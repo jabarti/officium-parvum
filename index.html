@@ -1,0 +1,1049 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Officium Parvum na dziś</title>
+<meta name="description" content="Małe Oficjum o Najświętszej Maryi Pannie na dziś — łacina i polski">
+<meta name="theme-color" content="#1f3f7a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Officium">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Alegreya+Sans:wght@400;500;700&display=swap">
+<style>
+:root{color-scheme:light}
+[hidden]{display:none!important}
+img{max-width:100%}
+
+/* Układ: strona brewiarza — pasek sterowania (data, język, godziny), rubryki dnia, potem ciągły tekst z rubrykami na czerwono */
+:root{
+  --bg:#f2f3f6; --page:#ffffff; --ink:#1c2130; --muted:#5e6577; --line:#dadde6;
+  --rubric:#a3241b; --marian:#1f3f7a; --marian-soft:#e5ebf6; --la:#3a4256;
+  --serif:"EB Garamond",Garamond,"Times New Roman",serif;
+  --sans:"Alegreya Sans","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1420; --page:#161c2a; --ink:#e8eaf0; --muted:#9aa2b5; --line:#2a3245;
+  --rubric:#e47b70; --marian:#a3baea; --marian-soft:#212c46; --la:#c3c9d8; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1420; --page:#161c2a; --ink:#e8eaf0; --muted:#9aa2b5; --line:#2a3245;
+  --rubric:#e47b70; --marian:#a3baea; --marian-soft:#212c46; --la:#c3c9d8; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 64px}
+.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header h1{font-family:var(--serif);font-weight:500;font-size:2rem;line-height:1.15;margin:0;text-wrap:balance}
+header h1 em{color:var(--rubric)}
+header p{margin:4px 0 0;color:var(--muted)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.bar .grp{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.lbl{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+input[type=date]{font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--page);color:var(--ink)}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--page);color:var(--ink);border-radius:6px;padding:7px 12px}
+button:hover{border-color:var(--marian)}
+button[aria-pressed="true"]{background:var(--marian);border-color:var(--marian);color:var(--page)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--marian);outline-offset:2px}
+.chip{border-radius:999px;padding:6px 12px;font-size:.95rem}
+.preset{font-size:.85rem;padding:5px 10px;color:var(--marian)}
+.panel{background:var(--page);border:1px solid var(--line);border-radius:8px;padding:16px 18px}
+.dayhead{font-family:var(--serif);font-size:1.45rem;margin:0}
+.season{display:inline-block;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--marian-soft);color:var(--marian);margin-top:4px}
+.rubrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px 20px;margin-top:12px}
+.rubrics div{min-width:0}
+.val{font-family:var(--serif);font-size:1.08rem}
+.legend{font-size:.85rem;color:var(--muted)}
+.legend b{color:var(--rubric);font-weight:500}
+/* tekst oficjum */
+.office{background:var(--page);border:1px solid var(--line);border-radius:8px;padding:8px 22px 28px;font-family:var(--serif);font-size:1.13rem;line-height:1.55}
+.hourtitle{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;border-bottom:1px solid var(--line);margin:26px 0 10px;padding-bottom:6px}
+.hourtitle h2{font-size:1.7rem;font-weight:500;margin:0}
+.hourtitle span{color:var(--rubric);font-style:italic;font-size:1.2rem}
+.sec{font-family:var(--sans);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--rubric);font-weight:700;margin:18px 0 4px}
+.rub{color:var(--rubric);font-style:italic;font-size:1.02rem;margin:8px 0}
+.blk{margin:6px 0}
+.bi{display:grid;grid-template-columns:1fr;gap:2px}
+.mode-both .bi{grid-template-columns:1fr 1fr;gap:26px}
+.bi > div{min-width:0}
+.mode-both .la{color:var(--la)}
+.k{color:var(--rubric);font-style:italic;margin-right:4px}
+.vr{color:var(--rubric);font-weight:500;margin-right:4px}
+.star{color:var(--rubric)}
+.pstitle{font-family:var(--sans);font-size:.85rem;color:var(--rubric);margin:14px 0 2px;letter-spacing:.03em}
+.verse{margin:2px 0}
+.stanza{margin:8px 0}
+@media (max-width:720px){
+  .mode-both .bi{grid-template-columns:1fr;gap:1px}
+  .mode-both .la{font-style:italic;font-size:.95em}
+  .office{padding:4px 14px 22px}
+}
+footer{color:var(--muted);font-size:.85rem;line-height:1.5}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>Officium Parvum <em>Beatae Mariae Virginis</em></h1>
+    <p>Pełne teksty na wybrany dzień — rubryki z 1960 roku, psalmy według Wulgaty.</p>
+  </header>
+
+  <div class="bar">
+    <button id="prev">← Wcześniej</button>
+    <input type="date" id="date" aria-label="Wybierz datę">
+    <button id="next">Później →</button>
+    <button id="today">Dziś</button>
+    <span style="flex:1"></span>
+    <div class="grp" role="group" aria-label="Język tekstu">
+      <span class="lbl">Tekst</span>
+      <button data-lang="pl">Polski</button>
+      <button data-lang="la">Łacina</button>
+      <button data-lang="both">Oba</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="lbl" style="margin-bottom:6px">Godziny odmawiane razem — zaznacz jedną lub kilka</div>
+    <div class="grp" id="chips"></div>
+    <div class="grp" style="margin-top:8px">
+      <span class="lbl">Szybki wybór</span>
+      <button class="preset" data-set="matins,lauds">Jutrznia + Laudy</button>
+      <button class="preset" data-set="matins,lauds,prime">Jutrznia + Laudy + Pryma</button>
+      <button class="preset" data-set="terce,sext,none">Tercja + Seksta + Nona</button>
+      <button class="preset" data-set="vespers,compline">Nieszpory + Kompleta</button>
+      <button class="preset" id="nowBtn">Teraz</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2 class="dayhead" id="dayhead"></h2>
+    <span class="season" id="season"></span>
+    <div class="rubrics" id="rubrics"></div>
+  </div>
+
+  <div class="legend"><b>℣</b> werset (versiculus) · <b>℟</b> odpowiedź (responsorium) · <b>*</b> pauza w połowie wersetu · tekst czerwony to rubryki, czyli wskazówki, których się nie odmawia</div>
+
+  <article class="office" id="office"></article>
+
+  <footer>
+    Teksty łacińskie według tradycyjnego Małego Oficjum (Wulgata, hymny w redakcji Urbana VIII). Przekład polski jest roboczym, wiernym przekładem pomocniczym, a nie zatwierdzonym tekstem liturgicznym. Wydania przedsoborowe różnią się drobnymi szczegółami, na przykład kapitułami małych godzin w Adwencie i Bożym Narodzeniu albo obecnością Kyrie — w razie rozbieżności rozstrzyga Twoje wydanie lub konstytucje zgromadzenia.
+  </footer>
+</div>
+
+<script>
+/* ===================== TEKSTY STAŁE ===================== */
+const G = {
+  ave:["Ave Maria, gratia plena, Dominus tecum; benedicta tu in mulieribus, et benedictus fructus ventris tui, Jesus. Sancta Maria, Mater Dei, ora pro nobis peccatoribus, nunc et in hora mortis nostrae. Amen.",
+       "Zdrowaś Maryjo, łaski pełna, Pan z Tobą, błogosławionaś Ty między niewiastami i błogosławiony owoc żywota Twojego, Jezus. Święta Maryjo, Matko Boża, módl się za nami grzesznymi teraz i w godzinę śmierci naszej. Amen."],
+  pater:["Pater noster, qui es in caelis, sanctificetur nomen tuum. Adveniat regnum tuum. Fiat voluntas tua, sicut in caelo et in terra. Panem nostrum quotidianum da nobis hodie. Et dimitte nobis debita nostra, sicut et nos dimittimus debitoribus nostris. Et ne nos inducas in tentationem. Sed libera nos a malo. Amen.",
+         "Ojcze nasz, któryś jest w niebie, święć się imię Twoje, przyjdź królestwo Twoje, bądź wola Twoja jako w niebie, tak i na ziemi. Chleba naszego powszedniego daj nam dzisiaj i odpuść nam nasze winy, jako i my odpuszczamy naszym winowajcom. I nie wódź nas na pokuszenie, ale nas zbaw ode złego. Amen."],
+  gloria:["Gloria Patri, et Filio, et Spiritui Sancto. Sicut erat in principio, et nunc, et semper, et in saecula saeculorum. Amen.",
+          "Chwała Ojcu i Synowi, i Duchowi Świętemu. Jak była na początku, teraz i zawsze, i na wieki wieków. Amen."],
+  gloriaV:[["Gloria Patri, et Filio, * et Spiritui Sancto.","Chwała Ojcu i Synowi, * i Duchowi Świętemu."],
+           ["Sicut erat in principio, et nunc, et semper, * et in saecula saeculorum. Amen.","Jak była na początku, teraz i zawsze, * i na wieki wieków. Amen."]],
+  alleluia:["Alleluia.","Alleluja."],
+  laus:["Laus tibi, Domine, Rex aeternae gloriae.","Chwała Tobie, Panie, Królu wiecznej chwały."],
+  kyrie:["Kyrie, eleison. Christe, eleison. Kyrie, eleison.","Panie, zmiłuj się. Chryste, zmiłuj się. Panie, zmiłuj się."],
+  oremus:["Oremus.","Módlmy się."],
+  amenR:["Amen.","Amen."],
+  tuAutem:["Tu autem, Domine, miserere nobis.","A Ty, Panie, zmiłuj się nad nami."],
+  deoGratias:["Deo gratias.","Bogu niech będą dzięki."],
+  jube:["Jube, Domine, benedicere.","Racz, Panie, pobłogosławić."],
+};
+const VR = {
+  labia:[["Domine, labia mea aperies.","Panie, otwórz wargi moje."],["Et os meum annuntiabit laudem tuam.","A usta moje będą głosić Twoją chwałę."]],
+  deus:[["Deus, in adjutorium meum intende.","Boże, wejrzyj ku wspomożeniu memu."],["Domine, ad adjuvandum me festina.","Panie, pośpiesz ku ratunkowi memu."]],
+  converte:[["Converte nos, Deus, salutaris noster.","Nawróć nas, Boże, Zbawicielu nasz."],["Et averte iram tuam a nobis.","I odwróć od nas swój gniew."]],
+  exaudi:[["Domine, exaudi orationem meam.","Panie, wysłuchaj modlitwy mojej."],["Et clamor meus ad te veniat.","A wołanie moje niech do Ciebie przyjdzie."]],
+  benedicamus:[["Benedicamus Domino.","Błogosławmy Panu."],["Deo gratias.","Bogu niech będą dzięki."]],
+  fidelium:[["Fidelium animae per misericordiam Dei requiescant in pace.","Dusze wiernych zmarłych przez miłosierdzie Boże niech odpoczywają w pokoju."],["Amen.","Amen."]],
+  benedicat:[["Benedicat et custodiat nos omnipotens et misericors Dominus, Pater, et Filius, et Spiritus Sanctus.","Niech nas błogosławi i strzeże wszechmogący i miłosierny Pan, Ojciec i Syn, i Duch Święty."],["Amen.","Amen."]],
+  dominusDet:[["Dominus det nobis suam pacem.","Pan niech nam da swój pokój."],["Et vitam aeternam. Amen.","I życie wieczne. Amen."]],
+  divinum:[["Divinum auxilium maneat semper nobiscum.","Pomoc Boża niech zawsze pozostaje z nami."],["Amen.","Amen."]],
+  diffusa:[["Diffusa est gratia in labiis tuis.","Wdzięk rozlany jest na wargach Twoich."],["Propterea benedixit te Deus in aeternum.","Dlatego pobłogosławił Cię Bóg na wieki."]],
+  adjuvabit:[["Adjuvabit eam Deus vultu suo.","Wspomoże ją Bóg swoim obliczem."],["Deus in medio ejus non commovebitur.","Bóg w pośrodku niej, nie będzie poruszona."]],
+  postPartum:[["Post partum, Virgo, inviolata permansisti.","Po porodzie, Dziewico, pozostałaś nienaruszona."],["Dei Genitrix, intercede pro nobis.","Boża Rodzicielko, wstawiaj się za nami."]],
+  benedictaTu:[["Benedicta tu in mulieribus.","Błogosławionaś Ty między niewiastami."],["Et benedictus fructus ventris tui.","I błogosławiony owoc żywota Twojego."]],
+  dignare:[["Dignare me laudare te, Virgo sacrata.","Racz przyjąć moją chwałę, Dziewico święta."],["Da mihi virtutem contra hostes tuos.","Daj mi moc przeciw Twoim nieprzyjaciołom."]],
+  oraPro:[["Ora pro nobis, sancta Dei Genitrix.","Módl się za nami, święta Boża Rodzicielko."],["Ut digni efficiamur promissionibus Christi.","Abyśmy się stali godnymi obietnic Chrystusowych."]],
+  rorate:[["Rorate, caeli, desuper, et nubes pluant justum.","Spuśćcie rosę, niebiosa, z góry, a obłoki niech spuszczą deszcz Sprawiedliwego."],["Aperiatur terra, et germinet Salvatorem.","Niech się otworzy ziemia i zrodzi Zbawiciela."]],
+  angelus:[["Angelus Domini nuntiavit Mariae.","Anioł Pański zwiastował Pannie Maryi."],["Et concepit de Spiritu Sancto.","I poczęła z Ducha Świętego."]],
+  gaude:[["Gaude et laetare, Virgo Maria, alleluia.","Raduj się i wesel, Panno Maryjo, alleluja."],["Quia surrexit Dominus vere, alleluia.","Bo zmartwychwstał Pan prawdziwie, alleluja."]],
+  laetamini:[["Laetamini in Domino et exsultate, justi.","Weselcie się w Panu i radujcie, sprawiedliwi."],["Et gloriamini, omnes recti corde.","I chlubcie się wszyscy prawego serca."]],
+};
+const END = {
+  per:["Per Dominum nostrum Jesum Christum, Filium tuum, qui tecum vivit et regnat in unitate Spiritus Sancti Deus, per omnia saecula saeculorum.","Przez Pana naszego Jezusa Chrystusa, Syna Twojego, który z Tobą żyje i króluje w jedności Ducha Świętego, Bóg, przez wszystkie wieki wieków."],
+  pereum:["Per eumdem Dominum nostrum Jesum Christum, Filium tuum, qui tecum vivit et regnat in unitate Spiritus Sancti Deus, per omnia saecula saeculorum.","Przez tegoż Pana naszego Jezusa Chrystusa, Syna Twojego, który z Tobą żyje i króluje w jedności Ducha Świętego, Bóg, przez wszystkie wieki wieków."],
+  qui:["Qui tecum vivit et regnat in unitate Spiritus Sancti Deus, per omnia saecula saeculorum.","Który z Tobą żyje i króluje w jedności Ducha Świętego, Bóg, przez wszystkie wieki wieków."],
+  quivivis:["Qui vivis et regnas cum Deo Patre in unitate Spiritus Sancti Deus, per omnia saecula saeculorum.","Który żyjesz i królujesz z Bogiem Ojcem w jedności Ducha Świętego, Bóg, przez wszystkie wieki wieków."],
+  short:["Per eumdem Christum Dominum nostrum.","Przez tegoż Chrystusa, Pana naszego."],
+  shortqui:["Qui tecum vivit et regnat in saecula saeculorum.","Który z Tobą żyje i króluje na wieki wieków."]
+};
+const OR = {
+  concede:{t:["Concede nos famulos tuos, quaesumus, Domine Deus, perpetua mentis et corporis sanitate gaudere: et gloriosa beatae Mariae semper Virginis intercessione, a praesenti liberari tristitia, et aeterna perfrui laetitia.","Daj nam, sługom Twoim, prosimy, Panie Boże, cieszyć się nieustannym zdrowiem duszy i ciała, a za chwalebnym wstawiennictwem błogosławionej Maryi, zawsze Dziewicy, zostać uwolnionymi od obecnego smutku i zażywać wiecznej radości."],e:"per"},
+  virginalem:{t:["Deus, qui virginalem aulam beatae Mariae, in qua habitares, eligere dignatus es: da, quaesumus; ut sua nos defensione munitos, jucundos facias suae interesse commemorationi.","Boże, który raczyłeś wybrać dziewiczy przybytek błogosławionej Maryi, aby w nim zamieszkać, spraw, prosimy, abyśmy osłonięci Jej obroną radośnie uczestniczyli w Jej wspomnieniu."],e:"quivivis"},
+  salutis:{t:["Deus, qui salutis aeternae, beatae Mariae virginitate fecunda, humano generi praemia praestitisti: tribue, quaesumus; ut ipsam pro nobis intercedere sentiamus, per quam meruimus auctorem vitae suscipere, Dominum nostrum Jesum Christum, Filium tuum.","Boże, który przez płodne dziewictwo błogosławionej Maryi dałeś rodzajowi ludzkiemu dobra wiecznego zbawienia, spraw, prosimy, abyśmy doznawali wstawiennictwa Tej, przez którą zasłużyliśmy przyjąć Dawcę życia, Pana naszego Jezusa Chrystusa, Syna Twojego."],e:"qui"},
+  misericors:{t:["Concede, misericors Deus, fragilitati nostrae praesidium: ut, qui sanctae Dei Genitricis memoriam agimus; intercessionis ejus auxilio, a nostris iniquitatibus resurgamus.","Udziel, miłosierny Boże, pomocy naszej słabości, abyśmy, obchodząc pamiątkę świętej Bożej Rodzicielki, za pomocą Jej wstawiennictwa powstali z naszych nieprawości."],e:"per"},
+  famulorum:{t:["Famulorum tuorum, quaesumus, Domine, delictis ignosce: ut qui tibi placere de actibus nostris non valemus; Genitricis Filii tui Domini nostri intercessione salvemur.","Odpuść, prosimy, Panie, winy sług Twoich, abyśmy, nie mogąc podobać się Tobie naszymi czynami, zostali zbawieni za wstawiennictwem Matki Syna Twojego, Pana naszego."],e:"qui"},
+  beatae:{t:["Beatae et gloriosae semper Virginis Mariae, quaesumus, Domine, intercessio gloriosa nos protegat, et ad vitam perducat aeternam.","Niech nas, prosimy, Panie, chroni chwalebne wstawiennictwo błogosławionej i chwalebnej zawsze Dziewicy Maryi i doprowadzi nas do życia wiecznego."],e:"per"},
+  utero:{t:["Deus, qui de beatae Mariae Virginis utero Verbum tuum, Angelo nuntiante, carnem suscipere voluisti: praesta supplicibus tuis; ut qui vere eam Genitricem Dei credimus, ejus apud te intercessionibus adjuvemur.","Boże, który chciałeś, aby Słowo Twoje za zwiastowaniem Anioła przyjęło ciało w łonie błogosławionej Maryi Dziewicy, spraw, abyśmy, wierząc, że jest Ona prawdziwie Matką Bożą, byli wspomagani Jej wstawiennictwem u Ciebie."],e:"pereum"},
+  protege:{t:["Protege, Domine, populum tuum, et Apostolorum tuorum Petri et Pauli et aliorum Apostolorum patrocinio confisum, perpetua defensione conserva. Omnes Sancti tui, quaesumus, Domine, nos ubique adjuvent: ut, dum eorum merita recolimus, patrocinia sentiamus: et pacem tuam nostris concede temporibus, et ab Ecclesia tua cunctam repelle nequitiam; iter, actus et voluntates nostras et omnium famulorum tuorum, in salutis tuae prosperitate dispone; benefactoribus nostris sempiterna bona retribue, et omnibus fidelibus defunctis requiem aeternam concede.","Chroń, Panie, lud Twój i zachowaj nieustanną obroną tych, którzy ufają opiece Twoich Apostołów Piotra i Pawła oraz innych Apostołów. Niech nas wszędzie wspomagają wszyscy Twoi Święci, prosimy, Panie, abyśmy, rozważając ich zasługi, doznawali ich opieki; użycz pokoju w naszych czasach i oddal od Twego Kościoła wszelką nieprawość; drogi, czyny i wolę naszą oraz wszystkich Twoich sług skieruj ku pomyślności Twego zbawienia; dobroczyńcom naszym odpłać wiecznymi dobrami, a wszystkim wiernym zmarłym daj wieczny odpoczynek."],e:"per"},
+};
+
+/* ===================== HYMNY ===================== */
+const DOXO = ["Jesu, tibi sit gloria, / Qui natus es de Virgine, / Cum Patre et almo Spiritu, / In sempiterna saecula. Amen.","Jezu, Tobie niech będzie chwała, / któryś się narodził z Dziewicy, / z Ojcem i Duchem Ożywicielem / na wieczne wieki. Amen."];
+const HY = {
+  quemTerra:{n:"Quem terra, pontus, sidera",s:[
+    ["Quem terra, pontus, sidera / Colunt, adorant, praedicant, / Trinam regentem machinam, / Claustrum Mariae bajulat.","Tego, którego ziemia, morze i gwiazdy / czczą, wielbią i głoszą, / Tego, co rządzi trojakim światem, / nosi łono Maryi."],
+    ["Cui luna, sol, et omnia / Deserviunt per tempora, / Perfusa caeli gratia, / Gestant puellae viscera.","Tego, któremu księżyc, słońce i wszystko / służą w swoich porach, / napełnione łaską nieba / nosi łono Dziewicy."],
+    ["Beata Mater munere, / Cujus, supernus Artifex, / Mundum pugillo continens, / Ventris sub arca clausus est.","Błogosławiona Matka z daru Bożego: / w arce Jej łona zamknął się / najwyższy Budowniczy, / co świat w swej dłoni trzyma."],
+    ["Beata caeli nuntio, / Fecunda Sancto Spiritu, / Desideratus gentibus / Cujus per alvum fusus est.","Błogosławiona przez zwiastowanie z nieba, / płodna z Ducha Świętego, / przez Jej łono przyszedł na świat / Upragniony narodów."],
+    DOXO]},
+  oGloriosa:{n:"O gloriosa virginum",s:[
+    ["O gloriosa virginum, / Sublimis inter sidera, / Qui te creavit, parvulum / Lactente nutris ubere.","O chwalebna wśród dziewic, / wywyższona ponad gwiazdy, / Tego, który Cię stworzył, jako Dziecię / karmisz swoją piersią."],
+    ["Quod Heva tristis abstulit, / Tu reddis almo germine: / Intrent ut astra flebiles, / Caeli recludis cardines.","Co smutna Ewa odebrała, / Ty oddajesz przez święty Owoc; / by płaczący weszli do gwiazd, / otwierasz bramy nieba."],
+    ["Tu Regis alti janua, / Et aula lucis fulgida: / Vitam datam per Virginem, / Gentes redemptae, plaudite.","Tyś bramą wielkiego Króla / i jaśniejącą salą światła; / życie dane przez Dziewicę / sławcie, odkupione narody."],
+    DOXO]},
+  memento:{n:"Memento, rerum Conditor",s:[
+    ["Memento, rerum Conditor, / Nostri quod olim corporis, / Sacrata ab alvo Virginis / Nascendo, formam sumpseris.","Pamiętaj, Stwórco wszechrzeczy, / że niegdyś, rodząc się / ze świętego łona Dziewicy, / przyjąłeś postać naszego ciała."],
+    ["Maria, Mater gratiae, / Dulcis parens clementiae, / Tu nos ab hoste protege, / Et mortis hora suscipe.","Maryjo, Matko łaski, / słodka Rodzicielko łaskawości, / Ty nas broń od wroga / i przyjmij w godzinę śmierci."],
+    DOXO]},
+  aveMaris:{n:"Ave, maris stella",s:[
+    ["Ave, maris stella, / Dei Mater alma, / Atque semper Virgo, / Felix caeli porta.","Witaj, Gwiazdo morza, / Boża Matko żywiąca, / i zawsze Dziewico, / szczęsna bramo nieba."],
+    ["Sumens illud Ave / Gabrielis ore, / Funda nos in pace, / Mutans Hevae nomen.","Przyjmując owo «Ave» / z ust Gabriela, / utwierdź nas w pokoju, / odmieniając imię Ewy."],
+    ["Solve vincla reis, / Profer lumen caecis, / Mala nostra pelle, / Bona cuncta posce.","Rozwiąż więzy winnym, / daj światło niewidomym, / oddal od nas zło, / wypraszaj wszelkie dobro."],
+    ["Monstra te esse matrem: / Sumat per te preces, / Qui pro nobis natus, / Tulit esse tuus.","Okaż, że jesteś Matką; / niech przez Ciebie przyjmie modły / Ten, co dla nas zrodzony / zechciał być Twoim Synem."],
+    ["Virgo singularis, / Inter omnes mitis, / Nos culpis solutos, / Mites fac et castos.","Dziewico jedyna, / najłagodniejsza ze wszystkich, / nas, uwolnionych od win, / uczyń łagodnymi i czystymi."],
+    ["Vitam praesta puram, / Iter para tutum: / Ut videntes Jesum, / Semper collaetemur.","Użycz życia czystego, / przygotuj bezpieczną drogę, / abyśmy, oglądając Jezusa, / radowali się zawsze."],
+    ["Sit laus Deo Patri, / Summo Christo decus, / Spiritui Sancto, / Tribus honor unus. Amen.","Chwała Bogu Ojcu, / cześć Chrystusowi Najwyższemu / i Duchowi Świętemu, / Trzem jedna cześć. Amen."]]},
+};
+
+/* ===================== PSALMY I KANTYKI (Wulgata) ===================== */
+const PS = {
+p8:{n:"Psalm 8",v:[
+["Domine, Dominus noster, * quam admirabile est nomen tuum in universa terra!","Panie, Panie nasz, * jakże przedziwne jest imię Twoje na całej ziemi!"],
+["Quoniam elevata est magnificentia tua, * super caelos.","Bo wywyższona jest wspaniałość Twoja * ponad niebiosa."],
+["Ex ore infantium et lactentium perfecisti laudem propter inimicos tuos, * ut destruas inimicum et ultorem.","Z ust niemowląt i ssących uczyniłeś doskonałą chwałę z powodu nieprzyjaciół Twoich, * abyś zniszczył wroga i mściciela."],
+["Quoniam videbo caelos tuos, opera digitorum tuorum: * lunam et stellas, quae tu fundasti.","Gdy patrzę na niebiosa Twoje, dzieło palców Twoich, * na księżyc i gwiazdy, któreś Ty utwierdził:"],
+["Quid est homo quod memor es ejus? * aut filius hominis, quoniam visitas eum?","Czym jest człowiek, że o nim pamiętasz? * albo syn człowieczy, że go nawiedzasz?"],
+["Minuisti eum paulo minus ab Angelis, gloria et honore coronasti eum: * et constituisti eum super opera manuum tuarum.","Uczyniłeś go niewiele mniejszym od Aniołów, chwałą i czcią go ukoronowałeś, * i postawiłeś go nad dziełami rąk Twoich."],
+["Omnia subjecisti sub pedibus ejus, * oves et boves universas: insuper et pecora campi.","Wszystko poddałeś pod jego stopy: * owce i woły wszelkie, a także zwierzęta polne,"],
+["Volucres caeli, et pisces maris, * qui perambulant semitas maris.","Ptaki niebieskie i ryby morskie, * które przemierzają ścieżki mórz."],
+["Domine, Dominus noster, * quam admirabile est nomen tuum in universa terra!","Panie, Panie nasz, * jakże przedziwne jest imię Twoje na całej ziemi!"]]},
+p18:{n:"Psalm 18",v:[
+["Caeli enarrant gloriam Dei: * et opera manuum ejus annuntiat firmamentum.","Niebiosa opowiadają chwałę Bożą, * a dzieła rąk Jego głosi firmament."],
+["Dies diei eructat verbum, * et nox nocti indicat scientiam.","Dzień dniowi przekazuje słowo, * a noc nocy podaje wiedzę."],
+["Non sunt loquelae, neque sermones, * quorum non audiantur voces eorum.","Nie ma mowy ani słów, * których głosu by nie słyszano."],
+["In omnem terram exivit sonus eorum: * et in fines orbis terrae verba eorum.","Na całą ziemię rozszedł się ich dźwięk * i aż po krańce świata ich słowa."],
+["In sole posuit tabernaculum suum: * et ipse tamquam sponsus procedens de thalamo suo.","W słońcu rozbił swój namiot, * a ono jak oblubieniec wychodzący ze swej komnaty"],
+["Exsultavit ut gigas ad currendam viam, * a summo caelo egressio ejus:","Rozradowało się jak olbrzym, by przebiec drogę; * od krańca nieba jego wyjście,"],
+["Et occursus ejus usque ad summum ejus: * nec est qui se abscondat a calore ejus.","A bieg jego aż do drugiego krańca, * i nie ma nikogo, kto by się ukrył przed jego żarem."],
+["Lex Domini immaculata, convertens animas: * testimonium Domini fidele, sapientiam praestans parvulis.","Prawo Pańskie nieskalane, nawraca dusze; * świadectwo Pańskie wierne, mądrości udziela maluczkim."],
+["Justitiae Domini rectae, laetificantes corda: * praeceptum Domini lucidum, illuminans oculos.","Sprawiedliwości Pańskie prawe, weselą serca; * przykazanie Pańskie jasne, oświeca oczy."],
+["Timor Domini sanctus, permanet in saeculum saeculi: * judicia Domini vera, justificata in semetipsa.","Bojaźń Pańska święta, trwa na wieki wieków; * sądy Pańskie prawdziwe, same w sobie sprawiedliwe."],
+["Desiderabilia super aurum et lapidem pretiosum multum: * et dulciora super mel et favum.","Bardziej pożądane niż złoto i drogie kamienie, * i słodsze nad miód i plaster miodu."],
+["Etenim servus tuus custodit ea, * in custodiendis illis retributio multa.","Toteż sługa Twój ich przestrzega, * w zachowywaniu ich nagroda wielka."],
+["Delicta quis intelligit? ab occultis meis munda me: * et ab alienis parce servo tuo.","Któż zna swoje upadki? Od ukrytych moich oczyść mnie, * a od cudzych oszczędź sługę Twego."],
+["Si mei non fuerint dominati, tunc immaculatus ero: * et emundabor a delicto maximo.","Jeśli nie zapanują nade mną, wtedy będę nieskalany * i oczyszczony z największego przestępstwa."],
+["Et erunt ut complaceant eloquia oris mei: * et meditatio cordis mei in conspectu tuo semper.","I będą miłe słowa ust moich, * a rozważanie serca mego zawsze przed Tobą,"],
+["Domine, adjutor meus, * et redemptor meus.","Panie, wspomożycielu mój * i odkupicielu mój."]]},
+p23:{n:"Psalm 23",v:[
+["Domini est terra, et plenitudo ejus: * orbis terrarum, et universi qui habitant in eo.","Do Pana należy ziemia i to, co ją napełnia, * okrąg ziemi i wszyscy, którzy na nim mieszkają."],
+["Quia ipse super maria fundavit eum: * et super flumina praeparavit eum.","Bo On ją założył na morzach * i umocnił ją nad rzekami."],
+["Quis ascendet in montem Domini? * aut quis stabit in loco sancto ejus?","Któż wstąpi na górę Pańską? * albo kto stanie na Jego miejscu świętym?"],
+["Innocens manibus et mundo corde, * qui non accepit in vano animam suam, nec juravit in dolo proximo suo.","Ten, kto ma niewinne ręce i czyste serce, * kto nie oddał duszy swej marności i nie przysięgał podstępnie bliźniemu."],
+["Hic accipiet benedictionem a Domino: * et misericordiam a Deo salutari suo.","Ten otrzyma błogosławieństwo od Pana * i miłosierdzie od Boga, Zbawiciela swego."],
+["Haec est generatio quaerentium eum, * quaerentium faciem Dei Jacob.","Takie jest pokolenie tych, którzy Go szukają, * którzy szukają oblicza Boga Jakubowego."],
+["Attollite portas, principes, vestras, et elevamini, portae aeternales: * et introibit Rex gloriae.","Podnieście, książęta, bramy wasze, i wznieście się, odwieczne podwoje, * a wejdzie Król chwały."],
+["Quis est iste Rex gloriae? * Dominus fortis et potens: Dominus potens in praelio.","Któż jest tym Królem chwały? * Pan mocny i potężny, Pan potężny w boju."],
+["Attollite portas, principes, vestras, et elevamini, portae aeternales: * et introibit Rex gloriae.","Podnieście, książęta, bramy wasze, i wznieście się, odwieczne podwoje, * a wejdzie Król chwały."],
+["Quis est iste Rex gloriae? * Dominus virtutum ipse est Rex gloriae.","Któż jest tym Królem chwały? * Pan Zastępów, On jest Królem chwały."]]},
+p44:{n:"Psalm 44",v:[
+["Eructavit cor meum verbum bonum: * dico ego opera mea regi.","Wylało serce moje słowo dobre; * mówię ja dzieła moje królowi."],
+["Lingua mea calamus scribae: * velociter scribentis.","Język mój jest piórem pisarza, * który szybko pisze."],
+["Speciosus forma prae filiis hominum, diffusa est gratia in labiis tuis: * propterea benedixit te Deus in aeternum.","Najpiękniejszy jesteś z synów ludzkich, wdzięk rozlany jest na wargach Twoich; * dlatego pobłogosławił Cię Bóg na wieki."],
+["Accingere gladio tuo super femur tuum, * potentissime.","Przypasz miecz swój do biodra, * o najmocniejszy."],
+["Specie tua et pulchritudine tua: * intende, prospere procede, et regna.","W okazałości Twojej i piękności Twojej * ruszaj, szczęśliwie postępuj i króluj"],
+["Propter veritatem, et mansuetudinem, et justitiam: * et deducet te mirabiliter dextera tua.","Dla prawdy, łagodności i sprawiedliwości; * a prawica Twoja poprowadzi Cię przedziwnie."],
+["Sagittae tuae acutae, populi sub te cadent: * in corda inimicorum regis.","Strzały Twoje ostre, ludy padną pod Tobą, * trafią w serca nieprzyjaciół króla."],
+["Sedes tua, Deus, in saeculum saeculi: * virga directionis virga regni tui.","Tron Twój, Boże, na wieki wieków; * berłem prawości jest berło królestwa Twego."],
+["Dilexisti justitiam, et odisti iniquitatem: * propterea unxit te Deus, Deus tuus, oleo laetitiae prae consortibus tuis.","Umiłowałeś sprawiedliwość, a znienawidziłeś nieprawość; * dlatego namaścił Cię Bóg, Bóg Twój, olejkiem radości bardziej niż Twoich towarzyszy."],
+["Myrrha, et gutta, et casia a vestimentis tuis, a domibus eburneis: * ex quibus delectaverunt te filiae regum in honore tuo.","Mirra, aloes i kasja wonieją od szat Twoich z pałaców z kości słoniowej, * z których rozweselały Cię córki królewskie w Twojej czci."],
+["Astitit regina a dextris tuis in vestitu deaurato: * circumdata varietate.","Stanęła królowa po prawicy Twojej w szacie złocistej, * otoczona rozmaitością."],
+["Audi, filia, et vide, et inclina aurem tuam: * et obliviscere populum tuum et domum patris tui.","Słuchaj, córko, i patrz, i nakłoń ucha swego, * a zapomnij o ludzie swoim i o domu ojca twego."],
+["Et concupiscet rex decorem tuum: * quoniam ipse est Dominus Deus tuus, et adorabunt eum.","A król zapragnie piękności twojej, * bo On jest Panem, Bogiem twoim, i będą Mu oddawać pokłon."],
+["Et filiae Tyri in muneribus * vultum tuum deprecabuntur: omnes divites plebis.","I córki Tyru z darami * szukać będą twego oblicza, wszyscy bogacze ludu."],
+["Omnis gloria ejus filiae regis ab intus, * in fimbriis aureis circumamicta varietatibus.","Cała chwała córki królewskiej jest wewnątrz, * odziana w złote frędzle, przybrana rozmaitością."],
+["Adducentur regi virgines post eam: * proximae ejus afferentur tibi.","Przywiodą królowi dziewice za nią, * jej towarzyszki przyprowadzą do Ciebie."],
+["Afferentur in laetitia et exsultatione: * adducentur in templum regis.","Przyprowadzą je z weselem i radością, * wprowadzą je do świątyni króla."],
+["Pro patribus tuis nati sunt tibi filii: * constitues eos principes super omnem terram.","Zamiast ojców Twoich narodzili Ci się synowie; * ustanowisz ich książętami nad całą ziemią."],
+["Memores erunt nominis tui: * in omni generatione et generationem.","Będą pamiętać imię Twoje * we wszystkich pokoleniach."],
+["Propterea populi confitebuntur tibi in aeternum: * et in saeculum saeculi.","Dlatego ludy będą Cię wysławiać na wieki * i na wieki wieków."]]},
+p45:{n:"Psalm 45",v:[
+["Deus noster refugium, et virtus: * adjutor in tribulationibus, quae invenerunt nos nimis.","Bóg naszą ucieczką i mocą, * wspomożycielem w utrapieniach, które nas bardzo dotknęły."],
+["Propterea non timebimus dum turbabitur terra: * et transferentur montes in cor maris.","Dlatego nie będziemy się lękać, choćby zatrzęsła się ziemia * i góry przeniosły się w głębię morza."],
+["Sonuerunt, et turbatae sunt aquae eorum: * conturbati sunt montes in fortitudine ejus.","Zahuczały i wzburzyły się ich wody, * zatrzęsły się góry od Jego potęgi."],
+["Fluminis impetus laetificat civitatem Dei: * sanctificavit tabernaculum suum Altissimus.","Nurt rzeki rozwesela miasto Boże; * uświęcił Najwyższy swój przybytek."],
+["Deus in medio ejus, non commovebitur: * adjuvabit eam Deus mane diluculo.","Bóg w pośrodku niego, nie będzie poruszone; * wspomoże je Bóg wczesnym rankiem."],
+["Conturbatae sunt gentes, et inclinata sunt regna: * dedit vocem suam, mota est terra.","Zatrwożyły się narody i zachwiały się królestwa; * wydał głos swój, zadrżała ziemia."],
+["Dominus virtutum nobiscum: * susceptor noster Deus Jacob.","Pan Zastępów z nami, * obrońcą naszym Bóg Jakubowy."],
+["Venite, et videte opera Domini, quae posuit prodigia super terram: * auferens bella usque ad finem terrae.","Przyjdźcie i patrzcie na dzieła Pana, jakie cuda uczynił na ziemi: * kładzie kres wojnom aż po krańce ziemi."],
+["Arcum conteret, et confringet arma: * et scuta comburet igni.","Łuk skruszy i połamie oręż, * a tarcze spali w ogniu."],
+["Vacate, et videte quoniam ego sum Deus: * exaltabor in gentibus, et exaltabor in terra.","Uspokójcie się i wiedzcie, że Ja jestem Bogiem: * będę wywyższony wśród narodów i wywyższony na ziemi."],
+["Dominus virtutum nobiscum: * susceptor noster Deus Jacob.","Pan Zastępów z nami, * obrońcą naszym Bóg Jakubowy."]]},
+p86:{n:"Psalm 86",v:[
+["Fundamenta ejus in montibus sanctis: * diligit Dominus portas Sion super omnia tabernacula Jacob.","Założenie jego na górach świętych; * Pan miłuje bramy Syjonu bardziej niż wszystkie przybytki Jakuba."],
+["Gloriosa dicta sunt de te, * civitas Dei.","Chwalebne rzeczy mówią o tobie, * miasto Boże."],
+["Memor ero Rahab et Babylonis, * scientium me.","Wspomnę Rahab i Babilon * wśród tych, którzy mnie znają."],
+["Ecce alienigenae, et Tyrus, et populus Aethiopum, * hi fuerunt illic.","Oto cudzoziemcy i Tyr, i lud etiopski: * ci tam się narodzili."],
+["Numquid Sion dicet: Homo et homo natus est in ea: * et ipse fundavit eam Altissimus?","Czyż Syjon nie powie: Ten i ów urodził się w nim, * a sam Najwyższy go ugruntował?"],
+["Dominus narrabit in scripturis populorum et principum: * horum, qui fuerunt in ea.","Pan opowie w księgach ludów i książąt * o tych, którzy w nim byli."],
+["Sicut laetantium omnium * habitatio est in te.","Jak u wszystkich rozradowanych * jest mieszkanie w tobie."]]},
+p95:{n:"Psalm 95",v:[
+["Cantate Domino canticum novum: * cantate Domino, omnis terra.","Śpiewajcie Panu pieśń nową, * śpiewajcie Panu, cała ziemio."],
+["Cantate Domino, et benedicite nomini ejus: * annuntiate de die in diem salutare ejus.","Śpiewajcie Panu i błogosławcie imię Jego, * głoście dzień po dniu Jego zbawienie."],
+["Annuntiate inter gentes gloriam ejus, * in omnibus populis mirabilia ejus.","Opowiadajcie wśród narodów Jego chwałę, * wśród wszystkich ludów Jego cuda."],
+["Quoniam magnus Dominus, et laudabilis nimis: * terribilis est super omnes deos.","Bo wielki jest Pan i godzien wielkiej chwały, * groźny ponad wszystkich bogów."],
+["Quoniam omnes dii gentium daemonia: * Dominus autem caelos fecit.","Bo wszyscy bogowie pogan to demony, * a Pan uczynił niebiosa."],
+["Confessio, et pulchritudo in conspectu ejus: * sanctimonia, et magnificentia in sanctificatione ejus.","Wysławianie i piękno przed Jego obliczem, * świętość i wspaniałość w Jego przybytku."],
+["Afferte Domino, patriae gentium, afferte Domino gloriam et honorem: * afferte Domino gloriam nomini ejus.","Oddajcie Panu, rody narodów, oddajcie Panu chwałę i cześć, * oddajcie Panu chwałę należną Jego imieniu."],
+["Tollite hostias, et introite in atria ejus: * adorate Dominum in atrio sancto ejus.","Przynieście ofiary i wejdźcie do Jego przedsionków, * pokłońcie się Panu w Jego świętym przedsionku."],
+["Commoveatur a facie ejus universa terra: * dicite in gentibus quia Dominus regnavit.","Niech zadrży przed Jego obliczem cała ziemia; * mówcie wśród narodów, że Pan króluje."],
+["Etenim correxit orbem terrae qui non commovebitur: * judicabit populos in aequitate.","Utwierdził bowiem okrąg ziemi, który się nie zachwieje; * będzie sądził ludy sprawiedliwie."],
+["Laetentur caeli, et exsultet terra: commoveatur mare, et plenitudo ejus: * gaudebunt campi, et omnia quae in eis sunt.","Niech się weselą niebiosa i raduje ziemia, niech szumi morze i to, co je napełnia; * rozradują się pola i wszystko, co na nich jest."],
+["Tunc exsultabunt omnia ligna silvarum a facie Domini, quia venit: * quoniam venit judicare terram.","Wtedy rozradują się wszystkie drzewa leśne przed obliczem Pana, bo przychodzi, * bo przychodzi sądzić ziemię."],
+["Judicabit orbem terrae in aequitate, * et populos in veritate sua.","Będzie sądził okrąg ziemi sprawiedliwie, * a ludy według swojej prawdy."]]},
+p96:{n:"Psalm 96",v:[
+["Dominus regnavit, exsultet terra: * laetentur insulae multae.","Pan króluje, niech się raduje ziemia, * niech się weselą liczne wyspy."],
+["Nubes, et caligo in circuitu ejus: * justitia, et judicium correctio sedis ejus.","Obłok i mrok wokół Niego, * sprawiedliwość i sąd podstawą Jego tronu."],
+["Ignis ante ipsum praecedet, * et inflammabit in circuitu inimicos ejus.","Ogień idzie przed Nim * i spala wokoło Jego nieprzyjaciół."],
+["Illuxerunt fulgura ejus orbi terrae: * vidit, et commota est terra.","Błyskawice Jego oświeciły okrąg ziemi; * ujrzała to i zadrżała ziemia."],
+["Montes, sicut cera fluxerunt a facie Domini: * a facie Domini omnis terra.","Góry jak wosk topnieją przed obliczem Pana, * przed obliczem Pana całej ziemi."],
+["Annuntiaverunt caeli justitiam ejus: * et viderunt omnes populi gloriam ejus.","Niebiosa głoszą Jego sprawiedliwość, * a wszystkie ludy oglądają Jego chwałę."],
+["Confundantur omnes qui adorant sculptilia: * et qui gloriantur in simulacris suis.","Niech się zawstydzą wszyscy, którzy czczą rzeźby * i chlubią się swoimi bożkami."],
+["Adorate eum, omnes Angeli ejus: * audivit, et laetata est Sion.","Oddajcie Mu pokłon, wszyscy Jego Aniołowie; * usłyszał to i ucieszył się Syjon."],
+["Et exsultaverunt filiae Judae, * propter judicia tua, Domine.","I rozradowały się córki Judy * z powodu sądów Twoich, Panie."],
+["Quoniam tu Dominus altissimus super omnem terram: * nimis exaltatus es super omnes deos.","Bo Ty, Panie, jesteś Najwyższy nad całą ziemią, * wywyższony wysoko ponad wszystkich bogów."],
+["Qui diligitis Dominum, odite malum: * custodit Dominus animas sanctorum suorum, de manu peccatoris liberabit eos.","Którzy miłujecie Pana, nienawidźcie zła; * Pan strzeże dusz swoich świętych, wyzwoli ich z ręki grzesznika."],
+["Lux orta est justo, * et rectis corde laetitia.","Wzeszła światłość sprawiedliwemu, * a ludziom prawego serca wesele."],
+["Laetamini, justi, in Domino: * et confitemini memoriae sanctificationis ejus.","Weselcie się, sprawiedliwi, w Panu * i wysławiajcie pamiątkę Jego świętości."]]},
+p97:{n:"Psalm 97",v:[
+["Cantate Domino canticum novum: * quia mirabilia fecit.","Śpiewajcie Panu pieśń nową, * bo uczynił cuda."],
+["Salvavit sibi dextera ejus: * et brachium sanctum ejus.","Zwycięstwo dała Mu Jego prawica * i Jego święte ramię."],
+["Notum fecit Dominus salutare suum: * in conspectu gentium revelavit justitiam suam.","Pan objawił swoje zbawienie, * na oczach narodów okazał swoją sprawiedliwość."],
+["Recordatus est misericordiae suae, * et veritatis suae domui Israel.","Wspomniał na swoje miłosierdzie * i na swoją wierność wobec domu Izraela."],
+["Viderunt omnes termini terrae * salutare Dei nostri.","Ujrzały wszystkie krańce ziemi * zbawienie Boga naszego."],
+["Jubilate Deo, omnis terra: * cantate, et exsultate, et psallite.","Wykrzykujcie Bogu, cała ziemio, * śpiewajcie, radujcie się i grajcie."],
+["Psallite Domino in cithara, in cithara et voce psalmi: * in tubis ductilibus, et voce tubae corneae.","Grajcie Panu na cytrze, na cytrze i przy głosie psalmu, * na trąbach i przy dźwięku rogu."],
+["Jubilate in conspectu regis Domini: * moveatur mare, et plenitudo ejus: orbis terrarum, et qui habitant in eo.","Wykrzykujcie przed obliczem Pana, Króla; * niech szumi morze i to, co je napełnia, okrąg ziemi i jego mieszkańcy."],
+["Flumina plaudent manu, simul montes exsultabunt a conspectu Domini: * quoniam venit judicare terram.","Rzeki niech klaszczą w dłonie, a góry razem niech się radują przed obliczem Pana, * bo przychodzi sądzić ziemię."],
+["Judicabit orbem terrarum in justitia, * et populos in aequitate.","Będzie sądził okrąg ziemi sprawiedliwie, * a ludy według słuszności."]]},
+p92:{n:"Psalm 92",v:[
+["Dominus regnavit, decorem indutus est: * indutus est Dominus fortitudinem, et praecinxit se.","Pan króluje, przyoblekł się w majestat; * przyoblekł się Pan w moc i przepasał się."],
+["Etenim firmavit orbem terrae, * qui non commovebitur.","Utwierdził bowiem okrąg ziemi, * który się nie zachwieje."],
+["Parata sedes tua ex tunc: * a saeculo tu es.","Od dawna stoi Twój tron, * od wieków Ty jesteś."],
+["Elevaverunt flumina, Domine: * elevaverunt flumina vocem suam.","Podniosły rzeki, Panie, * podniosły rzeki swój głos."],
+["Elevaverunt flumina fluctus suos, * a vocibus aquarum multarum.","Podniosły rzeki swoje fale * wśród szumu wielkich wód."],
+["Mirabiles elationes maris: * mirabilis in altis Dominus.","Przedziwne są wzburzenia morza, * przedziwny na wysokościach Pan."],
+["Testimonia tua credibilia facta sunt nimis: * domum tuam decet sanctitudo, Domine, in longitudinem dierum.","Świadectwa Twoje stały się bardzo wiarygodne; * domowi Twemu przystoi świętość, Panie, na długie dni."]]},
+p99:{n:"Psalm 99",v:[
+["Jubilate Deo, omnis terra: * servite Domino in laetitia.","Wykrzykujcie Bogu, cała ziemio, * służcie Panu z weselem."],
+["Introite in conspectu ejus, * in exsultatione.","Wejdźcie przed Jego oblicze * z radością."],
+["Scitote quoniam Dominus ipse est Deus: * ipse fecit nos, et non ipsi nos.","Wiedzcie, że Pan jest Bogiem; * On nas uczynił, a nie my sami siebie."],
+["Populus ejus, et oves pascuae ejus: * introite portas ejus in confessione, atria ejus in hymnis: confitemini illi.","Jesteśmy Jego ludem i owcami Jego pastwiska; * wejdźcie w Jego bramy z wyznaniem, w Jego przedsionki z hymnami; wysławiajcie Go."],
+["Laudate nomen ejus: quoniam suavis est Dominus, in aeternum misericordia ejus: * et usque in generationem et generationem veritas ejus.","Chwalcie Jego imię, bo słodki jest Pan, na wieki Jego miłosierdzie, * a Jego wierność z pokolenia na pokolenie."]]},
+p62:{n:"Psalm 62",noGloria:true,v:[
+["Deus, Deus meus, * ad te de luce vigilo.","Boże, Boże mój, * od świtu czuwam przy Tobie."],
+["Sitivit in te anima mea, * quam multipliciter tibi caro mea.","Pragnie Ciebie dusza moja, * i ciało moje na tak wiele sposobów,"],
+["In terra deserta, et invia, et inaquosa: * sic in sancto apparui tibi, ut viderem virtutem tuam, et gloriam tuam.","W ziemi pustej, bezdrożnej i bezwodnej; * tak w przybytku stawiłem się przed Tobą, by ujrzeć Twoją moc i Twoją chwałę."],
+["Quoniam melior est misericordia tua super vitas: * labia mea laudabunt te.","Bo lepsze jest Twoje miłosierdzie niż życie, * wargi moje będą Cię chwalić."],
+["Sic benedicam te in vita mea: * et in nomine tuo levabo manus meas.","Tak będę Ci błogosławił za życia mego * i w imię Twoje wzniosę ręce moje."],
+["Sicut adipe et pinguedine repleatur anima mea: * et labiis exsultationis laudabit os meum.","Jakby tłuszczem i obfitością niech nasyci się dusza moja, * a wargami radości będą chwalić usta moje."],
+["Si memor fui tui super stratum meum, in matutinis meditabor in te: * quia fuisti adjutor meus.","Gdy wspominam Cię na łożu moim, o świcie rozmyślam o Tobie, * bo byłeś moim wspomożycielem."],
+["Et in velamento alarum tuarum exsultabo, adhaesit anima mea post te: * me suscepit dextera tua.","W cieniu Twych skrzydeł będę się radował; przylgnęła dusza moja do Ciebie, * prawica Twoja mnie podtrzymała."],
+["Ipsi vero in vanum quaesierunt animam meam, introibunt in inferiora terrae: * tradentur in manus gladii, partes vulpium erunt.","A ci na próżno czyhali na moje życie; zejdą do głębin ziemi, * wydani zostaną pod miecz, staną się łupem lisów."],
+["Rex vero laetabitur in Deo, laudabuntur omnes qui jurant in eo: * quia obstructum est os loquentium iniqua.","Król zaś będzie się radował w Bogu, chwałę otrzymają wszyscy, którzy na Niego przysięgają, * bo zamknięte zostały usta mówiących nieprawość."]]},
+p66:{n:"Psalm 66",v:[
+["Deus misereatur nostri, et benedicat nobis: * illuminet vultum suum super nos, et misereatur nostri.","Niech się Bóg zmiłuje nad nami i niech nam błogosławi; * niech rozjaśni nad nami swoje oblicze i niech się zmiłuje nad nami,"],
+["Ut cognoscamus in terra viam tuam, * in omnibus gentibus salutare tuum.","Abyśmy poznali na ziemi Twoją drogę, * wśród wszystkich narodów Twoje zbawienie."],
+["Confiteantur tibi populi, Deus: * confiteantur tibi populi omnes.","Niech Cię wysławiają ludy, Boże, * niech Cię wysławiają wszystkie ludy."],
+["Laetentur et exsultent gentes: * quoniam judicas populos in aequitate, et gentes in terra dirigis.","Niech się weselą i radują narody, * bo sądzisz ludy sprawiedliwie i kierujesz narodami na ziemi."],
+["Confiteantur tibi populi, Deus, confiteantur tibi populi omnes: * terra dedit fructum suum.","Niech Cię wysławiają ludy, Boże, niech Cię wysławiają wszystkie ludy; * ziemia wydała swój plon."],
+["Benedicat nos Deus, Deus noster, benedicat nos Deus: * et metuant eum omnes fines terrae.","Niech nam błogosławi Bóg, Bóg nasz, niech nam błogosławi Bóg, * i niech się Go boją wszystkie krańce ziemi."]]},
+bened3:{n:"Kantyk Trzech Młodzieńców (Księga Daniela 3)",noGloria:true,v:[
+["Benedicite, omnia opera Domini, Domino: * laudate et superexaltate eum in saecula.","Błogosławcie Pana, wszystkie dzieła Pańskie, * chwalcie i wywyższajcie Go na wieki."],
+["Benedicite, Angeli Domini, Domino: * benedicite, caeli, Domino.","Błogosławcie Pana, Aniołowie Pańscy, * błogosławcie Pana, niebiosa."],
+["Benedicite, aquae omnes, quae super caelos sunt, Domino: * benedicite, omnes virtutes Domini, Domino.","Błogosławcie Pana, wszystkie wody nad niebiosami, * błogosławcie Pana, wszystkie moce Pańskie."],
+["Benedicite, sol et luna, Domino: * benedicite, stellae caeli, Domino.","Błogosławcie Pana, słońce i księżycu, * błogosławcie Pana, gwiazdy niebieskie."],
+["Benedicite, omnis imber et ros, Domino: * benedicite, omnes spiritus Dei, Domino.","Błogosławcie Pana, wszelki deszczu i roso, * błogosławcie Pana, wszystkie wiatry Boże."],
+["Benedicite, ignis et aestus, Domino: * benedicite, frigus et aestus, Domino.","Błogosławcie Pana, ogniu i żarze, * błogosławcie Pana, chłodzie i upale."],
+["Benedicite, rores et pruina, Domino: * benedicite, gelu et frigus, Domino.","Błogosławcie Pana, rosy i szrony, * błogosławcie Pana, mrozie i zimno."],
+["Benedicite, glacies et nives, Domino: * benedicite, noctes et dies, Domino.","Błogosławcie Pana, lody i śniegi, * błogosławcie Pana, noce i dnie."],
+["Benedicite, lux et tenebrae, Domino: * benedicite, fulgura et nubes, Domino.","Błogosławcie Pana, światłości i ciemności, * błogosławcie Pana, błyskawice i obłoki."],
+["Benedicat terra Dominum: * laudet et superexaltet eum in saecula.","Niech ziemia błogosławi Pana, * niech Go chwali i wywyższa na wieki."],
+["Benedicite, montes et colles, Domino: * benedicite, universa germinantia in terra, Domino.","Błogosławcie Pana, góry i pagórki, * błogosławcie Pana, wszystkie rośliny ziemi."],
+["Benedicite, fontes, Domino: * benedicite, maria et flumina, Domino.","Błogosławcie Pana, źródła, * błogosławcie Pana, morza i rzeki."],
+["Benedicite, cete, et omnia quae moventur in aquis, Domino: * benedicite, omnes volucres caeli, Domino.","Błogosławcie Pana, potwory morskie i wszystko, co się porusza w wodach, * błogosławcie Pana, wszystkie ptaki niebieskie."],
+["Benedicite, omnes bestiae et pecora, Domino: * benedicite, filii hominum, Domino.","Błogosławcie Pana, wszystkie zwierzęta dzikie i domowe, * błogosławcie Pana, synowie ludzcy."],
+["Benedicat Israel Dominum: * laudet et superexaltet eum in saecula.","Niech Izrael błogosławi Pana, * niech Go chwali i wywyższa na wieki."],
+["Benedicite, sacerdotes Domini, Domino: * benedicite, servi Domini, Domino.","Błogosławcie Pana, kapłani Pańscy, * błogosławcie Pana, słudzy Pańscy."],
+["Benedicite, spiritus et animae justorum, Domino: * benedicite, sancti et humiles corde, Domino.","Błogosławcie Pana, duchy i dusze sprawiedliwych, * błogosławcie Pana, święci i pokornego serca."],
+["Benedicite, Anania, Azaria, Misael, Domino: * laudate et superexaltate eum in saecula.","Błogosławcie Pana, Ananiaszu, Azariaszu i Miszaelu, * chwalcie i wywyższajcie Go na wieki."],
+["Benedicamus Patrem et Filium cum Sancto Spiritu: * laudemus et superexaltemus eum in saecula.","Błogosławmy Ojca i Syna z Duchem Świętym, * chwalmy i wywyższajmy Go na wieki."],
+["Benedictus es, Domine, in firmamento caeli: * et laudabilis, et gloriosus, et superexaltatus in saecula.","Błogosławiony jesteś, Panie, na firmamencie niebios, * godzien chwały, pełen chwały i wywyższony na wieki."]]},
+p148:{n:"Psalm 148",noGloria:true,v:[
+["Laudate Dominum de caelis: * laudate eum in excelsis.","Chwalcie Pana z niebios, * chwalcie Go na wysokościach."],
+["Laudate eum, omnes Angeli ejus: * laudate eum, omnes virtutes ejus.","Chwalcie Go, wszyscy Jego Aniołowie, * chwalcie Go, wszystkie Jego zastępy."],
+["Laudate eum, sol et luna: * laudate eum, omnes stellae et lumen.","Chwalcie Go, słońce i księżycu, * chwalcie Go, wszystkie gwiazdy i światło."],
+["Laudate eum, caeli caelorum: * et aquae omnes, quae super caelos sunt, laudent nomen Domini.","Chwalcie Go, niebiosa niebios, * i wszystkie wody, które są nad niebiosami, niech chwalą imię Pana."],
+["Quia ipse dixit, et facta sunt: * ipse mandavit, et creata sunt.","Bo On rzekł, i stały się, * On rozkazał, i zostały stworzone."],
+["Statuit ea in aeternum, et in saeculum saeculi: * praeceptum posuit, et non praeteribit.","Utwierdził je na wieki i na wieki wieków, * ustanowił prawo, które nie przeminie."],
+["Laudate Dominum de terra, * dracones, et omnes abyssi.","Chwalcie Pana z ziemi, * potwory morskie i wszystkie głębiny,"],
+["Ignis, grando, nix, glacies, spiritus procellarum: * quae faciunt verbum ejus:","Ogniu, grado, śniegu, lodzie, wichry burzliwe, * które pełnicie Jego słowo,"],
+["Montes, et omnes colles: * ligna fructifera, et omnes cedri.","Góry i wszystkie pagórki, * drzewa owocowe i wszystkie cedry,"],
+["Bestiae, et universa pecora: * serpentes, et volucres pennatae:","Zwierzęta dzikie i wszelkie bydło, * płazy i ptactwo skrzydlate,"],
+["Reges terrae, et omnes populi: * principes, et omnes judices terrae.","Królowie ziemi i wszystkie ludy, * książęta i wszyscy sędziowie ziemi,"],
+["Juvenes, et virgines: senes cum junioribus laudent nomen Domini: * quia exaltatum est nomen ejus solius.","Młodzieńcy i dziewice, starcy wraz z młodszymi niech chwalą imię Pana, * bo tylko Jego imię jest wywyższone."],
+["Confessio ejus super caelum et terram: * et exaltavit cornu populi sui.","Jego chwała ponad niebem i ziemią, * i wywyższył moc swego ludu."],
+["Hymnus omnibus sanctis ejus: * filiis Israel, populo appropinquanti sibi.","Hymn dla wszystkich Jego świętych, * dla synów Izraela, ludu, który jest Mu bliski."]]},
+p149:{n:"Psalm 149",noGloria:true,v:[
+["Cantate Domino canticum novum: * laus ejus in ecclesia sanctorum.","Śpiewajcie Panu pieśń nową, * Jego chwała w zgromadzeniu świętych."],
+["Laetetur Israel in eo, qui fecit eum: * et filii Sion exsultent in rege suo.","Niech się weseli Izrael w Tym, który go stworzył, * a synowie Syjonu niech się radują w swoim Królu."],
+["Laudent nomen ejus in choro: * in tympano, et psalterio psallant ei.","Niech chwalą Jego imię w pląsach, * niech Mu grają na bębnie i na harfie."],
+["Quia beneplacitum est Domino in populo suo: * et exaltabit mansuetos in salutem.","Bo Pan ma upodobanie w swoim ludzie * i wywyższy pokornych ku zbawieniu."],
+["Exsultabunt sancti in gloria: * laetabuntur in cubilibus suis.","Rozradują się święci w chwale, * będą się weselić na swoich łożach."],
+["Exaltationes Dei in gutture eorum: * et gladii ancipites in manibus eorum.","Uwielbienia Boże w ich ustach, * a miecze obosieczne w ich rękach,"],
+["Ad faciendam vindictam in nationibus: * increpationes in populis.","Aby dokonać pomsty wśród narodów, * karcenia wśród ludów,"],
+["Ad alligandos reges eorum in compedibus: * et nobiles eorum in manicis ferreis.","Aby spętać ich królów w okowy, * a ich możnych w żelazne kajdany,"],
+["Ut faciant in eis judicium conscriptum: * gloria haec est omnibus sanctis ejus.","Aby wykonać na nich wyrok zapisany: * ta chwała jest dla wszystkich Jego świętych."]]},
+p150:{n:"Psalm 150",v:[
+["Laudate Dominum in sanctis ejus: * laudate eum in firmamento virtutis ejus.","Chwalcie Pana w Jego świętych, * chwalcie Go na firmamencie Jego mocy."],
+["Laudate eum in virtutibus ejus: * laudate eum secundum multitudinem magnitudinis ejus.","Chwalcie Go za Jego potężne dzieła, * chwalcie Go według ogromu Jego wielkości."],
+["Laudate eum in sono tubae: * laudate eum in psalterio, et cithara.","Chwalcie Go dźwiękiem trąby, * chwalcie Go na harfie i cytrze."],
+["Laudate eum in tympano, et choro: * laudate eum in chordis, et organo.","Chwalcie Go na bębnie i w pląsach, * chwalcie Go na strunach i organach."],
+["Laudate eum in cymbalis benesonantibus: laudate eum in cymbalis jubilationis: * omnis spiritus laudet Dominum.","Chwalcie Go na cymbałach dźwięcznych, chwalcie Go na cymbałach radości; * wszystko, co żyje, niech chwali Pana."]]},
+benedictus:{n:"Kantyk Zachariasza – Benedictus (Ewangelia według świętego Łukasza 1)",v:[
+["Benedictus Dominus, Deus Israel: * quia visitavit, et fecit redemptionem plebis suae:","Błogosławiony Pan, Bóg Izraela, * bo nawiedził lud swój i dokonał jego odkupienia,"],
+["Et erexit cornu salutis nobis: * in domo David pueri sui.","I wzbudził nam róg zbawienia * w domu Dawida, sługi swego,"],
+["Sicut locutus est per os sanctorum, * qui a saeculo sunt, prophetarum ejus:","Jak zapowiedział przez usta swoich świętych * proroków, którzy byli od wieków,"],
+["Salutem ex inimicis nostris, * et de manu omnium qui oderunt nos.","Zbawienie od naszych nieprzyjaciół * i z ręki wszystkich, którzy nas nienawidzą,"],
+["Ad faciendam misericordiam cum patribus nostris: * et memorari testamenti sui sancti.","Aby okazać miłosierdzie naszym ojcom * i wspomnieć na swoje święte przymierze,"],
+["Jusjurandum, quod juravit ad Abraham patrem nostrum, * daturum se nobis:","Na przysięgę, którą złożył Abrahamowi, naszemu ojcu, * że nam to da,"],
+["Ut sine timore, de manu inimicorum nostrorum liberati, * serviamus illi.","Abyśmy bez lęku, wyzwoleni z ręki nieprzyjaciół, * służyli Mu"],
+["In sanctitate et justitia coram ipso, * omnibus diebus nostris.","W świętości i sprawiedliwości przed Nim * po wszystkie dni nasze."],
+["Et tu, puer, Propheta Altissimi vocaberis: * praeibis enim ante faciem Domini parare vias ejus:","A ty, dziecię, zwać się będziesz prorokiem Najwyższego, * bo pójdziesz przed Panem przygotować Mu drogi,"],
+["Ad dandam scientiam salutis plebi ejus: * in remissionem peccatorum eorum:","Aby dać Jego ludowi poznanie zbawienia * przez odpuszczenie grzechów,"],
+["Per viscera misericordiae Dei nostri: * in quibus visitavit nos, oriens ex alto:","Dzięki serdecznemu miłosierdziu Boga naszego, * z jakim nawiedził nas Wschód z wysoka,"],
+["Illuminare his qui in tenebris et in umbra mortis sedent: * ad dirigendos pedes nostros in viam pacis.","Aby oświecić tych, którzy siedzą w ciemności i w cieniu śmierci, * aby skierować nasze kroki na drogę pokoju."]]},
+p53:{n:"Psalm 53",v:[
+["Deus, in nomine tuo salvum me fac: * et in virtute tua judica me.","Boże, w imię Twoje wybaw mnie * i mocą Twoją ujmij się za mną."],
+["Deus, exaudi orationem meam: * auribus percipe verba oris mei.","Boże, wysłuchaj modlitwy mojej, * nakłoń ucha na słowa ust moich."],
+["Quoniam alieni insurrexerunt adversum me, et fortes quaesierunt animam meam: * et non proposuerunt Deum ante conspectum suum.","Bo obcy powstali przeciwko mnie, a mocarze czyhali na moje życie, * i nie mieli Boga przed oczami."],
+["Ecce enim Deus adjuvat me: * et Dominus susceptor est animae meae.","Oto Bóg mnie wspomaga, * a Pan jest obrońcą mej duszy."],
+["Averte mala inimicis meis: * et in veritate tua disperde illos.","Obróć zło na moich nieprzyjaciół * i w swojej wierności rozprosz ich."],
+["Voluntarie sacrificabo tibi, * et confitebor nomini tuo, Domine: quoniam bonum est:","Dobrowolnie złożę Ci ofiarę * i będę wysławiał imię Twoje, Panie, bo jest dobre,"],
+["Quoniam ex omni tribulatione eripuisti me: * et super inimicos meos despexit oculus meus.","Bo wyrwałeś mnie z wszelkiego ucisku, * a oko moje spojrzało z góry na moich nieprzyjaciół."]]},
+p84:{n:"Psalm 84",v:[
+["Benedixisti, Domine, terram tuam: * avertisti captivitatem Jacob.","Pobłogosławiłeś, Panie, ziemię Twoją, * odwróciłeś niewolę Jakuba."],
+["Remisisti iniquitatem plebis tuae: * operuisti omnia peccata eorum.","Odpuściłeś nieprawość ludowi Twemu, * zakryłeś wszystkie jego grzechy."],
+["Mitigasti omnem iram tuam: * avertisti ab ira indignationis tuae.","Uśmierzyłeś cały swój gniew, * odwróciłeś się od zapalczywości swego gniewu."],
+["Converte nos, Deus, salutaris noster: * et averte iram tuam a nobis.","Nawróć nas, Boże, Zbawicielu nasz, * i odwróć od nas swój gniew."],
+["Numquid in aeternum irasceris nobis? * aut extendes iram tuam a generatione in generationem?","Czyż na wieki będziesz się na nas gniewał * albo rozciągniesz swój gniew z pokolenia na pokolenie?"],
+["Deus, tu conversus vivificabis nos: * et plebs tua laetabitur in te.","Boże, Ty zwrócisz się ku nam i ożywisz nas, * a lud Twój będzie się radował w Tobie."],
+["Ostende nobis, Domine, misericordiam tuam: * et salutare tuum da nobis.","Okaż nam, Panie, miłosierdzie Twoje * i daj nam Twoje zbawienie."],
+["Audiam quid loquatur in me Dominus Deus: * quoniam loquetur pacem in plebem suam.","Będę słuchał, co mówi we mnie Pan Bóg, * bo będzie mówił o pokoju dla swego ludu"],
+["Et super sanctos suos: * et in eos, qui convertuntur ad cor.","I dla swoich świętych, * i dla tych, którzy nawracają się sercem."],
+["Verumtamen prope timentes eum salutare ipsius: * ut inhabitet gloria in terra nostra.","Zaiste, bliskie jest Jego zbawienie dla tych, którzy się Go boją, * aby chwała zamieszkała w naszej ziemi."],
+["Misericordia et veritas obviaverunt sibi: * justitia et pax osculatae sunt.","Miłosierdzie i prawda spotkały się z sobą, * sprawiedliwość i pokój ucałowały się."],
+["Veritas de terra orta est: * et justitia de caelo prospexit.","Prawda wzeszła z ziemi, * a sprawiedliwość spojrzała z nieba."],
+["Etenim Dominus dabit benignitatem: * et terra nostra dabit fructum suum.","Pan bowiem udzieli dobroci, * a ziemia nasza wyda swój plon."],
+["Justitia ante eum ambulabit: * et ponet in via gressus suos.","Sprawiedliwość pójdzie przed Nim * i na drodze postawi swoje kroki."]]},
+p116:{n:"Psalm 116",v:[
+["Laudate Dominum, omnes gentes: * laudate eum, omnes populi:","Chwalcie Pana, wszystkie narody, * chwalcie Go, wszystkie ludy,"],
+["Quoniam confirmata est super nos misericordia ejus: * et veritas Domini manet in aeternum.","Bo utwierdziło się nad nami Jego miłosierdzie, * a wierność Pańska trwa na wieki."]]},
+p119:{n:"Psalm 119",v:[
+["Ad Dominum cum tribularer clamavi: * et exaudivit me.","Do Pana wołałem w moim utrapieniu, * a On mnie wysłuchał."],
+["Domine, libera animam meam a labiis iniquis, * et a lingua dolosa.","Panie, wybaw duszę moją od warg nieprawych * i od języka zdradliwego."],
+["Quid detur tibi, aut quid apponatur tibi * ad linguam dolosam?","Cóż ci da albo co ci przysporzy * język zdradliwy?"],
+["Sagittae potentis acutae, * cum carbonibus desolatoriis.","Ostre strzały mocarza * z węglami niszczącymi."],
+["Heu mihi, quia incolatus meus prolongatus est: habitavi cum habitantibus Cedar: * multum incola fuit anima mea.","Biada mi, bo przedłuża się moje wygnanie; mieszkałem wśród mieszkańców Kedaru, * długo przebywała na obczyźnie moja dusza."],
+["Cum his qui oderunt pacem, eram pacificus: * cum loquebar illis, impugnabant me gratis.","Z tymi, którzy nienawidzą pokoju, byłem spokojny; * gdy do nich mówiłem, napadali na mnie bez powodu."]]},
+p120:{n:"Psalm 120",v:[
+["Levavi oculos meos in montes, * unde veniet auxilium mihi.","Wznoszę oczy moje ku górom, * skąd przyjdzie mi pomoc."],
+["Auxilium meum a Domino, * qui fecit caelum et terram.","Pomoc moja od Pana, * który stworzył niebo i ziemię."],
+["Non det in commotionem pedem tuum: * neque dormitet qui custodit te.","Niech nie da zachwiać się twej nodze, * niech nie drzemie Ten, który cię strzeże."],
+["Ecce non dormitabit neque dormiet, * qui custodit Israel.","Oto nie drzemie ani nie śpi * Ten, który strzeże Izraela."],
+["Dominus custodit te, Dominus protectio tua, * super manum dexteram tuam.","Pan cię strzeże, Pan twoją ochroną * po twojej prawej ręce."],
+["Per diem sol non uret te: * neque luna per noctem.","Za dnia nie porazi cię słońce * ani księżyc w nocy."],
+["Dominus custodit te ab omni malo: * custodiat animam tuam Dominus.","Pan cię strzeże od wszelkiego zła, * niech strzeże twojej duszy Pan."],
+["Dominus custodiat introitum tuum, et exitum tuum: * ex hoc nunc, et usque in saeculum.","Pan niech strzeże twego wejścia i wyjścia * odtąd i aż na wieki."]]},
+p121:{n:"Psalm 121",v:[
+["Laetatus sum in his quae dicta sunt mihi: * In domum Domini ibimus.","Ucieszyłem się z tego, co mi powiedziano: * Pójdziemy do domu Pańskiego."],
+["Stantes erant pedes nostri, * in atriis tuis, Jerusalem.","Stały już nasze nogi * w twoich przedsionkach, Jeruzalem."],
+["Jerusalem, quae aedificatur ut civitas: * cujus participatio ejus in idipsum.","Jeruzalem, które jest zbudowane jak miasto * zwarte w jedną całość."],
+["Illuc enim ascenderunt tribus, tribus Domini: * testimonium Israel ad confitendum nomini Domini.","Tam bowiem wstępowały pokolenia, pokolenia Pańskie, * zgodnie z prawem Izraela, aby wysławiać imię Pana."],
+["Quia illic sederunt sedes in judicio, * sedes super domum David.","Bo tam postawiono trony sądu, * trony domu Dawida."],
+["Rogate quae ad pacem sunt Jerusalem: * et abundantia diligentibus te.","Proście o to, co służy pokojowi Jeruzalem, * i o obfitość dla tych, którzy cię miłują."],
+["Fiat pax in virtute tua: * et abundantia in turribus tuis.","Niech pokój będzie w twoich murach * i obfitość w twoich wieżach."],
+["Propter fratres meos et proximos meos, * loquebar pacem de te.","Ze względu na moich braci i bliskich * mówiłem o tobie: Pokój!"],
+["Propter domum Domini Dei nostri, * quaesivi bona tibi.","Ze względu na dom Pana, Boga naszego, * szukałem dla ciebie dobra."]]},
+p122:{n:"Psalm 122",v:[
+["Ad te levavi oculos meos, * qui habitas in caelis.","Do Ciebie wznoszę oczy moje, * który mieszkasz w niebiosach."],
+["Ecce sicut oculi servorum, * in manibus dominorum suorum.","Oto jak oczy sług * zwrócone na ręce swoich panów,"],
+["Sicut oculi ancillae in manibus dominae suae: * ita oculi nostri ad Dominum Deum nostrum, donec misereatur nostri.","Jak oczy służebnicy na ręce swojej pani, * tak oczy nasze ku Panu, Bogu naszemu, dopóki się nie zmiłuje nad nami."],
+["Miserere nostri, Domine, miserere nostri: * quia multum repleti sumus despectione:","Zmiłuj się nad nami, Panie, zmiłuj się nad nami, * bo bardzo jesteśmy nasyceni pogardą,"],
+["Quia multum repleta est anima nostra: * opprobrium abundantibus, et despectio superbis.","Bo bardzo nasycona jest dusza nasza * szyderstwem bogaczy i pogardą pysznych."]]},
+p123:{n:"Psalm 123",v:[
+["Nisi quia Dominus erat in nobis, dicat nunc Israel: * nisi quia Dominus erat in nobis,","Gdyby Pan nie był z nami, niech powie teraz Izrael, * gdyby Pan nie był z nami,"],
+["Cum exsurgerent homines in nos, * forte vivos deglutissent nos:","Gdy ludzie powstali przeciw nam, * byliby nas żywcem pochłonęli."],
+["Cum irasceretur furor eorum in nos, * forsitan aqua absorbuisset nos.","Gdy ich gniew zapłonął przeciw nam, * może by nas woda zatopiła."],
+["Torrentem pertransivit anima nostra: * forsitan pertransisset anima nostra aquam intolerabilem.","Przez potok przeszła nasza dusza; * może by nasza dusza musiała przejść przez wody nie do przebycia."],
+["Benedictus Dominus, * qui non dedit nos in captionem dentibus eorum.","Błogosławiony Pan, * który nie wydał nas na łup ich zębom."],
+["Anima nostra sicut passer erepta est * de laqueo venantium:","Dusza nasza jak ptak wyrwała się * z sidła ptaszników;"],
+["Laqueus contritus est, * et nos liberati sumus.","Sidło się podarło, * a my jesteśmy wolni."],
+["Adjutorium nostrum in nomine Domini, * qui fecit caelum et terram.","Nasza pomoc w imieniu Pana, * który stworzył niebo i ziemię."]]},
+p124:{n:"Psalm 124",v:[
+["Qui confidunt in Domino, sicut mons Sion: * non commovebitur in aeternum, qui habitat in Jerusalem.","Ci, którzy ufają Panu, są jak góra Syjon: * nie zachwieje się na wieki ten, kto mieszka w Jeruzalem."],
+["Montes in circuitu ejus: et Dominus in circuitu populi sui, * ex hoc nunc et usque in saeculum.","Góry je otaczają, a Pan otacza swój lud * odtąd i aż na wieki."],
+["Quia non relinquet Dominus virgam peccatorum super sortem justorum: * ut non extendant justi ad iniquitatem manus suas.","Bo Pan nie zostawi berła grzeszników nad dziedzictwem sprawiedliwych, * aby sprawiedliwi nie wyciągnęli rąk swoich ku nieprawości."],
+["Benefac, Domine, bonis, * et rectis corde.","Czyń dobrze, Panie, dobrym * i ludziom prawego serca."],
+["Declinantes autem in obligationes adducet Dominus cum operantibus iniquitatem: * pax super Israel.","Lecz tych, którzy zbaczają na kręte drogi, Pan odprowadzi wraz z czyniącymi nieprawość; * pokój nad Izraelem."]]},
+p125:{n:"Psalm 125",v:[
+["In convertendo Dominus captivitatem Sion: * facti sumus sicut consolati.","Gdy Pan odmienił niewolę Syjonu, * byliśmy jak ludzie pocieszeni."],
+["Tunc repletum est gaudio os nostrum: * et lingua nostra exsultatione.","Wtedy napełniły się radością nasze usta, * a nasz język weselem."],
+["Tunc dicent inter gentes: * Magnificavit Dominus facere cum eis.","Wtedy mówiono wśród narodów: * Wielkie rzeczy uczynił im Pan."],
+["Magnificavit Dominus facere nobiscum: * facti sumus laetantes.","Wielkie rzeczy uczynił nam Pan, * staliśmy się radośni."],
+["Converte, Domine, captivitatem nostram, * sicut torrens in austro.","Odmień, Panie, naszą niewolę * jak potoki na południu."],
+["Qui seminant in lacrimis, * in exsultatione metent.","Ci, którzy sieją we łzach, * będą zbierać w radości."],
+["Euntes ibant et flebant, * mittentes semina sua.","Idąc, szli i płakali, * niosąc swoje ziarno;"],
+["Venientes autem venient cum exsultatione, * portantes manipulos suos.","Lecz powracając, przyjdą z radością, * niosąc swoje snopy."]]},
+p126:{n:"Psalm 126",v:[
+["Nisi Dominus aedificaverit domum, * in vanum laboraverunt qui aedificant eam.","Jeśli Pan domu nie zbuduje, * na próżno trudzą się ci, którzy go budują."],
+["Nisi Dominus custodierit civitatem, * frustra vigilat qui custodit eam.","Jeśli Pan miasta nie ustrzeże, * na próżno czuwa ten, kto go strzeże."],
+["Vanum est vobis ante lucem surgere: * surgite postquam sederitis, qui manducatis panem doloris.","Daremnie wstajecie przed świtem; * wstawajcie, gdy odpoczniecie, wy, którzy jecie chleb boleści,"],
+["Cum dederit dilectis suis somnum: * ecce hereditas Domini filii: merces, fructus ventris.","Gdy On da sen swoim umiłowanym; * oto dziedzictwem Pańskim są synowie, nagrodą owoc łona."],
+["Sicut sagittae in manu potentis: * ita filii excussorum.","Jak strzały w ręku mocarza, * tak synowie ludzi wygnanych."],
+["Beatus vir qui implevit desiderium suum ex ipsis: * non confundetur cum loquetur inimicis suis in porta.","Szczęśliwy mąż, który nimi napełnił swoje pragnienie; * nie zawstydzi się, gdy będzie rozprawiał z nieprzyjaciółmi w bramie."]]},
+p127:{n:"Psalm 127",v:[
+["Beati omnes qui timent Dominum, * qui ambulant in viis ejus.","Szczęśliwi wszyscy, którzy boją się Pana, * którzy chodzą Jego drogami."],
+["Labores manuum tuarum quia manducabis: * beatus es, et bene tibi erit.","Będziesz bowiem jadł z pracy rąk twoich; * szczęśliwy jesteś i dobrze ci będzie."],
+["Uxor tua sicut vitis abundans, * in lateribus domus tuae.","Żona twoja jak płodny winny krzew * w zakątkach twego domu."],
+["Filii tui sicut novellae olivarum, * in circuitu mensae tuae.","Synowie twoi jak młode oliwki * wokół twego stołu."],
+["Ecce sic benedicetur homo, * qui timet Dominum.","Oto tak będzie błogosławiony człowiek, * który boi się Pana."],
+["Benedicat tibi Dominus ex Sion: * et videas bona Jerusalem omnibus diebus vitae tuae.","Niech ci błogosławi Pan z Syjonu, * i obyś oglądał pomyślność Jeruzalem po wszystkie dni twego życia."],
+["Et videas filios filiorum tuorum, * pacem super Israel.","I obyś oglądał synów twoich synów; * pokój nad Izraelem."]]},
+p109:{n:"Psalm 109",v:[
+["Dixit Dominus Domino meo: * Sede a dextris meis:","Rzekł Pan do Pana mego: * Siądź po mojej prawicy,"],
+["Donec ponam inimicos tuos, * scabellum pedum tuorum.","Aż położę Twoich nieprzyjaciół * jako podnóżek pod Twoje stopy."],
+["Virgam virtutis tuae emittet Dominus ex Sion: * dominare in medio inimicorum tuorum.","Berło Twej potęgi wyśle Pan z Syjonu: * panuj pośród Twoich nieprzyjaciół."],
+["Tecum principium in die virtutis tuae in splendoribus sanctorum: * ex utero ante luciferum genui te.","Przy Tobie panowanie w dniu Twojej mocy, we wspaniałości świętych; * z łona przed jutrzenką zrodziłem Cię."],
+["Juravit Dominus, et non poenitebit eum: * Tu es sacerdos in aeternum secundum ordinem Melchisedech.","Przysiągł Pan i nie będzie żałował: * Ty jesteś kapłanem na wieki według porządku Melchizedeka."],
+["Dominus a dextris tuis, * confregit in die irae suae reges.","Pan po Twojej prawicy * zetrze królów w dniu swego gniewu."],
+["Judicabit in nationibus, implebit ruinas: * conquassabit capita in terra multorum.","Będzie sądził narody, dokona zniszczenia, * zetrze głowy wielu na ziemi."],
+["De torrente in via bibet: * propterea exaltabit caput.","Z potoku na drodze pić będzie, * dlatego podniesie głowę."]]},
+p112:{n:"Psalm 112",v:[
+["Laudate, pueri, Dominum: * laudate nomen Domini.","Chwalcie, słudzy, Pana, * chwalcie imię Pana."],
+["Sit nomen Domini benedictum, * ex hoc nunc, et usque in saeculum.","Niech będzie imię Pańskie błogosławione * odtąd i aż na wieki."],
+["A solis ortu usque ad occasum, * laudabile nomen Domini.","Od wschodu słońca aż do zachodu * niech będzie chwalone imię Pana."],
+["Excelsus super omnes gentes Dominus, * et super caelos gloria ejus.","Wywyższony jest Pan ponad wszystkie narody, * a Jego chwała ponad niebiosa."],
+["Quis sicut Dominus, Deus noster, qui in altis habitat, * et humilia respicit in caelo et in terra?","Któż jak Pan, Bóg nasz, który mieszka na wysokościach, * a spogląda na rzeczy pokorne w niebie i na ziemi?"],
+["Suscitans a terra inopem, * et de stercore erigens pauperem:","Podnosi z ziemi ubogiego, * a z gnoju dźwiga biedaka,"],
+["Ut collocet eum cum principibus, * cum principibus populi sui.","Aby go posadzić z książętami, * z książętami swego ludu."],
+["Qui habitare facit sterilem in domo, * matrem filiorum laetantem.","Niepłodnej daje mieszkać w domu * jako matce radującej się z synów."]]},
+p147:{n:"Psalm 147",v:[
+["Lauda, Jerusalem, Dominum: * lauda Deum tuum, Sion.","Chwal, Jeruzalem, Pana, * chwal Boga twego, Syjonie."],
+["Quoniam confortavit seras portarum tuarum: * benedixit filiis tuis in te.","Bo umocnił zawory twoich bram, * pobłogosławił synów twoich w tobie."],
+["Qui posuit fines tuos pacem: * et adipe frumenti satiat te.","On zapewnił pokój twoim granicom * i syci cię wybornym zbożem."],
+["Qui emittit eloquium suum terrae: * velociter currit sermo ejus.","On zsyła na ziemię swoje słowo, * a Jego mowa szybko biegnie."],
+["Qui dat nivem sicut lanam: * nebulam sicut cinerem spargit.","On daje śnieg jak wełnę, * szron rozsypuje jak popiół."],
+["Mittit crystallum suam sicut buccellas: * ante faciem frigoris ejus quis sustinebit?","Rzuca swój lód jak okruchy; * któż wytrzyma przed Jego mrozem?"],
+["Emittet verbum suum, et liquefaciet ea: * flabit spiritus ejus, et fluent aquae.","Ześle swoje słowo, a stopi je; * powieje Jego wiatr, a popłyną wody."],
+["Qui annuntiat verbum suum Jacob: * justitias, et judicia sua Israel.","On oznajmia swoje słowo Jakubowi, * swoje ustawy i sądy Izraelowi."],
+["Non fecit taliter omni nationi: * et judicia sua non manifestavit eis.","Nie uczynił tak żadnemu narodowi * i nie objawił im swoich sądów."]]},
+magnificat:{n:"Kantyk Maryi – Magnificat (Ewangelia według świętego Łukasza 1)",v:[
+["Magnificat * anima mea Dominum.","Wielbi * dusza moja Pana,"],
+["Et exsultavit spiritus meus * in Deo salutari meo.","I rozradował się duch mój * w Bogu, Zbawicielu moim,"],
+["Quia respexit humilitatem ancillae suae: * ecce enim ex hoc beatam me dicent omnes generationes.","Bo wejrzał na uniżenie swojej służebnicy; * oto bowiem odtąd błogosławić mnie będą wszystkie pokolenia,"],
+["Quia fecit mihi magna qui potens est: * et sanctum nomen ejus.","Bo wielkie rzeczy uczynił mi Wszechmocny, * a święte jest imię Jego."],
+["Et misericordia ejus a progenie in progenies * timentibus eum.","A Jego miłosierdzie z pokolenia na pokolenie * nad tymi, którzy się Go boją."],
+["Fecit potentiam in brachio suo: * dispersit superbos mente cordis sui.","Okazał moc swego ramienia, * rozproszył pyszniących się zamysłami serc swoich."],
+["Deposuit potentes de sede, * et exaltavit humiles.","Strącił władców z tronu, * a wywyższył pokornych."],
+["Esurientes implevit bonis: * et divites dimisit inanes.","Głodnych nasycił dobrami, * a bogatych z niczym odprawił."],
+["Suscepit Israel puerum suum, * recordatus misericordiae suae.","Ujął się za swoim sługą, Izraelem, * pomny na swoje miłosierdzie,"],
+["Sicut locutus est ad patres nostros, * Abraham et semini ejus in saecula.","Jak obiecał naszym ojcom, * Abrahamowi i jego potomstwu na wieki."]]},
+p128:{n:"Psalm 128",v:[
+["Saepe expugnaverunt me a juventute mea, * dicat nunc Israel.","Często mnie gnębili od mojej młodości, * niech powie teraz Izrael,"],
+["Saepe expugnaverunt me a juventute mea: * etenim non potuerunt mihi.","Często mnie gnębili od mojej młodości, * lecz mnie nie przemogli."],
+["Supra dorsum meum fabricaverunt peccatores: * prolongaverunt iniquitatem suam.","Na moim grzbiecie orali grzesznicy, * długo ciągnęli swoją nieprawość."],
+["Dominus justus concidit cervices peccatorum: * confundantur et convertantur retrorsum omnes qui oderunt Sion.","Pan sprawiedliwy przeciął karki grzeszników; * niech się zawstydzą i cofną wszyscy, którzy nienawidzą Syjonu."],
+["Fiant sicut foenum tectorum: * quod priusquam evellatur, exaruit:","Niech będą jak trawa na dachach, * która usycha, zanim ją wyrwą,"],
+["De quo non implevit manum suam qui metit, * et sinum suum qui manipulos colligit.","Z której żniwiarz nie napełni swej ręki * ani zanadrza ten, kto wiąże snopy."],
+["Et non dixerunt qui praeteribant: Benedictio Domini super vos: * benediximus vobis in nomine Domini.","I nie powiedzą przechodzący: Błogosławieństwo Pańskie nad wami; * błogosławimy wam w imię Pana."]]},
+p129:{n:"Psalm 129",v:[
+["De profundis clamavi ad te, Domine: * Domine, exaudi vocem meam.","Z głębokości wołam do Ciebie, Panie, * Panie, wysłuchaj głosu mego."],
+["Fiant aures tuae intendentes, * in vocem deprecationis meae.","Nakłoń swoich uszu * na głos mojej prośby."],
+["Si iniquitates observaveris, Domine: * Domine, quis sustinebit?","Jeśli zachowasz pamięć o nieprawościach, Panie, * Panie, któż się ostoi?"],
+["Quia apud te propitiatio est: * et propter legem tuam sustinui te, Domine.","Ale u Ciebie jest przebaczenie, * i ze względu na Twoje prawo czekałem na Ciebie, Panie."],
+["Sustinuit anima mea in verbo ejus: * speravit anima mea in Domino.","Dusza moja czeka na Jego słowo, * dusza moja ufa Panu."],
+["A custodia matutina usque ad noctem, * speret Israel in Domino.","Od straży porannej aż do nocy * niech Izrael ufa Panu."],
+["Quia apud Dominum misericordia: * et copiosa apud eum redemptio.","Bo u Pana jest miłosierdzie * i obfite u Niego odkupienie."],
+["Et ipse redimet Israel, * ex omnibus iniquitatibus ejus.","I On odkupi Izraela * ze wszystkich jego nieprawości."]]},
+p130:{n:"Psalm 130",v:[
+["Domine, non est exaltatum cor meum: * neque elati sunt oculi mei.","Panie, nie wynosi się moje serce * ani nie wywyższają się moje oczy."],
+["Neque ambulavi in magnis: * neque in mirabilibus super me.","Nie chodziłem za rzeczami wielkimi * ani za przedziwnymi, które mnie przerastają."],
+["Si non humiliter sentiebam: * sed exaltavi animam meam:","Jeślim nie myślał pokornie, * lecz wywyższał duszę moją,"],
+["Sicut ablactatus est super matre sua, * ita retributio in anima mea.","Jak dziecko odstawione od piersi matki, * taka niech będzie zapłata dla mej duszy."],
+["Speret Israel in Domino, * ex hoc nunc et usque in saeculum.","Niech Izrael ufa Panu * odtąd i aż na wieki."]]},
+nunc:{n:"Kantyk Symeona – Nunc dimittis (Ewangelia według świętego Łukasza 2)",v:[
+["Nunc dimittis servum tuum, Domine, * secundum verbum tuum in pace:","Teraz, o Panie, pozwalasz odejść słudze swemu * w pokoju, według Twego słowa,"],
+["Quia viderunt oculi mei * salutare tuum,","Bo moje oczy ujrzały * Twoje zbawienie,"],
+["Quod parasti * ante faciem omnium populorum:","Któreś przygotował * wobec wszystkich narodów:"],
+["Lumen ad revelationem gentium, * et gloriam plebis tuae Israel.","Światło na oświecenie pogan * i chwałę ludu Twego, Izraela."]]},
+teDeum:{n:"Hymn Te Deum",noGloria:true,v:[
+["Te Deum laudamus: * te Dominum confitemur.","Ciebie, Boże, chwalimy, * Ciebie, Panie, wyznajemy."],
+["Te aeternum Patrem * omnis terra veneratur.","Ciebie, Ojca przedwiecznego, * czci cała ziemia."],
+["Tibi omnes Angeli, * tibi caeli et universae potestates,","Tobie wszyscy Aniołowie, * Tobie niebiosa i wszystkie Moce,"],
+["Tibi Cherubim et Seraphim * incessabili voce proclamant:","Tobie Cherubini i Serafini * nieustannym głosem wołają:"],
+["Sanctus, Sanctus, Sanctus * Dominus Deus Sabaoth.","Święty, Święty, Święty * Pan Bóg Zastępów."],
+["Pleni sunt caeli et terra * majestatis gloriae tuae.","Pełne są niebiosa i ziemia * majestatu Twojej chwały."],
+["Te gloriosus * Apostolorum chorus,","Ciebie chwalebny * chór Apostołów,"],
+["Te Prophetarum * laudabilis numerus,","Ciebie Proroków * godny chwały zastęp,"],
+["Te Martyrum candidatus * laudat exercitus.","Ciebie Męczenników * biały orszak wychwala."],
+["Te per orbem terrarum * sancta confitetur Ecclesia,","Ciebie po całym okręgu ziemi * wyznaje święty Kościół:"],
+["Patrem * immensae majestatis;","Ojca * niezmierzonego majestatu,"],
+["Venerandum tuum verum * et unicum Filium;","Godnego czci, prawdziwego * i jedynego Twego Syna,"],
+["Sanctum quoque * Paraclitum Spiritum.","I Ducha Świętego * Pocieszyciela."],
+["Tu Rex gloriae, * Christe.","Ty, Chryste, * jesteś Królem chwały,"],
+["Tu Patris * sempiternus es Filius.","Ty jesteś * odwiecznym Synem Ojca."],
+["Tu ad liberandum suscepturus hominem, * non horruisti Virginis uterum.","Ty, mając przyjąć człowieczeństwo dla wyzwolenia człowieka, * nie wzdrygnąłeś się przed łonem Dziewicy."],
+["Tu, devicto mortis aculeo, * aperuisti credentibus regna caelorum.","Ty, przezwyciężywszy żądło śmierci, * otworzyłeś wierzącym królestwo niebieskie."],
+["Tu ad dexteram Dei sedes, * in gloria Patris.","Ty siedzisz po prawicy Boga * w chwale Ojca."],
+["Judex crederis * esse venturus.","Wierzymy, że przyjdziesz * jako Sędzia."],
+["Te ergo quaesumus, tuis famulis subveni: * quos pretioso sanguine redemisti.","Prosimy Cię więc, wspomóż sługi Twoje, * które odkupiłeś drogocenną Krwią."],
+["Aeterna fac cum Sanctis tuis * in gloria numerari.","Spraw, by wraz z Twoimi Świętymi * zostały zaliczone do wiecznej chwały."],
+["Salvum fac populum tuum, Domine, * et benedic hereditati tuae.","Zbaw lud Twój, Panie, * i błogosław dziedzictwu Twemu."],
+["Et rege eos, * et extolle illos usque in aeternum.","I rządź nimi, * i wywyższaj ich aż na wieki."],
+["Per singulos dies * benedicimus te.","Każdego dnia * błogosławimy Ciebie"],
+["Et laudamus nomen tuum in saeculum, * et in saeculum saeculi.","I chwalimy imię Twoje na wieki, * na wieki wieków."],
+["Dignare, Domine, die isto * sine peccato nos custodire.","Racz, Panie, w dniu tym * zachować nas bez grzechu."],
+["Miserere nostri, Domine, * miserere nostri.","Zmiłuj się nad nami, Panie, * zmiłuj się nad nami."],
+["Fiat misericordia tua, Domine, super nos, * quemadmodum speravimus in te.","Niech miłosierdzie Twoje, Panie, będzie nad nami, * jak zaufaliśmy Tobie."],
+["In te, Domine, speravi: * non confundar in aeternum.","W Tobie, Panie, zaufałem, * nie zawstydzę się na wieki."]]},
+};
+const INVIT = [
+["Venite, exsultemus Domino, jubilemus Deo, salutari nostro: praeoccupemus faciem ejus in confessione, et in psalmis jubilemus ei.","Przyjdźcie, radujmy się w Panu, wykrzykujmy Bogu, Zbawicielowi naszemu; stańmy przed Jego obliczem z wyznaniem i śpiewajmy Mu radośnie psalmy."],
+["Quoniam Deus magnus Dominus, et Rex magnus super omnes deos, quoniam non repellet Dominus plebem suam: quia in manu ejus sunt omnes fines terrae, et altitudines montium ipse conspicit.","Bo Pan jest Bogiem wielkim i Królem wielkim nad wszystkimi bogami; Pan nie odrzuci ludu swego, bo w Jego ręku są wszystkie krańce ziemi i On spogląda na wierzchołki gór."],
+["Quoniam ipsius est mare, et ipse fecit illud, et aridam fundaverunt manus ejus. Venite, adoremus, et procidamus ante Deum: ploremus coram Domino, qui fecit nos, quia ipse est Dominus Deus noster; nos autem populus ejus, et oves pascuae ejus.","Bo do Niego należy morze, On je uczynił, a ląd ukształtowały Jego ręce. Przyjdźcie, pokłońmy się i padnijmy przed Bogiem, płaczmy przed Panem, który nas stworzył, bo On jest Panem, Bogiem naszym, a my ludem Jego i owcami Jego pastwiska."],
+["Hodie, si vocem ejus audieritis, nolite obdurare corda vestra, sicut in exacerbatione secundum diem tentationis in deserto: ubi tentaverunt me patres vestri, probaverunt et viderunt opera mea.","Dziś, jeśli usłyszycie głos Jego, nie zatwardzajcie serc waszych jak w czasie rozdrażnienia, w dniu pokusy na pustyni, gdzie kusili Mnie ojcowie wasi, doświadczali Mnie i widzieli dzieła moje."],
+["Quadraginta annis proximus fui generationi huic, et dixi: Semper hi errant corde, ipsi vero non cognoverunt vias meas: quibus juravi in ira mea: Si introibunt in requiem meam.","Przez czterdzieści lat byłem blisko tego pokolenia i rzekłem: Zawsze błądzą sercem, nie poznali dróg moich; przysiągłem więc w gniewie moim: Nie wejdą do mego odpoczynku."]];
+
+/* ===================== ELEMENTY ZMIENNE ===================== */
+const ANT = {
+  invit:["Ave Maria, gratia plena, Dominus tecum.","Zdrowaś Maryjo, łaski pełna, Pan z Tobą."],
+  invitHalf:["Dominus tecum.","Pan z Tobą."],
+  noct:{
+    A:{ps:["p8","p18","p23"],a:[["Benedicta tu in mulieribus, et benedictus fructus ventris tui.","Błogosławionaś Ty między niewiastami i błogosławiony owoc żywota Twojego."],
+        ["Sicut myrrha electa, odorem dedisti suavitatis, sancta Dei Genitrix.","Jak wyborna mirra wydałaś słodką woń, święta Boża Rodzicielko."],
+        ["Ante torum hujus Virginis frequentate nobis dulcia cantica dramatis.","Przed łożem tej Dziewicy śpiewajcie nam często słodkie pieśni."]],vr:"diffusa"},
+    B:{ps:["p44","p45","p86"],a:[["Specie tua et pulchritudine tua intende, prospere procede et regna.","W okazałości Twojej i piękności Twojej ruszaj, szczęśliwie postępuj i króluj."],
+        ["Adjuvabit eam Deus vultu suo: Deus in medio ejus, non commovebitur.","Wspomoże ją Bóg swoim obliczem; Bóg w pośrodku niej, nie będzie poruszona."],
+        ["Sicut laetantium omnium nostrum habitatio est in te, sancta Dei Genitrix.","Jak u nas wszystkich rozradowanych jest mieszkanie w Tobie, święta Boża Rodzicielko."]],vr:"adjuvabit"},
+    C:{ps:["p95","p96","p97"],a:[["Gaude, Maria Virgo, cunctas haereses sola interemisti in universo mundo.","Raduj się, Maryjo Dziewico, Ty sama zniweczyłaś wszystkie herezje na całym świecie."],
+        ["Dignare me laudare te, Virgo sacrata: da mihi virtutem contra hostes tuos.","Racz przyjąć moją chwałę, Dziewico święta; daj mi moc przeciw Twoim nieprzyjaciołom."],
+        ["Post partum, Virgo, inviolata permansisti: Dei Genitrix, intercede pro nobis.","Po porodzie, Dziewico, pozostałaś nienaruszona; Boża Rodzicielko, wstawiaj się za nami."]],vr:"postPartum"}
+  },
+  subTuum:["Sub tuum praesidium confugimus, sancta Dei Genitrix: nostras deprecationes ne despicias in necessitatibus, sed a periculis cunctis libera nos semper, Virgo gloriosa et benedicta.","Pod Twoją obronę uciekamy się, święta Boża Rodzicielko; naszymi prośbami racz nie gardzić w potrzebach naszych, ale od wszelakich złych przygód racz nas zawsze wybawiać, Panno chwalebna i błogosławiona."],
+  sancti:["Sancti Dei omnes, intercedere dignemini pro nostra omniumque salute.","Wszyscy Święci Boży, raczcie wstawiać się za zbawieniem naszym i wszystkich."]
+};
+const BEN = [
+  ["Nos cum prole pia benedicat Virgo Maria.","Niech nas wraz ze swym świętym Synem błogosławi Dziewica Maryja."],
+  ["Ipsa Virgo virginum intercedat pro nobis ad Dominum.","Niech sama Dziewica nad dziewicami wstawia się za nami do Pana."],
+  ["Per Virginem Matrem concedat nobis Dominus salutem et pacem.","Przez Dziewicę Matkę niech nam Pan udzieli zbawienia i pokoju."]];
+const ABSOL = ["Precibus et meritis beatae Mariae semper Virginis et omnium Sanctorum, perducat nos Dominus ad regna caelorum.","Przez prośby i zasługi błogosławionej Maryi, zawsze Dziewicy, i wszystkich Świętych niech nas Pan doprowadzi do królestwa niebieskiego."];
+
+const LESS = {
+  annum:{
+    l:[["In omnibus requiem quaesivi, et in hereditate Domini morabor. Tunc praecepit, et dixit mihi Creator omnium: et qui creavit me, requievit in tabernaculo meo, et dixit mihi: In Jacob inhabita, et in Israel hereditare, et in electis meis mitte radices.","We wszystkim szukałam odpoczynku i w dziedzictwie Pana zamieszkam. Wtedy rozkazał mi Stwórca wszystkiego i rzekł do mnie, a Ten, który mnie stworzył, odpoczął w moim namiocie i powiedział mi: Zamieszkaj w Jakubie, w Izraelu weź dziedzictwo, a wśród moich wybranych zapuść korzenie."],
+       ["Et sic in Sion firmata sum, et in civitate sanctificata similiter requievi, et in Jerusalem potestas mea. Et radicavi in populo honorificato, et in parte Dei mei hereditas illius, et in plenitudine sanctorum detentio mea.","I tak na Syjonie zostałam utwierdzona, w mieście uświęconym podobnie znalazłam odpoczynek, a w Jeruzalem jest moja władza. I zapuściłam korzenie w ludzie czcigodnym, w dziale mego Boga, w Jego dziedzictwie, a moje przebywanie jest w pełni świętych."],
+       ["Quasi cedrus exaltata sum in Libano, et quasi cypressus in monte Sion: quasi palma exaltata sum in Cades, et quasi plantatio rosae in Jericho. Quasi oliva speciosa in campis, et quasi platanus exaltata sum juxta aquam in plateis. Sicut cinnamomum et balsamum aromatizans odorem dedi: quasi myrrha electa dedi suavitatem odoris.","Wyrosłam jak cedr na Libanie i jak cyprys na górze Syjon; wyrosłam jak palma w Kadesz i jak krzew róży w Jerychu. Jak piękna oliwka na polach i jak platan wyrosłam nad wodą na placach. Jak cynamon i wonny balsam wydałam zapach, jak wyborna mirra wydałam słodką woń."]],
+    src:["Księga Syracydesa (Eklezjastyk) 24, 11–13","Księga Syracydesa 24, 15–16","Księga Syracydesa 24, 17–20"],
+    r:[{r:["Sancta et immaculata virginitas, quibus te laudibus efferam, nescio: * Quia quem caeli capere non poterant, tuo gremio contulisti.","Święte i niepokalane dziewictwo, nie wiem, jakimi pochwałami Cię wysławić, * bo Tego, którego niebiosa nie mogły ogarnąć, nosiłaś w swoim łonie."],
+        v:["Benedicta tu in mulieribus, et benedictus fructus ventris tui.","Błogosławionaś Ty między niewiastami i błogosławiony owoc żywota Twojego."],
+        rep:["Quia quem caeli capere non poterant, tuo gremio contulisti.","Bo Tego, którego niebiosa nie mogły ogarnąć, nosiłaś w swoim łonie."]},
+       {r:["Beata es, Virgo Maria, quae Dominum portasti, Creatorem mundi: * Genuisti qui te fecit, et in aeternum permanes Virgo.","Błogosławiona jesteś, Dziewico Maryjo, któraś nosiła Pana, Stwórcę świata; * zrodziłaś Tego, który Cię stworzył, i na wieki pozostajesz Dziewicą."],
+        v:["Ave, Maria, gratia plena, Dominus tecum.","Zdrowaś Maryjo, łaski pełna, Pan z Tobą."],
+        rep:["Genuisti qui te fecit, et in aeternum permanes Virgo.","Zrodziłaś Tego, który Cię stworzył, i na wieki pozostajesz Dziewicą."]},
+       {r:["Felix namque es, sacra Virgo Maria, et omni laude dignissima: * Quia ex te ortus est sol justitiae, Christus Deus noster.","Szczęśliwaś zaiste, święta Dziewico Maryjo, i wszelkiej chwały najgodniejsza, * bo z Ciebie wzeszło słońce sprawiedliwości, Chrystus, Bóg nasz."],
+        v:["Ora pro populo, interveni pro clero, intercede pro devoto femineo sexu: sentiant omnes tuum juvamen, quicumque celebrant tuam sanctam commemorationem.","Módl się za ludem, przyczyń się za duchowieństwem, wstawiaj się za pobożnymi niewiastami; niech doznają Twojej pomocy wszyscy, którzy obchodzą Twoją świętą pamiątkę."],
+        rep:["Quia ex te ortus est sol justitiae, Christus Deus noster.","Bo z Ciebie wzeszło słońce sprawiedliwości, Chrystus, Bóg nasz."]}]},
+  advent:{
+    l:[["Missus est Angelus Gabriel a Deo in civitatem Galilaeae, cui nomen Nazareth, ad Virginem desponsatam viro, cui nomen erat Joseph, de domo David, et nomen Virginis Maria. Et ingressus Angelus ad eam dixit: Ave, gratia plena: Dominus tecum: benedicta tu in mulieribus.","Posłany został Anioł Gabriel od Boga do miasta w Galilei, zwanego Nazaret, do Dziewicy poślubionej mężowi imieniem Józef, z domu Dawida, a Dziewicy było na imię Maryja. I wszedłszy do Niej Anioł rzekł: Zdrowaś, łaski pełna, Pan z Tobą, błogosławionaś Ty między niewiastami."],
+       ["Quae cum audisset, turbata est in sermone ejus, et cogitabat qualis esset ista salutatio. Et ait Angelus ei: Ne timeas, Maria, invenisti enim gratiam apud Deum: ecce concipies in utero, et paries filium, et vocabis nomen ejus Jesum. Hic erit magnus, et Filius Altissimi vocabitur, et dabit illi Dominus Deus sedem David patris ejus: et regnabit in domo Jacob in aeternum, et regni ejus non erit finis.","Ona, usłyszawszy to, zmieszała się na jego słowa i rozważała, co mogłoby znaczyć to pozdrowienie. I rzekł Jej Anioł: Nie bój się, Maryjo, albowiem znalazłaś łaskę u Boga. Oto poczniesz w łonie i porodzisz Syna, i nadasz Mu imię Jezus. Ten będzie wielki i będzie nazwany Synem Najwyższego, a Pan Bóg da Mu tron Dawida, ojca Jego, i będzie królował w domu Jakuba na wieki, a Jego królestwu nie będzie końca."],
+       ["Dixit autem Maria ad Angelum: Quomodo fiet istud, quoniam virum non cognosco? Et respondens Angelus dixit ei: Spiritus Sanctus superveniet in te, et virtus Altissimi obumbrabit tibi. Ideoque et quod nascetur ex te Sanctum, vocabitur Filius Dei. Et ecce Elisabeth cognata tua, et ipsa concepit filium in senectute sua: et hic mensis sextus est illi, quae vocatur sterilis: quia non erit impossibile apud Deum omne verbum. Dixit autem Maria: Ecce ancilla Domini, fiat mihi secundum verbum tuum.","Rzekła zaś Maryja do Anioła: Jakże się to stanie, skoro nie znam męża? A Anioł odpowiedział Jej: Duch Święty zstąpi na Ciebie i moc Najwyższego osłoni Cię. Dlatego też Święte, które się z Ciebie narodzi, będzie nazwane Synem Bożym. A oto Elżbieta, Twoja krewna, poczęła w swojej starości syna, i jest już w szóstym miesiącu ta, którą nazywano niepłodną, bo dla Boga nie ma nic niemożliwego. Rzekła zaś Maryja: Oto ja służebnica Pańska, niech mi się stanie według słowa twego."]],
+    src:["Ewangelia według świętego Łukasza 1, 26–28","Ewangelia według świętego Łukasza 1, 29–33","Ewangelia według świętego Łukasza 1, 34–38"],
+    r:[{r:["Missus est Gabriel Angelus ad Mariam Virginem desponsatam Joseph, nuntians ei verbum; et expavescit Virgo de lumine: ne timeas, Maria, invenisti gratiam apud Dominum: * Ecce concipies et paries, et vocabitur Altissimi Filius.","Posłany został Anioł Gabriel do Maryi Dziewicy, poślubionej Józefowi, zwiastując Jej słowo; i zlękła się Dziewica światłości. Nie bój się, Maryjo, znalazłaś łaskę u Pana: * Oto poczniesz i porodzisz, a On będzie nazwany Synem Najwyższego."],
+        v:["Dabit ei Dominus Deus sedem David patris ejus, et regnabit in domo Jacob in aeternum.","Da Mu Pan Bóg tron Dawida, ojca Jego, i będzie królował w domu Jakuba na wieki."],
+        rep:["Ecce concipies et paries, et vocabitur Altissimi Filius.","Oto poczniesz i porodzisz, a On będzie nazwany Synem Najwyższego."]},
+       {r:["Ave, Maria, gratia plena, Dominus tecum: * Spiritus Sanctus superveniet in te, et virtus Altissimi obumbrabit tibi: quod enim ex te nascetur Sanctum, vocabitur Filius Dei.","Zdrowaś Maryjo, łaski pełna, Pan z Tobą: * Duch Święty zstąpi na Ciebie i moc Najwyższego osłoni Cię, a Święte, które się z Ciebie narodzi, będzie nazwane Synem Bożym."],
+        v:["Quomodo fiet istud, quoniam virum non cognosco? Et respondens Angelus dixit ei:","Jakże się to stanie, skoro nie znam męża? A Anioł odpowiedział Jej:"],
+        rep:["Spiritus Sanctus superveniet in te, et virtus Altissimi obumbrabit tibi: quod enim ex te nascetur Sanctum, vocabitur Filius Dei.","Duch Święty zstąpi na Ciebie i moc Najwyższego osłoni Cię, a Święte, które się z Ciebie narodzi, będzie nazwane Synem Bożym."]},
+       {r:["Suscipe verbum, Virgo Maria, quod tibi a Domino per Angelum transmissum est: concipies et paries Deum pariter et hominem, * Ut benedicta dicaris inter omnes mulieres.","Przyjmij słowo, Dziewico Maryjo, które przez Anioła zostało Ci przesłane od Pana: poczniesz i porodzisz Boga i zarazem człowieka, * abyś była nazwana błogosławioną między wszystkimi niewiastami."],
+        v:["Paries quidem filium, et virginitatis non patieris detrimentum: efficieris gravida, et eris mater semper intacta.","Porodzisz Syna i nie doznasz uszczerbku dziewictwa; staniesz się brzemienną, a będziesz matką zawsze nienaruszoną."],
+        rep:["Ut benedicta dicaris inter omnes mulieres.","Abyś była nazwana błogosławioną między wszystkimi niewiastami."]}]}
+};
+LESS.christmas = LESS.annum;
+
+const SEASON = {
+  annum:{name:"Przez rok",
+    laud:[["Assumpta est Maria in caelum: gaudent Angeli, laudantes benedicunt Dominum.","Wzięta jest Maryja do nieba; radują się Aniołowie, chwaląc błogosławią Pana."],
+          ["Maria Virgo assumpta est ad aethereum thalamum, in quo Rex regum stellato sedet solio.","Maryja Dziewica wzięta jest do niebiańskiej komnaty, gdzie Król królów zasiada na gwiaździstym tronie."],
+          ["In odorem unguentorum tuorum currimus: adolescentulae dilexerunt te nimis.","Biegniemy za wonią Twoich olejków; dziewczęta bardzo Cię umiłowały."],
+          ["Benedicta filia tu a Domino: quia per te fructum vitae communicavimus.","Błogosławionaś, córko, od Pana, bo przez Ciebie staliśmy się uczestnikami owocu życia."],
+          ["Pulchra es et decora, filia Jerusalem: terribilis ut castrorum acies ordinata.","Piękna jesteś i urocza, córko Jeruzalem, groźna jak wojsko w szyku bojowym."]],
+    vesp:[["Dum esset Rex in accubitu suo, nardus mea dedit odorem suavitatis.","Gdy Król spoczywał przy swoim stole, mój nard wydał słodką woń."],
+          ["Laeva ejus sub capite meo, et dextera illius amplexabitur me.","Jego lewica pod moją głową, a jego prawica mnie obejmie."],
+          ["Nigra sum, sed formosa, filiae Jerusalem: ideo dilexit me Rex, et introduxit me in cubiculum suum.","Czarna jestem, lecz piękna, córki Jeruzalem; dlatego umiłował mnie Król i wprowadził do swojej komnaty."],
+          ["Jam hiems transiit, imber abiit et recessit: surge, amica mea, et veni.","Oto zima minęła, deszcz ustał i przeszedł; wstań, przyjaciółko moja, i przyjdź."],
+          ["Speciosa facta es et suavis in deliciis tuis, sancta Dei Genitrix.","Stałaś się piękna i słodka w swoich rozkoszach, święta Boża Rodzicielko."]],
+    capL:["Viderunt eam filiae Sion, et beatissimam praedicaverunt, et reginae laudaverunt eam.","Ujrzały ją córki Syjonu i nazwały najszczęśliwszą, a królowe ją wychwalały."], capLsrc:"Pieśń nad Pieśniami 6, 8",
+    capV:["Ab initio et ante saecula creata sum, et usque ad futurum saeculum non desinam, et in habitatione sancta coram ipso ministravi.","Od początku i przed wiekami zostałam stworzona i aż do przyszłego wieku nie przestanę istnieć, i w świętym przybytku służyłam przed Nim."], capVsrc:"Księga Syracydesa 24, 14",
+    vrL:"benedictaTu", vrV:"diffusa",
+    bened:["Beata Dei Genitrix, Maria, Virgo perpetua, templum Domini, sacrarium Spiritus Sancti, sola sine exemplo placuisti Domino nostro Jesu Christo: ora pro populo, interveni pro clero, intercede pro devoto femineo sexu.","Błogosławiona Boża Rodzicielko, Maryjo, Dziewico na zawsze, świątynio Pana, przybytku Ducha Świętego, Ty jedna bez przykładu podobałaś się Panu naszemu Jezusowi Chrystusowi; módl się za ludem, przyczyń się za duchowieństwem, wstawiaj się za pobożnymi niewiastami."],
+    magn:["Beata Mater et intacta Virgo, gloriosa Regina mundi, intercede pro nobis ad Dominum.","Błogosławiona Matko i nienaruszona Dziewico, chwalebna Królowo świata, wstawiaj się za nami do Pana."],
+    pr:{matins:"concede",lauds:"concede",prime:"virginalem",terce:"salutis",sext:"misericors",none:"famulorum",vespers:"concede",compline:"beatae"}},
+  advent:{name:"Adwent",
+    laud:[["Missus est Gabriel Angelus ad Mariam Virginem desponsatam Joseph.","Posłany został Anioł Gabriel do Maryi Dziewicy, poślubionej Józefowi."],
+          ["Ave, Maria, gratia plena: Dominus tecum: benedicta tu in mulieribus, alleluia.","Zdrowaś Maryjo, łaski pełna, Pan z Tobą, błogosławionaś Ty między niewiastami, alleluja."],
+          ["Ne timeas, Maria: invenisti gratiam apud Dominum: ecce concipies et paries filium, alleluia.","Nie bój się, Maryjo, znalazłaś łaskę u Pana; oto poczniesz i porodzisz Syna, alleluja."],
+          ["Dabit ei Dominus sedem David patris ejus, et regnabit in aeternum.","Da Mu Pan tron Dawida, ojca Jego, i będzie królował na wieki."],
+          ["Ecce ancilla Domini: fiat mihi secundum verbum tuum.","Oto ja służebnica Pańska, niech mi się stanie według słowa twego."]],
+    capL:["Ecce Virgo concipiet, et pariet filium, et vocabitur nomen ejus Emmanuel. Butyrum et mel comedet, ut sciat reprobare malum, et eligere bonum.","Oto Dziewica pocznie i porodzi Syna, i nazwą Go imieniem Emmanuel. Masło i miód będzie jadł, aby umiał odrzucić zło, a wybrać dobro."], capLsrc:"Księga Izajasza 7, 14–15",
+    vrL:"rorate", vrV:"rorate",
+    bened:["Spiritus Sanctus in te descendet, Maria: ne timeas, habebis in utero Filium Dei, alleluia.","Duch Święty zstąpi na Ciebie, Maryjo; nie bój się, będziesz nosić w łonie Syna Bożego, alleluja."],
+    magn:["Ave, Maria, gratia plena: Dominus tecum: benedicta tu in mulieribus, alleluia.","Zdrowaś Maryjo, łaski pełna, Pan z Tobą, błogosławionaś Ty między niewiastami, alleluja."],
+    pr:"utero"},
+  christmas:{name:"Boże Narodzenie (do 2 lutego)",
+    laud:[["O admirabile commercium: Creator generis humani, animatum corpus sumens, de Virgine nasci dignatus est: et procedens homo sine semine, largitus est nobis suam deitatem.","O przedziwna wymiano! Stwórca rodzaju ludzkiego, przyjmując ciało z duszą, raczył narodzić się z Dziewicy, a stawszy się człowiekiem bez udziału męża, udzielił nam swojego Bóstwa."],
+          ["Quando natus es ineffabiliter ex Virgine, tunc impletae sunt Scripturae: sicut pluvia in vellus descendisti, ut salvum faceres genus humanum: te laudamus, Deus noster.","Gdy w niewypowiedziany sposób narodziłeś się z Dziewicy, wypełniły się Pisma: jak deszcz na runo zstąpiłeś, aby zbawić rodzaj ludzki; Ciebie chwalimy, Boże nasz."],
+          ["Rubum, quem viderat Moyses incombustum, conservatam agnovimus tuam laudabilem virginitatem: Dei Genitrix, intercede pro nobis.","W krzewie, który Mojżesz widział niespalony, poznajemy zachowane Twoje chwalebne dziewictwo; Boża Rodzicielko, wstawiaj się za nami."],
+          ["Germinavit radix Jesse, orta est stella ex Jacob: Virgo peperit Salvatorem: te laudamus, Deus noster.","Wypuścił pęd korzeń Jessego, wzeszła gwiazda z Jakuba; Dziewica porodziła Zbawiciela; Ciebie chwalimy, Boże nasz."],
+          ["Ecce Maria genuit nobis Salvatorem, quem Joannes videns exclamavit dicens: Ecce Agnus Dei, ecce qui tollit peccata mundi, alleluia.","Oto Maryja zrodziła nam Zbawiciela, którego Jan ujrzawszy zawołał: Oto Baranek Boży, oto Ten, który gładzi grzechy świata, alleluja."]],
+    bened:["Mirabile mysterium declaratur hodie: innovantur naturae, Deus homo factus est: id quod fuit permansit, et quod non erat assumpsit, non commixtionem passus, neque divisionem.","Przedziwna tajemnica objawia się dzisiaj: odnawiają się natury, Bóg stał się człowiekiem; pozostał tym, czym był, a przyjął to, czym nie był, nie doznając ani zmieszania, ani podziału."],
+    magn:["Magnum hereditatis mysterium: templum Dei factus est uterus nescientis virum: non est pollutus ex ea carnem assumens: omnes gentes venient dicentes: Gloria tibi, Domine.","Wielka tajemnica dziedzictwa: łono Tej, która nie znała męża, stało się świątynią Boga; nie skalał się, przyjmując z Niej ciało; wszystkie narody przyjdą, mówiąc: Chwała Tobie, Panie."],
+    pr:"salutis"}
+};
+// uzupełnienie: elementy wspólne z „przez rok”
+["advent","christmas"].forEach(k=>{const s=SEASON[k],a=SEASON.annum;
+  s.vesp = s.vesp || s.laud; s.capL = s.capL || a.capL; s.capLsrc = s.capLsrc || a.capLsrc;
+  s.capV = s.capV || (k==="advent"? s.capL : a.capV); s.capVsrc = s.capVsrc || (k==="advent"? s.capLsrc : a.capVsrc);
+  s.vrL = s.vrL || a.vrL; s.vrV = s.vrV || a.vrV;});
+const MINOR = {
+  prime:{ps:["p53","p84","p116"],ai:0,cap:["Quae est ista, quae progreditur quasi aurora consurgens, pulchra ut luna, electa ut sol, terribilis ut castrorum acies ordinata?","Któż jest ta, która wychodzi jak wschodząca zorza, piękna jak księżyc, jaśniejąca jak słońce, groźna jak wojsko w szyku bojowym?"],src:"Pieśń nad Pieśniami 6, 9",vr:"dignare"},
+  terce:{ps:["p119","p120","p121"],ai:1,cap:["Et sic in Sion firmata sum, et in civitate sanctificata similiter requievi, et in Jerusalem potestas mea.","I tak na Syjonie zostałam utwierdzona, w mieście uświęconym podobnie znalazłam odpoczynek, a w Jeruzalem jest moja władza."],src:"Księga Syracydesa 24, 15",vr:"diffusa"},
+  sext:{ps:["p122","p123","p124"],ai:2,cap:["Et radicavi in populo honorificato, et in parte Dei mei hereditas illius, et in plenitudine sanctorum detentio mea.","I zapuściłam korzenie w ludzie czcigodnym, w dziale mego Boga, w Jego dziedzictwie, a moje przebywanie jest w pełni świętych."],src:"Księga Syracydesa 24, 16",vr:"benedictaTu"},
+  none:{ps:["p125","p126","p127"],ai:4,cap:["In plateis sicut cinnamomum et balsamum aromatizans odorem dedi: quasi myrrha electa dedi suavitatem odoris.","Na placach jak cynamon i wonny balsam wydałam zapach, jak wyborna mirra wydałam słodką woń."],src:"Księga Syracydesa 24, 19–20",vr:"postPartum"}
+};
+const FINAL = {
+  almaAdv:{n:"Alma Redemptoris Mater",t:["Alma Redemptoris Mater, quae pervia caeli / Porta manes, et stella maris, succurre cadenti, / Surgere qui curat, populo: tu quae genuisti, / Natura mirante, tuum sanctum Genitorem, / Virgo prius ac posterius, Gabrielis ab ore / Sumens illud Ave, peccatorum miserere.","Żywicielko Odkupiciela, Matko, która pozostajesz otwartą bramą nieba / i gwiazdą morza, wspomóż upadający lud, / który pragnie powstać; Ty, która zrodziłaś, / ku zdumieniu natury, swego świętego Stwórcę, / Dziewico przed porodem i po porodzie, przyjmując z ust Gabriela / owo «Ave», zmiłuj się nad grzesznikami."],vr:"angelus",
+    or:["Gratiam tuam, quaesumus, Domine, mentibus nostris infunde: ut qui, Angelo nuntiante, Christi Filii tui incarnationem cognovimus; per passionem ejus et crucem, ad resurrectionis gloriam perducamur.","Łaskę Twoją, prosimy Cię, Panie, racz wlać w serca nasze, abyśmy, którzy za zwiastowaniem anielskim poznaliśmy wcielenie Chrystusa, Syna Twego, przez Jego mękę i krzyż zostali doprowadzeni do chwały zmartwychwstania."],e:"short"},
+  almaNat:{n:"Alma Redemptoris Mater",vr:"postPartum",
+    or:["Deus, qui salutis aeternae, beatae Mariae virginitate fecunda, humano generi praemia praestitisti: tribue, quaesumus; ut ipsam pro nobis intercedere sentiamus, per quam meruimus auctorem vitae suscipere, Dominum nostrum Jesum Christum, Filium tuum.","Boże, który przez płodne dziewictwo błogosławionej Maryi dałeś rodzajowi ludzkiemu dobra wiecznego zbawienia, spraw, prosimy, abyśmy doznawali wstawiennictwa Tej, przez którą zasłużyliśmy przyjąć Dawcę życia, Pana naszego Jezusa Chrystusa, Syna Twojego."],e:"shortqui"},
+  aveRegina:{n:"Ave, Regina caelorum",t:["Ave, Regina caelorum, / Ave, Domina Angelorum: / Salve, radix, salve, porta, / Ex qua mundo lux est orta: / Gaude, Virgo gloriosa, / Super omnes speciosa, / Vale, o valde decora, / Et pro nobis Christum exora.","Witaj, Królowo nieba, / witaj, Pani Aniołów, / witaj, korzeniu, witaj, bramo, / z której wzeszło światło dla świata. / Raduj się, Dziewico chwalebna, / piękniejsza nad wszystkie, / bądź pozdrowiona, o przepiękna, / i wstawiaj się za nami do Chrystusa."],vr:"dignare",
+    or:["Concede, misericors Deus, fragilitati nostrae praesidium: ut, qui sanctae Dei Genitricis memoriam agimus; intercessionis ejus auxilio, a nostris iniquitatibus resurgamus.","Udziel, miłosierny Boże, pomocy naszej słabości, abyśmy, obchodząc pamiątkę świętej Bożej Rodzicielki, za pomocą Jej wstawiennictwa powstali z naszych nieprawości."],e:"short"},
+  reginaCaeli:{n:"Regina caeli",t:["Regina caeli, laetare, alleluia. / Quia quem meruisti portare, alleluia. / Resurrexit, sicut dixit, alleluia. / Ora pro nobis Deum, alleluia.","Królowo nieba, wesel się, alleluja, / bo Ten, któregoś nosić zasłużyła, alleluja, / zmartwychwstał, jak powiedział, alleluja. / Módl się za nami do Boga, alleluja."],vr:"gaude",
+    or:["Deus, qui per resurrectionem Filii tui, Domini nostri Jesu Christi, mundum laetificare dignatus es: praesta, quaesumus; ut per ejus Genitricem Virginem Mariam, perpetuae capiamus gaudia vitae.","Boże, który przez zmartwychwstanie Syna Twego, Pana naszego Jezusa Chrystusa, raczyłeś rozweselić świat, spraw, prosimy, abyśmy przez Jego Rodzicielkę, Dziewicę Maryję, dostąpili radości życia wiecznego."],e:"short"},
+  salve:{n:"Salve, Regina",t:["Salve, Regina, mater misericordiae; vita, dulcedo et spes nostra, salve. Ad te clamamus, exsules filii Hevae. Ad te suspiramus, gementes et flentes in hac lacrimarum valle. Eia ergo, advocata nostra, illos tuos misericordes oculos ad nos converte. Et Jesum, benedictum fructum ventris tui, nobis post hoc exsilium ostende. O clemens, o pia, o dulcis Virgo Maria.","Witaj, Królowo, Matko miłosierdzia, życie, słodyczy i nadziejo nasza, witaj! Do Ciebie wołamy, wygnańcy, synowie Ewy; do Ciebie wzdychamy, jęcząc i płacząc na tym łez padole. Przeto, Orędowniczko nasza, one miłosierne oczy Twoje na nas zwróć, a Jezusa, błogosławiony owoc żywota Twojego, po tym wygnaniu nam okaż. O łaskawa, o litościwa, o słodka Panno Maryjo!"],vr:"oraPro",
+    or:["Omnipotens sempiterne Deus, qui gloriosae Virginis Matris Mariae corpus et animam, ut dignum Filii tui habitaculum effici mereretur, Spiritu Sancto cooperante, praeparasti: da, ut cujus commemoratione laetamur; ejus pia intercessione, ab instantibus malis et a morte perpetua liberemur.","Wszechmogący, wieczny Boże, który ciało i duszę chwalebnej Dziewicy Matki Maryi, aby się stała godnym mieszkaniem Twego Syna, za sprawą Ducha Świętego przygotowałeś, spraw, abyśmy, radując się z Jej pamiątki, przez Jej łaskawe wstawiennictwo zostali wybawieni od grożących nam nieszczęść i od śmierci wiecznej."],e:"short"}
+};
+FINAL.almaNat.t = FINAL.almaAdv.t;
+
+/* ===================== KALENDARZ ===================== */
+const DAY=864e5, mk=(y,m,d)=>new Date(Date.UTC(y,m-1,d)), add=(d,n)=>new Date(d.getTime()+n*DAY), same=(a,b)=>a.getTime()===b.getTime();
+const fmt=d=>d.toISOString().slice(0,10);
+const WD=["niedziela","poniedziałek","wtorek","środa","czwartek","piątek","sobota"];
+const MO=["stycznia","lutego","marca","kwietnia","maja","czerwca","lipca","sierpnia","września","października","listopada","grudnia"];
+function easter(y){const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),da=((h+l-7*m+114)%31)+1;return mk(y,mo,da);}
+function advent1(y){const x=mk(y,12,25),w=x.getUTCDay();return add(x,-(w===0?7:w)-21);}
+function officeSeason(d,ev){
+  const y=d.getUTCFullYear(), advEve=add(advent1(y),-1), xEve=mk(y,12,24);
+  if(d<mk(y,2,3)) return "christmas";
+  if(same(d,xEve)) return ev?"christmas":"advent";
+  if(d>xEve) return "christmas";
+  if(same(d,advEve)) return ev?"advent":"annum";
+  if(d>advEve) return "advent";
+  return "annum";
+}
+function cal(d){
+  const y=d.getUTCFullYear(),E=easter(y),a1=advent1(y);
+  const c={E,septua:add(E,-63),ash:add(E,-46),passion:add(E,-14),holyThu:add(E,-3),holySat:add(E,-1),satPent:add(E,55),a1};
+  let p="Okres po Objawieniu lub po Zesłaniu Ducha Świętego";
+  if(d>=a1&&d<mk(y,12,25)) p="Adwent";
+  else if(d>=mk(y,12,25)||d<mk(y,1,14)) p="Okres Bożego Narodzenia";
+  else if(d>=c.septua&&d<c.ash) p="Przedpoście (Siedemdziesiątnica)";
+  else if(d>=c.ash&&d<c.passion) p="Wielki Post";
+  else if(d>=c.passion&&d<c.holyThu) p="Okres Męki Pańskiej";
+  else if(d>=c.holyThu&&d<E) p="Triduum Paschalne";
+  else if(d>=E&&d<=c.satPent) p="Okres Wielkanocny";
+  c.period=p; return c;
+}
+function finalKey(d,ev){
+  const y=d.getUTCFullYear(),c=cal(d),advEve=add(c.a1,-1),xEve=mk(y,12,24);
+  if(d>advEve||(same(d,advEve)&&ev)) return (d>xEve||(same(d,xEve)&&ev))?"almaNat":"almaAdv";
+  if(d<=mk(y,2,2)) return "almaNat";
+  if(d<c.holyThu) return "aveRegina";
+  if(d<c.holySat) return null;
+  if(d<c.satPent||(same(d,c.satPent)&&!ev)) return "reginaCaeli";
+  return "salve";
+}
+
+/* ===================== GODZINY ===================== */
+const HOURS=[
+  {id:"matins",pl:"Jutrznia",la:"Ad Matutinum",from:0,to:6},
+  {id:"lauds",pl:"Laudy",la:"Ad Laudes",from:6,to:7},
+  {id:"prime",pl:"Pryma",la:"Ad Primam",from:7,to:9},
+  {id:"terce",pl:"Tercja",la:"Ad Tertiam",from:9,to:12},
+  {id:"sext",pl:"Seksta",la:"Ad Sextam",from:12,to:15},
+  {id:"none",pl:"Nona",la:"Ad Nonam",from:15,to:17},
+  {id:"vespers",pl:"Nieszpory",la:"Ad Vesperas",from:17,to:20},
+  {id:"compline",pl:"Kompleta",la:"Ad Completorium",from:20,to:24}];
+const ORDER=HOURS.map(h=>h.id);
+
+function ctxFor(d,hourId){
+  const ev=hourId==="vespers"||hourId==="compline", c=cal(d), sk=officeSeason(d,ev);
+  const laus = d>=add(c.septua,-1) && d<c.E;                 // od I Nieszporów Siedemdziesiątnicy do Wielkiej Soboty
+  const pasch = d>=c.E && d<=c.satPent;
+  const teDeum = !(sk==="advent" || (d>=c.septua && d<c.E));
+  return {d,c,sk,s:SEASON[sk],laus,pasch,teDeum,ev,dow:d.getUTCDay()};
+}
+// antyfona: w Okresie Wielkanocnym dodaje się alleluja, od Siedemdziesiątnicy się je usuwa
+function A(t,x){
+  let [la,pl]=t;
+  if(x.laus){la=la.replace(/,?\s*alleluia\.?$/i,"."); pl=pl.replace(/,?\s*alleluja\.?$/i,".");}
+  else if(x.pasch && !/alleluia\.?$/i.test(la)){la=la.replace(/[.:;]?$/,", alleluia."); pl=pl.replace(/[.!:;]?$/,", alleluja.");}
+  return [la,pl];
+}
+function VRp(key,x){ // werset godziny z alleluja w Okresie Wielkanocnym
+  const v=VR[key]; if(!x.pasch) return v;
+  const f=t=>[t[0].replace(/[.]?$/,", alleluia."),t[1].replace(/[.]?$/,", alleluja.")];
+  return [f(v[0]),f(v[1])];
+}
+
+/* bloki: r rubryka, s nagłówek sekcji, x tekst, vr werset, ps psalm, hy hymn, h tytuł godziny */
+function opening(id,x,o){
+  const b=[];
+  if(!o.noAve){ b.push({r:"Przed godziną cicho:"}); b.push({x:G.ave,k:"Ave Maria"}); }
+  else b.push({r:"Laudy następują bezpośrednio po Jutrzni — bez Ave Maria."});
+  if(id==="matins") b.push({vr:VR.labia});
+  if(id==="compline") b.push({vr:VR.converte});
+  b.push({vr:VR.deus},{x:G.gloria},{x:x.laus?G.laus:G.alleluia});
+  if(x.laus) b.push({r:"Od Siedemdziesiątnicy do Wielkiej Soboty zamiast Alleluja mówi się: Laus tibi, Domine…"});
+  return b;
+}
+function psalmBlock(key){return {ps:key};}
+function prayerBlocks(key,x,withEnd=true){
+  const p=OR[key], b=[{x:G.oremus},{x:p.t,k:"Modlitwa"}];
+  if(withEnd) b.push({x:END[p.e]},{x:G.amenR,k:"℟."});
+  return b;
+}
+function finalAntiphonBlocks(x){
+  const k=finalKey(x.d,x.ev); const b=[{s:"Antyfona końcowa do Najświętszej Maryi Panny"}];
+  if(!k){ b.push({r:"W Wielki Czwartek i Wielki Piątek antyfony końcowej się nie odmawia."}); return b; }
+  const f=FINAL[k];
+  b.push({r:f.n+(k==="almaNat"?" — z wersetem i modlitwą okresu Bożego Narodzenia":"")});
+  b.push({hy:{s:[f.t]}});
+  b.push({vr:VR[f.vr]},{x:G.oremus},{x:f.or,k:"Modlitwa"},{x:END[f.e]},{x:G.amenR,k:"℟."});
+  b.push({vr:VR.divinum});
+  return b;
+}
+function conclusion(id,x,o,prKey,commem){
+  const b=[];
+  if(id!=="matins") b.push({x:G.kyrie});
+  b.push({vr:VR.exaudi});
+  if(commem){
+    b.push(...prayerBlocks(prKey,x,false));
+    b.push({r:"Pamiątka Wszystkich Świętych (w okresie „przez rok”):"});
+    b.push({x:A(ANT.sancti,x),k:"Antyfona"},{vr:VRp("laetamini",x)});
+    b.push(...prayerBlocks("protege",x,true));
+  } else b.push(...prayerBlocks(prKey,x,true));
+  b.push({vr:VR.exaudi},{vr:VR.benedicamus});
+  if(id==="compline"){
+    b.push({vr:VR.benedicat});
+    b.push(...finalAntiphonBlocks(x));
+    return b;
+  }
+  b.push({vr:VR.fidelium});
+  if(o.isLast){
+    b.push({s:"Zakończenie odmawiania"});
+    b.push({r:"Ponieważ to ostatnia odmawiana teraz godzina: cicho Pater noster, a następnie werset i antyfona końcowa."});
+    b.push({x:G.pater,k:"Pater noster (cicho)"},{vr:VR.dominusDet});
+    b.push(...finalAntiphonBlocks(x));
+  } else b.push({r:"Bezpośrednio następuje kolejna godzina — Pater noster, Dominus det nobis i antyfonę końcową odmawia się dopiero po ostatniej godzinie."});
+  return b;
+}
+function antPsalms(ants,keys,x){ // każda antyfona przy swoim psalmie
+  const b=[];
+  keys.forEach((k,i)=>{
+    const a=A(ants[i],x); b.push({x:a,k:"Antyfona"});
+    if(k==="p62"){ b.push({ps:"p62"},{r:"Bez Chwała Ojcu — od razu Psalm 66."},{ps:"p66"}); }
+    else if(k==="p148"){ b.push({ps:"p148"},{r:"Bez Chwała Ojcu — od razu Psalm 149."},{ps:"p149"},{r:"Bez Chwała Ojcu — od razu Psalm 150."},{ps:"p150"}); }
+    else b.push({ps:k});
+    b.push({x:a,k:"Antyfona"});
+  });
+  return b;
+}
+const BUILD={
+  matins(x,o){
+    const b=opening("matins",x,o), g=({0:"A",1:"A",4:"A",2:"B",5:"B",3:"C",6:"C"})[x.dow], n=ANT.noct[g];
+    b.push({s:"Invitatorium"});
+    const full=A(ANT.invit,x), half=A(ANT.invitHalf,x);
+    b.push({x:full,k:"Antyfona"},{r:"Antyfonę powtarza się."},{x:full,k:"Antyfona"});
+    b.push({x:INVIT[0]},{x:full,k:"Antyfona"},{x:INVIT[1]},{x:half,k:"Antyfona"});
+    b.push({r:"Przy słowach „Venite, adoremus” przyklęka się."},{x:INVIT[2]},{x:full,k:"Antyfona"});
+    b.push({x:INVIT[3]},{x:half,k:"Antyfona"},{x:INVIT[4]},{x:full,k:"Antyfona"});
+    b.push({x:G.gloria},{x:half,k:"Antyfona"},{x:full,k:"Antyfona"});
+    b.push({s:"Hymn"},{hy:"quemTerra"});
+    b.push({s:"Nokturn"},{r:`Psalmy na ${["niedzielę","poniedziałek","wtorek","środę","czwartek","piątek","sobotę"][x.dow]}.`});
+    b.push(...antPsalms(n.a,n.ps,x));
+    b.push({vr:VRp(n.vr,x)});
+    b.push({x:G.pater,k:"Pater noster (cicho)"},{x:ABSOL,k:"Absolucja"},{x:G.amenR,k:"℟."});
+    const L=LESS[x.sk];
+    for(let i=0;i<3;i++){
+      b.push({s:`Lekcja ${["pierwsza","druga","trzecia"][i]}`});
+      b.push({x:G.jube,k:"℣."},{x:BEN[i],k:"Błogosławieństwo"},{x:G.amenR,k:"℟."});
+      b.push({r:L.src[i]},{x:L.l[i]},{x:G.tuAutem,k:"℣."},{x:G.deoGratias,k:"℟."});
+      const last = x.teDeum ? 1 : 2;
+      if(i<2 || !x.teDeum){
+        const R=L.r[i]; b.push({x:R.r,k:"Responsorium"},{x:R.v,k:"℣."},{x:R.rep,k:"℟."});
+        if(i===last) b.push({x:[G.gloriaV[0][0].replace(" *",""),G.gloriaV[0][1].replace(" *","")],k:"℣."},{x:R.rep,k:"℟."});
+      }
+    }
+    if(x.teDeum){ b.push({s:"Te Deum"},{r:"Zamiast trzeciego responsorium. Przy słowach „Te ergo quaesumus” przyklęka się."},{ps:"teDeum"}); }
+    else b.push({r:"Te Deum się dziś nie odmawia (Adwent lub czas od Siedemdziesiątnicy do Wielkanocy) — w jego miejsce było trzecie responsorium."});
+    if(o.next==="lauds"){ b.push({r:"Jeśli bezpośrednio następują Laudy, Jutrznia kończy się tutaj i przechodzi się od razu do Laudów — bez modlitwy i zakończenia."}); return b; }
+    b.push(...conclusion("matins",x,o,typeof x.s.pr==="string"?x.s.pr:x.s.pr.matins,false));
+    return b;
+  },
+  lauds(x,o){
+    const b=opening("lauds",x,o);
+    b.push({s:"Psalmy"},...antPsalms(x.s.laud,["p92","p99","p62","bened3","p148"],x));
+    b.push({s:"Kapituła"},{r:x.s.capLsrc},{x:x.s.capL},{x:G.deoGratias,k:"℟."});
+    b.push({s:"Hymn"},{hy:"oGloriosa"},{vr:VRp(x.s.vrL,x)});
+    const ba=A(x.s.bened,x);
+    b.push({s:"Benedictus"},{x:ba,k:"Antyfona"},{ps:"benedictus"},{x:ba,k:"Antyfona"});
+    b.push(...conclusion("lauds",x,o,typeof x.s.pr==="string"?x.s.pr:x.s.pr.lauds,x.sk==="annum"));
+    return b;
+  },
+  vespers(x,o){
+    const b=opening("vespers",x,o);
+    b.push({s:"Psalmy"},...antPsalms(x.s.vesp,["p109","p112","p121","p126","p147"],x));
+    b.push({s:"Kapituła"},{r:x.s.capVsrc},{x:x.s.capV},{x:G.deoGratias,k:"℟."});
+    b.push({s:"Hymn"},{hy:"aveMaris"},{vr:VRp(x.s.vrV,x)});
+    const ma=A(x.s.magn,x);
+    b.push({s:"Magnificat"},{x:ma,k:"Antyfona"},{ps:"magnificat"},{x:ma,k:"Antyfona"});
+    b.push(...conclusion("vespers",x,o,typeof x.s.pr==="string"?x.s.pr:x.s.pr.vespers,x.sk==="annum"));
+    return b;
+  },
+  compline(x,o){
+    const b=opening("compline",x,o);
+    b.push({s:"Psalmy"},{ps:"p128"},{ps:"p129"},{ps:"p130"});
+    b.push({s:"Hymn"},{hy:"memento"});
+    b.push({s:"Kapituła"},{r:"Księga Syracydesa 24, 24"},{x:["Ego mater pulchrae dilectionis, et timoris, et agnitionis, et sanctae spei.","Ja jestem matką pięknej miłości i bojaźni, i poznania, i świętej nadziei."]},{x:G.deoGratias,k:"℟."});
+    b.push({vr:VRp("oraPro",x)});
+    const na=A(ANT.subTuum,x);
+    b.push({s:"Nunc dimittis"},{x:na,k:"Antyfona"},{ps:"nunc"},{x:na,k:"Antyfona"});
+    b.push(...conclusion("compline",x,o,typeof x.s.pr==="string"?x.s.pr:x.s.pr.compline,false));
+    return b;
+  }
+};
+["prime","terce","sext","none"].forEach(id=>{
+  BUILD[id]=(x,o)=>{
+    const m=MINOR[id], b=opening(id,x,o);
+    b.push({s:"Hymn"},{hy:"memento"});
+    const a=A(x.s.laud[m.ai],x);
+    b.push({s:"Psalmy"},{x:a,k:"Antyfona"},{ps:m.ps[0]},{ps:m.ps[1]},{ps:m.ps[2]},{x:a,k:"Antyfona"});
+    b.push({s:"Kapituła"},{r:m.src},{x:m.cap},{x:G.deoGratias,k:"℟."},{vr:VRp(m.vr,x)});
+    b.push(...conclusion(id,x,o,typeof x.s.pr==="string"?x.s.pr:x.s.pr[id],false));
+    return b;
+  };
+});
+
+/* ===================== RENDER ===================== */
+const $=id=>document.getElementById(id);
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const star=s=>esc(s).replace(/ \* /g,' <span class="star">*</span> ').replace(/ \/ /g,"<br>").replace(/^\* /,'<span class="star">*</span> ');
+let cur, lang="both", sel=[];
+function pair(la,pl,pre=""){
+  const L=`<div class="la">${pre}${star(la)}</div>`, P=`<div class="pl">${pre}${star(pl)}</div>`;
+  if(lang==="la") return `<div class="bi">${L}</div>`;
+  if(lang==="pl") return `<div class="bi">${P}</div>`;
+  return `<div class="bi">${L}${P}</div>`;
+}
+function renderBlock(b){
+  if(b.h) return `<div class="hourtitle"><h2>${b.h}</h2><span>${b.la}</span></div>`;
+  if(b.s) return `<div class="sec">${b.s}</div>`;
+  if(b.r) return `<div class="rub">${esc(b.r)}</div>`;
+  if(b.vr) return `<div class="blk">${pair(b.vr[0][0],b.vr[0][1],'<span class="vr">℣.</span>')}${pair(b.vr[1][0],b.vr[1][1],'<span class="vr">℟.</span>')}</div>`;
+  if(b.x){ const pre=b.k?(b.k.length<=3?`<span class="vr">${b.k}</span>`:`<span class="k">${b.k}.</span>`):""; return `<div class="blk">${pair(b.x[0],b.x[1],pre)}</div>`; }
+  if(b.ps){ const p=PS[b.ps]; let h=`<div class="pstitle">${p.n}</div>`;
+    p.v.forEach(v=>h+=`<div class="verse">${pair(v[0],v[1])}</div>`);
+    if(!p.noGloria) G.gloriaV.forEach(v=>h+=`<div class="verse">${pair(v[0],v[1])}</div>`);
+    return h; }
+  if(b.hy){ const H=typeof b.hy==="string"?HY[b.hy]:b.hy; let h=H.n?`<div class="pstitle">${H.n}</div>`:"";
+    H.s.forEach(st=>h+=`<div class="stanza">${pair(st[0],st[1])}</div>`); return h; }
+  return "";
+}
+function renderOffice(){
+  const list=ORDER.filter(h=>sel.includes(h)), out=[];
+  if(!list.length){ $("office").innerHTML='<div class="rub" style="margin-top:20px">Zaznacz powyżej przynajmniej jedną godzinę.</div>'; return; }
+  list.forEach((id,i)=>{
+    const H=HOURS.find(h=>h.id===id), x=ctxFor(cur,id);
+    const o={prev:list[i-1],next:list[i+1],isLast:i===list.length-1,noAve:id==="lauds"&&list[i-1]==="matins"};
+    out.push({h:H.pl,la:H.la}, ...BUILD[id](x,o));
+  });
+  if(list.length>1) out.unshift({r:`Godziny odmawiane razem: ${list.map(id=>HOURS.find(h=>h.id===id).pl).join(" + ")}. Zakończenie (Pater noster, Dominus det nobis, antyfona końcowa) tylko raz — po ostatniej.`});
+  $("office").className="office mode-"+lang;
+  $("office").innerHTML=out.map(renderBlock).join("");
+}
+function renderHead(){
+  const d=cur,w=d.getUTCDay(),c=cal(d),m=ctxFor(d,"lauds"),e=ctxFor(d,"vespers");
+  $("date").value=fmt(d);
+  $("dayhead").textContent=`${WD[w][0].toUpperCase()+WD[w].slice(1)}, ${d.getUTCDate()} ${MO[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+  $("season").textContent="Oficjum: "+m.s.name+(m.sk!==e.sk?" → od Nieszporów: "+e.s.name:"");
+  const g=({0:"A",1:"A",4:"A",2:"B",5:"B",3:"C",6:"C"})[w], fk=finalKey(d,true);
+  $("rubrics").innerHTML=[
+    ["Okres roku kościelnego",c.period],
+    ["Psalmy Jutrzni",ANT.noct[g].ps.map(k=>PS[k].n.replace("Psalm ","")).join(", ")+" (numeracja Wulgaty)"],
+    ["Te Deum",m.teDeum?"odmawia się":"pomija się"],
+    ["Po Deus in adjutorium",m.laus?"Laus tibi, Domine…":"Alleluja"+(m.pasch?" (i alleluja przy antyfonach)":"")],
+    ["Antyfona końcowa",fk?FINAL[fk].n:"pomija się"],
+    ["Pamiątka Świętych",m.sk==="annum"?"w Laudach i Nieszporach":"nie ma"]
+  ].map(([k,v])=>`<div><div class="lbl">${k}</div><div class="val">${v}</div></div>`).join("");
+}
+function render(){renderHead();renderOffice();renderControls();}
+function renderControls(){
+  $("chips").innerHTML=HOURS.map(h=>`<button class="chip" data-h="${h.id}" aria-pressed="${sel.includes(h.id)}">${h.pl}</button>`).join("");
+  document.querySelectorAll("[data-lang]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.lang===lang));
+}
+function saveState(){try{localStorage.setItem("opbmv-state",JSON.stringify({lang}))}catch(e){}}
+function nowHour(){const h=new Date().getHours();return HOURS.find(x=>h>=x.from&&h<x.to).id;}
+function localISO(n){return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`;}
+function setISO(s){const [y,m,d]=s.split("-").map(Number);cur=mk(y,m,d);render();}
+
+$("chips").addEventListener("click",e=>{const b=e.target.closest("[data-h]");if(!b)return;const h=b.dataset.h;
+  sel=sel.includes(h)?sel.filter(x=>x!==h):[...sel,h]; render();});
+document.querySelectorAll(".preset[data-set]").forEach(b=>b.onclick=()=>{sel=b.dataset.set.split(",");render();});
+$("nowBtn").onclick=()=>{sel=[nowHour()];render();};
+document.querySelectorAll("[data-lang]").forEach(b=>b.onclick=()=>{lang=b.dataset.lang;saveState();render();});
+$("prev").onclick=()=>{cur=add(cur,-1);render();};
+$("next").onclick=()=>{cur=add(cur,1);render();};
+$("today").onclick=()=>setISO(localISO(new Date()));
+$("date").addEventListener("change",e=>{if(e.target.value)setISO(e.target.value);});
+try{const st=JSON.parse(localStorage.getItem("opbmv-state")||"{}"); if(st.lang) lang=st.lang;}catch(e){}
+sel=[nowHour()];
+setISO(localISO(new Date()));
+if("serviceWorker" in navigator) addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+</script>
+
+</body>
+</html>
