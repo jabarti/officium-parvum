@@ -54,6 +54,10 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--marian);outline
 .rubrics div{min-width:0}
 .val{font-family:var(--serif);font-size:1.08rem}
 .legend{font-size:.85rem;color:var(--muted)}
+.settings{padding-block:10px}
+.settings summary{cursor:pointer;font-weight:500}
+.opts{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px}
+.opts label{display:flex;gap:6px;align-items:center;cursor:pointer}
 .legend b{color:var(--rubric);font-weight:500}
 /* tekst oficjum */
 .office{background:var(--page);border:1px solid var(--line);border-radius:8px;padding:8px 22px 28px;font-family:var(--serif);font-size:1.13rem;line-height:1.55}
@@ -109,6 +113,12 @@ footer{color:var(--muted);font-size:.85rem;line-height:1.5}
       <button data-tr="krus" title="ks. Józef Kruszyński, przekład z hebrajskiego (Lublin 1936)">Kruszyński</button>
     </div>
   </div>
+
+  <details class="panel settings">
+    <summary>Ustawienia — teksty zawsze po łacinie</summary>
+    <div class="opts" id="latinOpts"></div>
+    <div class="legend" style="margin-top:8px">Zaznaczone teksty pokazują się tylko po łacinie, także w trybie „Polski” i „Oba”.</div>
+  </details>
 
   <div class="panel">
     <div class="lbl" style="margin-bottom:6px">Godziny odmawiane razem — zaznacz jedną lub kilka</div>
@@ -851,6 +861,21 @@ const FINAL = {
 };
 FINAL.almaNat.t = FINAL.almaAdv.t;
 
+/* teksty, które użytkownik może zawsze odmawiać po łacinie */
+const LATIN_GROUPS = [
+  {id:"ave",n:"Ave Maria",t:[G.ave]},
+  {id:"pater",n:"Pater noster",t:[G.pater]},
+  {id:"gloria",n:"Gloria Patri (także po psalmach)",t:[G.gloria,...G.gloriaV,G.gloriaV[0].map(s=>s.replace(" *",""))]},
+  {id:"kyrie",n:"Kyrie eleison",t:[G.kyrie]},
+  {id:"vers",n:"Stałe wersety i odpowiedzi (Deus in adjutorium, Domine exaudi, Benedicamus Domino, Oremus, Amen…)",
+   t:[...["labia","deus","converte","exaudi","benedicamus","fidelium","benedicat","dominusDet","divinum"].flatMap(k=>VR[k]),
+      G.alleluia,G.laus,G.oremus,G.amenR,G.tuAutem,G.deoGratias,G.jube]},
+  {id:"end",n:"Zakończenia modlitw (Per Dominum…)",t:Object.values(END)},
+  {id:"final",n:"Antyfony końcowe (Salve Regina, Alma Redemptoris…)",t:Object.values(FINAL).map(f=>f.t)},
+  {id:"hymns",n:"Hymny",t:Object.values(HY).flatMap(h=>h.s)},
+  {id:"teDeum",n:"Te Deum",t:PS.teDeum.v}
+];
+
 /* ===================== KALENDARZ ===================== */
 const DAY=864e5, mk=(y,m,d)=>new Date(Date.UTC(y,m-1,d)), add=(d,n)=>new Date(d.getTime()+n*DAY), same=(a,b)=>a.getTime()===b.getTime();
 const fmt=d=>d.toISOString().slice(0,10);
@@ -1066,10 +1091,12 @@ const BUILD={
 const $=id=>document.getElementById(id);
 const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
 const star=s=>esc(s).replace(/ \* /g,' <span class="star">*</span> ').replace(/ \/ /g,"<br>").replace(/^\* /,'<span class="star">*</span> ');
-let cur, lang="both", tr="own", sel=[];
+let cur, lang="both", tr="own", sel=[], latin=[], forcedLa=new Set();
+function setLatin(ids){latin=ids.filter(id=>LATIN_GROUPS.some(g=>g.id===id));
+  forcedLa=new Set(LATIN_GROUPS.filter(g=>latin.includes(g.id)).flatMap(g=>g.t.map(x=>x[0])));}
 function pair(la,pl,pre=""){
   const L=`<div class="la">${pre}${star(la)}</div>`, P=`<div class="pl">${pre}${star(pl)}</div>`;
-  if(lang==="la") return `<div class="bi">${L}</div>`;
+  if(lang==="la"||forcedLa.has(la)) return `<div class="bi">${L}</div>`;
   if(lang==="pl") return `<div class="bi">${P}</div>`;
   return `<div class="bi">${L}${P}</div>`;
 }
@@ -1121,8 +1148,9 @@ function renderControls(){
   $("chips").innerHTML=HOURS.map(h=>`<button class="chip" data-h="${h.id}" aria-pressed="${sel.includes(h.id)}">${h.pl}</button>`).join("");
   document.querySelectorAll("[data-lang]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.lang===lang));
   document.querySelectorAll("[data-tr]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tr===tr));
+  $("latinOpts").innerHTML=LATIN_GROUPS.map(g=>`<label><input type="checkbox" value="${g.id}"${latin.includes(g.id)?" checked":""}> ${g.n}</label>`).join("");
 }
-function saveState(){try{localStorage.setItem("opbmv-state",JSON.stringify({lang,tr}))}catch(e){}}
+function saveState(){try{localStorage.setItem("opbmv-state",JSON.stringify({lang,tr,latin}))}catch(e){}}
 function nowHour(){const h=new Date().getHours();return HOURS.find(x=>h>=x.from&&h<x.to).id;}
 function localISO(n){return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`;}
 function setISO(s){const [y,m,d]=s.split("-").map(Number);cur=mk(y,m,d);render();}
@@ -1133,11 +1161,12 @@ document.querySelectorAll(".preset[data-set]").forEach(b=>b.onclick=()=>{sel=b.d
 $("nowBtn").onclick=()=>{sel=[nowHour()];render();};
 document.querySelectorAll("[data-lang]").forEach(b=>b.onclick=()=>{lang=b.dataset.lang;saveState();render();});
 document.querySelectorAll("[data-tr]").forEach(b=>b.onclick=()=>{tr=b.dataset.tr;saveState();render();});
+$("latinOpts").onchange=()=>{setLatin([...document.querySelectorAll("#latinOpts input:checked")].map(i=>i.value));saveState();render();};
 $("prev").onclick=()=>{cur=add(cur,-1);render();};
 $("next").onclick=()=>{cur=add(cur,1);render();};
 $("today").onclick=()=>setISO(localISO(new Date()));
 $("date").addEventListener("change",e=>{if(e.target.value)setISO(e.target.value);});
-try{const st=JSON.parse(localStorage.getItem("opbmv-state")||"{}"); if(st.lang) lang=st.lang; if(TRN[st.tr]) tr=st.tr;}catch(e){}
+try{const st=JSON.parse(localStorage.getItem("opbmv-state")||"{}"); if(st.lang) lang=st.lang; if(TRN[st.tr]) tr=st.tr; if(Array.isArray(st.latin)) setLatin(st.latin);}catch(e){}
 sel=[nowHour()];
 setISO(localISO(new Date()));
 if("serviceWorker" in navigator) addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
