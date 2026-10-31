@@ -133,9 +133,15 @@ body.reading-on .office .blk,body.reading-on .office .verse,body.reading-on .off
   </div>
 
   <details class="panel settings">
-    <summary>Ustawienia — teksty zawsze po łacinie</summary>
+    <summary>Ustawienia</summary>
+    <div class="lbl" style="margin-top:10px">Teksty zawsze po łacinie</div>
     <div class="opts" id="latinOpts"></div>
     <div class="legend" style="margin-top:8px">Zaznaczone teksty pokazują się tylko po łacinie, także w trybie „Polski” i „Oba”.</div>
+    <div class="lbl" style="margin-top:14px">Modlitwa przygotowawcza i na zakończenie Oficjum</div>
+    <div class="opts" id="prePostOpts">
+      <label><input type="radio" name="prePost" value="mc"> tylko przed Jutrznią i po Komplecie</label>
+      <label><input type="radio" name="prePost" value="each"> przy każdym odmawianiu (przed pierwszą i po ostatniej wybranej godzinie)</label>
+    </div>
   </details>
 
   <div class="panel">
@@ -1143,7 +1149,7 @@ const BUILD={
 const $=id=>document.getElementById(id);
 const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
 const star=s=>esc(s).replace(/ \* /g,' <span class="star">*</span> ').replace(/ \/ /g,"<br>").replace(/^\* /,'<span class="star">*</span> ').replace(/✠/g,'<span class="cross" title="znak krzyża">✠</span>');
-let cur, lang="both", tr="own", sel=[], latin=[], forcedLa=new Set();
+let cur, lang="both", tr="own", sel=[], latin=[], forcedLa=new Set(), prePost="mc";
 function setLatin(ids){latin=ids.filter(id=>LATIN_GROUPS.some(g=>g.id===id));
   forcedLa=new Set(LATIN_GROUPS.filter(g=>latin.includes(g.id)).flatMap(g=>g.t.map(x=>x[0])));}
 function pair(la,pl,pre=""){
@@ -1183,11 +1189,11 @@ function renderOffice(){
   list.forEach((id,i)=>{
     const H=HOURS.find(h=>h.id===id), x=ctxFor(cur,id);
     const o={prev:list[i-1],next:list[i+1],isLast:i===list.length-1,noAve:id==="lauds"&&list[i-1]==="matins"};
-    if(i===0) out.push(...preOffice());
+    if(i===0&&(prePost==="each"||id==="matins")) out.push(...preOffice());
     out.push({h:H.pl,la:H.la}, ...BUILD[id](x,o));
   });
-  out.push(...postOffice());
-  if(list.length>1) out.unshift({r:`Godziny odmawiane razem: ${list.map(id=>HOURS.find(h=>h.id===id).pl).join(" + ")}. Modlitwa przygotowawcza na początku, a zakończenie (Pater noster, Dominus det nobis, antyfona końcowa, modlitwa na zakończenie) tylko raz — po ostatniej.`});
+  if(prePost==="each"||list.includes("compline")) out.push(...postOffice());
+  if(list.length>1) out.unshift({r:`Godziny odmawiane razem: ${list.map(id=>HOURS.find(h=>h.id===id).pl).join(" + ")}. Zakończenie (Pater noster, Dominus det nobis, antyfona końcowa) tylko raz — po ostatniej.`});
   $("office").className="office mode-"+lang;
   $("office").innerHTML=out.map(renderBlock).join("");
   if(typeof addPlayMarks==="function") addPlayMarks();
@@ -1212,9 +1218,10 @@ function renderControls(){
   $("chips").innerHTML=HOURS.map(h=>`<button class="chip" data-h="${h.id}" aria-pressed="${sel.includes(h.id)}">${h.pl}</button>`).join("");
   document.querySelectorAll("[data-lang]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.lang===lang));
   document.querySelectorAll("[data-tr]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tr===tr));
+  document.querySelectorAll('[name="prePost"]').forEach(r=>r.checked=r.value===prePost);
   $("latinOpts").innerHTML=LATIN_GROUPS.map(g=>`<label><input type="checkbox" value="${g.id}"${latin.includes(g.id)?" checked":""}> ${g.n}</label>`).join("");
 }
-function saveState(){try{localStorage.setItem("opbmv-state",JSON.stringify({lang,tr,latin,rate:RD.rate,laVoice:RD.laVoice}))}catch(e){}}
+function saveState(){try{localStorage.setItem("opbmv-state",JSON.stringify({lang,tr,latin,prePost,rate:RD.rate,laVoice:RD.laVoice}))}catch(e){}}
 function nowHour(){const h=new Date().getHours();return HOURS.find(x=>h>=x.from&&h<x.to).id;}
 function localISO(n){return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`;}
 function setISO(s){const [y,m,d]=s.split("-").map(Number);cur=mk(y,m,d);render();}
@@ -1225,6 +1232,7 @@ document.querySelectorAll(".preset[data-set]").forEach(b=>b.onclick=()=>{sel=b.d
 $("nowBtn").onclick=()=>{sel=[nowHour()];render();};
 document.querySelectorAll("[data-lang]").forEach(b=>b.onclick=()=>{lang=b.dataset.lang;saveState();render();});
 document.querySelectorAll("[data-tr]").forEach(b=>b.onclick=()=>{tr=b.dataset.tr;saveState();render();});
+$("prePostOpts").onchange=e=>{prePost=e.target.value;saveState();render();};
 $("latinOpts").onchange=()=>{setLatin([...document.querySelectorAll("#latinOpts input:checked")].map(i=>i.value));saveState();render();};
 $("prev").onclick=()=>{cur=add(cur,-1);render();};
 $("next").onclick=()=>{cur=add(cur,1);render();};
@@ -1344,6 +1352,7 @@ $("office").addEventListener("click",e=>{ if(!RD.on) return; const el=e.target.c
   const i=el?RD.items.indexOf(el):-1; if(i>=0) goTo(i); });
 
 try{const st=JSON.parse(localStorage.getItem("opbmv-state")||"{}"); if(st.lang) lang=st.lang; if(TRN[st.tr]) tr=st.tr; if(Array.isArray(st.latin)) setLatin(st.latin);
+  if(st.prePost==="each"||st.prePost==="mc") prePost=st.prePost;
   if(st.rate) RD.rate=+st.rate; if(st.laVoice) RD.laVoice=st.laVoice; $("rRate").value=String(RD.rate); $("rLaVoice").value=RD.laVoice;}catch(e){}
 sel=[nowHour()];
 setISO(localISO(new Date()));
