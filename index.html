@@ -171,7 +171,7 @@ body.reading-on .office .blk,body.reading-on .office .verse,body.reading-on .off
       <option value="1.15">Tempo 1,15×</option><option value="1.3">Tempo 1,3×</option><option value="1.5">Tempo 1,5×</option>
     </select>
     <select id="rLaVoice" aria-label="Wymowa łaciny">
-      <option value="it">Łacina: wymowa włoska</option><option value="pl">Łacina: wymowa polska</option>
+      <option value="it">Łacina: wymowa włoska</option><option value="rest">Łacina: wymowa restytuowana</option><option value="pl">Łacina: wymowa polska</option>
     </select>
     <div class="rinfo" id="rInfo"></div>
   </div>
@@ -1241,6 +1241,12 @@ function pickVoices(){
   RD.voices={pl:best("pl"),it:best("it")};
 }
 if(synth){pickVoices(); synth.onvoiceschanged=pickVoices;}
+function laRestituta(t){ // przybliżenie wymowy klasycznej (restytuowanej) zapisane tak, by głos włoski ją oddał
+  return t.replace(/ph/g,"f").replace(/th/g,"t").replace(/rh/g,"r").replace(/ch/gi,m=>m[0]==="C"?"K":"k")
+    .replace(/ae|æ/g,"ai").replace(/Ae|Æ/g,"Ai").replace(/oe|œ/g,"oi").replace(/y/g,"i").replace(/Y/g,"I")
+    .replace(/c(?=[ei])/g,"ch").replace(/C(?=[ei])/g,"Ch").replace(/g(?=[ei])/g,"gh").replace(/G(?=[ei])/g,"Gh")
+    .replace(/gn/g,"ngn").replace(/v/g,"u").replace(/V/g,"U").replace(/j/g,"i").replace(/J/g,"I");
+}
 function laForItalian(t){ // przybliżenie wymowy kościelnej dla głosu włoskiego
   return t.replace(/ae|æ/g,"e").replace(/Ae|Æ/g,"E").replace(/oe|œ/g,"e").replace(/([^stx])ti(?=[aeiouy])/gi,"$1zi")
     .replace(/\bmihi\b/gi,"miki").replace(/\bnihil\b/gi,"nikil").replace(/ph/g,"f").replace(/th/g,"t").replace(/y/g,"i")
@@ -1267,8 +1273,8 @@ function queueFor(el){
 function speakNext(){
   if(!RD.playing) return;
   if(RD.qi>=RD.q.length){ RD.i++; return startItem(); }
-  const [l,t]=RD.q[RD.qi++], useIt=l==="la"&&RD.laVoice==="it"&&RD.voices.it;
-  const u=new SpeechSynthesisUtterance(useIt?laForItalian(t):t);
+  const [l,t]=RD.q[RD.qi++], useIt=l==="la"&&RD.laVoice!=="pl"&&RD.voices.it;
+  const u=new SpeechSynthesisUtterance(useIt?(RD.laVoice==="rest"?laRestituta(t):laForItalian(t)):t);
   const v=useIt?RD.voices.it:RD.voices.pl; if(v){u.voice=v;u.lang=v.lang;} else u.lang=useIt?"it-IT":"pl-PL";
   u.rate=RD.rate; u.onend=()=>{ if(RD.utt===u) speakNext(); }; u.onerror=e=>{ if(RD.utt===u&&e.error!=="interrupted"&&e.error!=="canceled") speakNext(); };
   RD.utt=u; synth.speak(u);

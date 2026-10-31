@@ -1,6 +1,6 @@
 // Service worker: zapisuje stronę w telefonie, żeby działała bez internetu.
 // Po zmianie plików podbij VERSION, aby wymusić odświeżenie pamięci podręcznej.
-const VERSION = "v8";
+const VERSION = "v10";
 const CACHE = "officium-" + VERSION;
 const SHELL = [
   "./",
@@ -32,7 +32,7 @@ self.addEventListener("fetch", e => {
   // Strona: najpierw sieć (świeża wersja), bez sieci — kopia z telefonu.
   if (req.mode === "navigate") {
     e.respondWith(
-      fetch(req)
+      fetch(req, { cache: "no-cache" })
         .then(res => { const copy = res.clone(); caches.open(CACHE).then(c => c.put("./", copy)); return res; })
         .catch(() => caches.match("./"))
     );
