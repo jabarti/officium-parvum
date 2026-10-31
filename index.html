@@ -73,6 +73,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--marian);outline
 .mode-both .la{color:var(--la)}
 .k{color:var(--rubric);font-style:italic;margin-right:4px}
 .vr{color:var(--rubric);font-weight:500;margin-right:4px}
+.cross{color:var(--rubric);font-weight:700}
 .star{color:var(--rubric)}
 .pstitle{font-family:var(--sans);font-size:.85rem;color:var(--rubric);margin:14px 0 2px;letter-spacing:.03em}
 .pstitle .trsrc{color:var(--muted);letter-spacing:0}
@@ -84,6 +85,22 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--marian);outline
   .office{padding:4px 14px 22px}
 }
 footer{color:var(--muted);font-size:.85rem;line-height:1.5}
+/* czytanie na głos */
+#readBtn{border-color:var(--marian);color:var(--marian);font-weight:500}
+.reader{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--page);border-top:1px solid var(--line);box-shadow:0 -4px 16px rgba(0,0,0,.12);
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;padding:10px max(12px,env(safe-area-inset-left,0px)) max(10px,env(safe-area-inset-bottom,0px))}
+.reader[hidden]{display:none}
+.reader button{min-width:48px;font-size:1.15rem;padding:8px 12px}
+.reader #rPlay{min-width:64px;background:var(--marian);border-color:var(--marian);color:var(--page)}
+.reader select{font:inherit;font-size:.9rem;padding:6px;border:1px solid var(--line);border-radius:6px;background:var(--page);color:var(--ink)}
+.reader .rinfo{font-size:.8rem;color:var(--muted);flex-basis:100%;text-align:center}
+body.reading-on{padding-bottom:150px}
+.rd{background:var(--marian-soft);border-radius:4px;box-shadow:0 0 0 4px var(--marian-soft)}
+.rbtn{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;padding:0;margin:0 6px 0 0;vertical-align:2px;
+  border-radius:50%;border:1px solid var(--marian);background:transparent;color:var(--marian);font-size:10px;line-height:1;opacity:.55}
+.rbtn:hover,.rbtn:focus-visible{opacity:1;background:var(--marian);color:var(--page)}
+.pstitle .rbtn{margin:0 0 0 8px}
+body.reading-on .office .blk,body.reading-on .office .verse,body.reading-on .office .stanza{cursor:pointer}
 </style>
 </head>
 <body>
@@ -99,6 +116,7 @@ footer{color:var(--muted);font-size:.85rem;line-height:1.5}
     <input type="date" id="date" aria-label="Wybierz datę">
     <button id="next">Później →</button>
     <button id="today">Dziś</button>
+    <button id="readBtn" title="Czytanie na głos — syntezator mowy telefonu">▶ Czytaj</button>
     <span style="flex:1"></span>
     <div class="grp" role="group" aria-label="Język tekstu">
       <span class="lbl">Tekst</span>
@@ -139,9 +157,24 @@ footer{color:var(--muted);font-size:.85rem;line-height:1.5}
     <div class="rubrics" id="rubrics"></div>
   </div>
 
-  <div class="legend"><b>℣</b> werset (versiculus) · <b>℟</b> odpowiedź (responsorium) · <b>*</b> pauza w połowie wersetu · tekst czerwony to rubryki, czyli wskazówki, których się nie odmawia</div>
+  <div class="legend"><b>℣</b> werset (versiculus) · <b>℟</b> odpowiedź (responsorium) · <b>*</b> pauza w połowie wersetu · <b>✠</b> znak krzyża · tekst czerwony to rubryki, czyli wskazówki, których się nie odmawia</div>
 
   <article class="office" id="office"></article>
+
+  <div class="reader" id="reader" hidden role="region" aria-label="Czytanie na głos">
+    <button id="rPrev" title="Poprzedni fragment" aria-label="Poprzedni fragment">⏮</button>
+    <button id="rPlay" title="Pauza / dalej" aria-label="Pauza">⏸</button>
+    <button id="rNext" title="Następny fragment" aria-label="Następny fragment">⏭</button>
+    <button id="rStop" title="Zakończ czytanie" aria-label="Zakończ czytanie">✕</button>
+    <select id="rRate" aria-label="Tempo czytania">
+      <option value="0.8">Tempo 0,8×</option><option value="0.9">Tempo 0,9×</option><option value="1" selected>Tempo 1×</option>
+      <option value="1.15">Tempo 1,15×</option><option value="1.3">Tempo 1,3×</option><option value="1.5">Tempo 1,5×</option>
+    </select>
+    <select id="rLaVoice" aria-label="Wymowa łaciny">
+      <option value="it">Łacina: wymowa włoska</option><option value="pl">Łacina: wymowa polska</option>
+    </select>
+    <div class="rinfo" id="rInfo"></div>
+  </div>
 
   <footer>
     Teksty łacińskie według tradycyjnego Małego Oficjum (Wulgata, hymny w redakcji Urbana VIII). Przekład polski „własny” jest roboczym przekładem pomocniczym z łaciny, a nie zatwierdzonym tekstem liturgicznym. Psalmy i kantyki można też czytać w przekładzie ks. Jakuba Wujka SJ (z Wulgaty; wydanie z 1923 r., pisownia oryginalna) lub ks. Józefa Kruszyńskiego (z hebrajskiego; Lublin 1936 — dlatego miejscami brzmi inaczej niż łacina). Teksty obu przekładów pochodzą z serwisu BibliePolskie.pl; kantyku Trzech Młodzieńców brak w obu, a kantyków z Ewangelii — u ks. Kruszyńskiego, więc tam zostaje przekład własny. Wydania przedsoborowe różnią się drobnymi szczegółami, na przykład kapitułami małych godzin w Adwencie i Bożym Narodzeniu — w razie rozbieżności rozstrzyga Twoje wydanie lub konstytucje zgromadzenia.
@@ -169,13 +202,13 @@ const G = {
   jube:["Jube, Domine, benedicere.","Racz, Panie, pobłogosławić."],
 };
 const VR = {
-  labia:[["Domine, labia mea aperies.","Panie, otwórz wargi moje."],["Et os meum annuntiabit laudem tuam.","A usta moje będą głosić Twoją chwałę."]],
-  deus:[["Deus, in adjutorium meum intende.","Boże, wejrzyj ku wspomożeniu memu."],["Domine, ad adjuvandum me festina.","Panie, pośpiesz ku ratunkowi memu."]],
-  converte:[["Converte nos, Deus, salutaris noster.","Nawróć nas, Boże, Zbawicielu nasz."],["Et averte iram tuam a nobis.","I odwróć od nas swój gniew."]],
+  labia:[["Domine, ✠ labia mea aperies.","Panie, ✠ otwórz wargi moje."],["Et os meum annuntiabit laudem tuam.","A usta moje będą głosić Twoją chwałę."]],
+  deus:[["Deus, ✠ in adjutorium meum intende.","Boże, ✠ wejrzyj ku wspomożeniu memu."],["Domine, ad adjuvandum me festina.","Panie, pośpiesz ku ratunkowi memu."]],
+  converte:[["✠ Converte nos, Deus, salutaris noster.","✠ Nawróć nas, Boże, Zbawicielu nasz."],["Et averte iram tuam a nobis.","I odwróć od nas swój gniew."]],
   exaudi:[["Domine, exaudi orationem meam.","Panie, wysłuchaj modlitwy mojej."],["Et clamor meus ad te veniat.","A wołanie moje niech do Ciebie przyjdzie."]],
   benedicamus:[["Benedicamus Domino.","Błogosławmy Panu."],["Deo gratias.","Bogu niech będą dzięki."]],
   fidelium:[["Fidelium animae per misericordiam Dei requiescant in pace.","Dusze wiernych zmarłych przez miłosierdzie Boże niech odpoczywają w pokoju."],["Amen.","Amen."]],
-  benedicat:[["Benedicat et custodiat nos omnipotens et misericors Dominus, Pater, et Filius, et Spiritus Sanctus.","Niech nas błogosławi i strzeże wszechmogący i miłosierny Pan, Ojciec i Syn, i Duch Święty."],["Amen.","Amen."]],
+  benedicat:[["✠ Benedicat et custodiat nos omnipotens et misericors Dominus, Pater, et Filius, et Spiritus Sanctus.","✠ Niech nas błogosławi i strzeże wszechmogący i miłosierny Pan, Ojciec i Syn, i Duch Święty."],["Amen.","Amen."]],
   dominusDet:[["Dominus det nobis suam pacem.","Pan niech nam da swój pokój."],["Et vitam aeternam. Amen.","I życie wieczne. Amen."]],
   divinum:[["Divinum auxilium maneat semper nobiscum.","Pomoc Boża niech zawsze pozostaje z nami."],["Amen.","Amen."]],
   diffusa:[["Diffusa est gratia in labiis tuis.","Wdzięk rozlany jest na wargach Twoich."],["Propterea benedixit te Deus in aeternum.","Dlatego pobłogosławił Cię Bóg na wieki."]],
@@ -733,6 +766,7 @@ const TRN = {
   wujek:{n:"ks. Jakub Wujek", ps:PSW},
   krus:{n:"ks. Józef Kruszyński", ps:PSK}
 };
+const CROSS_PS = ["benedictus","magnificat","nunc"]; // na początku kantyków ewangelicznych czyni się znak krzyża
 const BIBLICAL_ONLY_OWN = ["bened3","benedictus","magnificat","nunc"]; // gdy wybranego przekładu brak — przekład własny
 const INVIT = [
 ["Venite, exsultemus Domino, jubilemus Deo, salutari nostro: praeoccupemus faciem ejus in confessione, et in psalmis jubilemus ei.","Przyjdźcie, radujmy się w Panu, wykrzykujmy Bogu, Zbawicielowi naszemu; stańmy przed Jego obliczem z wyznaniem i śpiewajmy Mu radośnie psalmy."],
@@ -861,6 +895,22 @@ const FINAL = {
 };
 FINAL.almaNat.t = FINAL.almaAdv.t;
 
+/* modlitwy przed i po Oficjum (według wydania krakowskiego, Łubieńska 1932) */
+const PRE = {
+  aperi:["Aperi, ✠ Domine, os meum ad benedicendum nomen sanctum tuum: munda quoque cor meum ab omnibus vanis, perversis et alienis cogitationibus; intellectum illumina, affectum inflamma, ut digne, attente ac devote hoc Officium recitare valeam, et exaudiri merear ante conspectum divinae Majestatis tuae. Per Christum Dominum nostrum.",
+         "Otwórz, ✠ Panie, usta moje, by błogosławiły Świętemu Imieniu Twemu; oczyść także serce me od wszelkich próżnych, przewrotnych i obcych myśli; oświeć mój umysł, rozpal serce, abym godnie, z uszanowaniem i pobożnie Oficjum to mógł odmówić i zasłużył sobie na wysłuchanie przed obliczem Boskiego Majestatu Twego. Przez Chrystusa, Pana naszego."],
+  unione:["Domine, in unione illius divinae intentionis, qua ipse in terris laudes Deo persolvisti, has tibi Horas persolvo.",
+          "Panie Jezu, jednocząc się z Twą Boską intencją, w jakiej sam na ziemi chwałę Bogu oddawałeś, Tobie te godziny ofiaruję."],
+  sacro:["Sacrosanctae et individuae Trinitati, crucifixi Domini nostri Jesu Christi humanitati, beatissimae et gloriosissimae semperque Virginis Mariae fecundae integritati, et omnium Sanctorum universitati sit sempiterna laus, honor, virtus et gloria ab omni creatura, nobisque remissio omnium peccatorum, per infinita saecula saeculorum.",
+         "Przenajświętszej i nierozdzielnej Trójcy, Najświętszemu człowieczeństwu ukrzyżowanego Pana naszego Jezusa Chrystusa, Przebłogosławionej i Najchwalebniejszej zawsze Panny Maryi płodnemu dziewictwu i wszystkich Świętych społeczności niech będzie wieczna chwała, cześć, moc i uwielbienie od wszelkiego stworzenia, a nam odpuszczenie wszystkich grzechów na nieskończone wieki wieków."],
+  beata:[["Beata viscera Mariae Virginis, quae portaverunt aeterni Patris Filium.","Błogosławiony żywot Maryi Dziewicy, który nosił Syna Ojca Przedwiecznego."],
+         ["Et beata ubera, quae lactaverunt Christum Dominum.","I błogosławione piersi, które mlekiem karmiły Chrystusa Pana."]],
+  parce:[["Parce, Domine, parce populo tuo.","Przepuść, Panie, przepuść ludowi Twojemu."],
+         ["Neque in perpetuum irascaris nobis.","A nie bądź na nas zagniewany na wieki."]],
+  strzala:["Laudetur, benedicatur, ametur, adoretur et glorificetur semper Sanctissimum, Sacratissimum, honoratissimum, nimis incognitum et ineffabilissimum Nomen Dei in caelo, super terram, et in inferno per omnes creaturas prodeuntes de manu Dei, et per Sacratissimum Cor Domini nostri Jesu Christi in Sanctissimo Altaris Sacramento. Amen.",
+           "Niech będzie pochwalone, błogosławione, miłowane, wielbione i czczone Przenajświętsze, najczcigodniejsze, najchwalebniejsze, niepojęte, a tak bardzo nieznane Imię Boże; w niebie, na ziemi i w podziemiu przez wszystkie stworzenia, ręką Boga uczynione, i przez Boskie Serce Jezusa Chrystusa, Pana naszego w Przenajświętszym Sakramencie Ołtarza. Amen."]
+};
+
 /* teksty, które użytkownik może zawsze odmawiać po łacinie */
 const LATIN_GROUPS = [
   {id:"ave",n:"Ave Maria",t:[G.ave]},
@@ -873,7 +923,9 @@ const LATIN_GROUPS = [
   {id:"end",n:"Zakończenia modlitw (Per Dominum…)",t:Object.values(END)},
   {id:"final",n:"Antyfony końcowe (Salve Regina, Alma Redemptoris…)",t:Object.values(FINAL).map(f=>f.t)},
   {id:"hymns",n:"Hymny",t:Object.values(HY).flatMap(h=>h.s)},
-  {id:"teDeum",n:"Te Deum",t:PS.teDeum.v}
+  {id:"teDeum",n:"Te Deum",t:PS.teDeum.v},
+  {id:"pre",n:"Modlitwy przed i po Oficjum (Aperi, Domine; Sacrosanctae; Złota strzała)",
+   t:[PRE.aperi,PRE.unione,PRE.sacro,...PRE.beata,...PRE.parce,PRE.strzala]}
 ];
 
 /* ===================== KALENDARZ ===================== */
@@ -1090,7 +1142,7 @@ const BUILD={
 /* ===================== RENDER ===================== */
 const $=id=>document.getElementById(id);
 const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
-const star=s=>esc(s).replace(/ \* /g,' <span class="star">*</span> ').replace(/ \/ /g,"<br>").replace(/^\* /,'<span class="star">*</span> ');
+const star=s=>esc(s).replace(/ \* /g,' <span class="star">*</span> ').replace(/ \/ /g,"<br>").replace(/^\* /,'<span class="star">*</span> ').replace(/✠/g,'<span class="cross" title="znak krzyża">✠</span>');
 let cur, lang="both", tr="own", sel=[], latin=[], forcedLa=new Set();
 function setLatin(ids){latin=ids.filter(id=>LATIN_GROUPS.some(g=>g.id===id));
   forcedLa=new Set(LATIN_GROUPS.filter(g=>latin.includes(g.id)).flatMap(g=>g.t.map(x=>x[0])));}
@@ -1109,12 +1161,21 @@ function renderBlock(b){
   if(b.ps){ const p=PS[b.ps], alt=TRN[tr]?.ps[b.ps];
     const src=lang==="la"||tr==="own"?"":alt?` — przekład: ${TRN[tr].n}`:BIBLICAL_ONLY_OWN.includes(b.ps)?` — przekład własny (brak w przekładzie: ${TRN[tr].n})`:"";
     let h=`<div class="pstitle">${p.n}${src?`<span class="trsrc">${src}</span>`:""}</div>`;
-    p.v.forEach((v,i)=>h+=`<div class="verse">${pair(v[0],alt?alt[i]:v[1])}</div>`);
+    p.v.forEach((v,i)=>h+=`<div class="verse">${pair(v[0],alt?alt[i]:v[1],i===0&&CROSS_PS.includes(b.ps)?'<span class="cross" title="znak krzyża">✠</span> ':"")}</div>`);
     if(!p.noGloria) G.gloriaV.forEach(v=>h+=`<div class="verse">${pair(v[0],v[1])}</div>`);
     return h; }
   if(b.hy){ const H=typeof b.hy==="string"?HY[b.hy]:b.hy; let h=H.n?`<div class="pstitle">${H.n}</div>`:"";
     H.s.forEach(st=>h+=`<div class="stanza">${pair(st[0],st[1])}</div>`); return h; }
   return "";
+}
+function preOffice(){
+  return [{s:"Modlitwa przygotowawcza"},{r:"Przed rozpoczęciem Oficjum."},
+    {x:PRE.aperi},{x:G.amenR,k:"℟."},{x:PRE.unione}];
+}
+function postOffice(){
+  return [{s:"Modlitwa na zakończenie Oficjum"},{x:PRE.sacro},{x:G.amenR,k:"℟."},{vr:PRE.beata},
+    {r:"W tygodniu wynagradzającym dodaje się po trzykroć:"},{vr:PRE.parce},
+    {s:"Akt wynagradzający „Złota strzała”"},{x:PRE.strzala},{r:"Odpust 40 dni."}];
 }
 function renderOffice(){
   const list=ORDER.filter(h=>sel.includes(h)), out=[];
@@ -1122,11 +1183,14 @@ function renderOffice(){
   list.forEach((id,i)=>{
     const H=HOURS.find(h=>h.id===id), x=ctxFor(cur,id);
     const o={prev:list[i-1],next:list[i+1],isLast:i===list.length-1,noAve:id==="lauds"&&list[i-1]==="matins"};
+    if(i===0) out.push(...preOffice());
     out.push({h:H.pl,la:H.la}, ...BUILD[id](x,o));
   });
-  if(list.length>1) out.unshift({r:`Godziny odmawiane razem: ${list.map(id=>HOURS.find(h=>h.id===id).pl).join(" + ")}. Zakończenie (Pater noster, Dominus det nobis, antyfona końcowa) tylko raz — po ostatniej.`});
+  out.push(...postOffice());
+  if(list.length>1) out.unshift({r:`Godziny odmawiane razem: ${list.map(id=>HOURS.find(h=>h.id===id).pl).join(" + ")}. Modlitwa przygotowawcza na początku, a zakończenie (Pater noster, Dominus det nobis, antyfona końcowa, modlitwa na zakończenie) tylko raz — po ostatniej.`});
   $("office").className="office mode-"+lang;
   $("office").innerHTML=out.map(renderBlock).join("");
+  if(typeof addPlayMarks==="function") addPlayMarks();
 }
 function renderHead(){
   const d=cur,w=d.getUTCDay(),c=cal(d),m=ctxFor(d,"lauds"),e=ctxFor(d,"vespers");
@@ -1143,14 +1207,14 @@ function renderHead(){
     ["Pamiątka Świętych",m.sk==="annum"?"w Laudach i Nieszporach":"nie ma"]
   ].map(([k,v])=>`<div><div class="lbl">${k}</div><div class="val">${v}</div></div>`).join("");
 }
-function render(){renderHead();renderOffice();renderControls();}
+function render(){if(typeof RD!=="undefined"&&RD.on) stopReading(); renderHead();renderOffice();renderControls();}
 function renderControls(){
   $("chips").innerHTML=HOURS.map(h=>`<button class="chip" data-h="${h.id}" aria-pressed="${sel.includes(h.id)}">${h.pl}</button>`).join("");
   document.querySelectorAll("[data-lang]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.lang===lang));
   document.querySelectorAll("[data-tr]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tr===tr));
   $("latinOpts").innerHTML=LATIN_GROUPS.map(g=>`<label><input type="checkbox" value="${g.id}"${latin.includes(g.id)?" checked":""}> ${g.n}</label>`).join("");
 }
-function saveState(){try{localStorage.setItem("opbmv-state",JSON.stringify({lang,tr,latin}))}catch(e){}}
+function saveState(){try{localStorage.setItem("opbmv-state",JSON.stringify({lang,tr,latin,rate:RD.rate,laVoice:RD.laVoice}))}catch(e){}}
 function nowHour(){const h=new Date().getHours();return HOURS.find(x=>h>=x.from&&h<x.to).id;}
 function localISO(n){return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`;}
 function setISO(s){const [y,m,d]=s.split("-").map(Number);cur=mk(y,m,d);render();}
@@ -1166,7 +1230,115 @@ $("prev").onclick=()=>{cur=add(cur,-1);render();};
 $("next").onclick=()=>{cur=add(cur,1);render();};
 $("today").onclick=()=>setISO(localISO(new Date()));
 $("date").addEventListener("change",e=>{if(e.target.value)setISO(e.target.value);});
-try{const st=JSON.parse(localStorage.getItem("opbmv-state")||"{}"); if(st.lang) lang=st.lang; if(TRN[st.tr]) tr=st.tr; if(Array.isArray(st.latin)) setLatin(st.latin);}catch(e){}
+
+/* ===================== CZYTANIE NA GŁOS ===================== */
+// Syntezator mowy przeglądarki: polski głos dla tekstu polskiego, włoski (wymowa kościelna) albo polski dla łaciny.
+const RD={on:false,playing:false,i:0,stopAt:null,items:[],q:[],qi:0,utt:null,lock:null,rate:1,laVoice:"it",voices:{}};
+const synth=window.speechSynthesis;
+function pickVoices(){
+  const vs=synth?synth.getVoices():[], best=l=>{const c=vs.filter(v=>v.lang.replace("_","-").toLowerCase().startsWith(l));
+    return c.find(v=>/enhanced|premium|natural|neural|wavenet/i.test(v.name))||c.find(v=>v.localService)||c[0]||null;};
+  RD.voices={pl:best("pl"),it:best("it")};
+}
+if(synth){pickVoices(); synth.onvoiceschanged=pickVoices;}
+function laForItalian(t){ // przybliżenie wymowy kościelnej dla głosu włoskiego
+  return t.replace(/ae|æ/g,"e").replace(/Ae|Æ/g,"E").replace(/oe|œ/g,"e").replace(/([^stx])ti(?=[aeiouy])/gi,"$1zi")
+    .replace(/\bmihi\b/gi,"miki").replace(/\bnihil\b/gi,"nikil").replace(/ph/g,"f").replace(/th/g,"t").replace(/y/g,"i")
+    .replace(/\bJ/g,"I").replace(/j/g,"i");
+}
+function cleanText(el){
+  const c=el.cloneNode(true); c.querySelectorAll(".k,.vr,.star,.cross,.trsrc,.rbtn").forEach(x=>x.remove());
+  c.querySelectorAll("br").forEach(x=>x.replaceWith(" "));
+  return c.textContent.replace(/[*✠†℣℟]/g," ").replace(/\s+/g," ").trim();
+}
+function readItems(){ // elementy do czytania w kolejności — bez rubryk
+  return [...$("office").querySelectorAll(".hourtitle h2,.sec,.pstitle,.blk,.verse,.stanza")].filter(el=>!el.closest(".rub"));
+}
+function chunks(t){ // krótkie kawałki — niektóre przeglądarki urywają długie wypowiedzi
+  const out=[]; let cur="";
+  t.split(/(?<=[.;:!?])\s+/).forEach(s=>{ if((cur+" "+s).length>220&&cur){out.push(cur);cur=s;} else cur=cur?cur+" "+s:s; });
+  if(cur) out.push(cur); return out;
+}
+function queueFor(el){
+  const parts=el.matches(".hourtitle h2,.sec,.pstitle")?[["pl",cleanText(el)]]
+    :[...el.querySelectorAll(".la,.pl")].map(d=>[d.classList.contains("la")?"la":"pl",cleanText(d)]);
+  return parts.filter(p=>p[1]).flatMap(([l,t])=>chunks(t).map(c=>[l,c]));
+}
+function speakNext(){
+  if(!RD.playing) return;
+  if(RD.qi>=RD.q.length){ RD.i++; return startItem(); }
+  const [l,t]=RD.q[RD.qi++], useIt=l==="la"&&RD.laVoice==="it"&&RD.voices.it;
+  const u=new SpeechSynthesisUtterance(useIt?laForItalian(t):t);
+  const v=useIt?RD.voices.it:RD.voices.pl; if(v){u.voice=v;u.lang=v.lang;} else u.lang=useIt?"it-IT":"pl-PL";
+  u.rate=RD.rate; u.onend=()=>{ if(RD.utt===u) speakNext(); }; u.onerror=e=>{ if(RD.utt===u&&e.error!=="interrupted"&&e.error!=="canceled") speakNext(); };
+  RD.utt=u; synth.speak(u);
+}
+function startItem(){
+  document.querySelectorAll(".rd").forEach(x=>x.classList.remove("rd"));
+  if(RD.i>=RD.items.length){ stopReading(); return; }
+  if(RD.stopAt!==null&&RD.i>RD.stopAt){ RD.stopAt=null; setPlaying(false); $("rInfo").textContent="Koniec modlitwy — ▶ czyta dalej"; return; }
+  const el=RD.items[RD.i]; el.classList.add("rd"); el.scrollIntoView({block:"center",behavior:"smooth"});
+  RD.q=queueFor(el); RD.qi=0; $("rInfo").textContent=`Fragment ${RD.i+1} z ${RD.items.length}`;
+  speakNext();
+}
+async function wake(on){
+  try{ if(on&&"wakeLock" in navigator&&!RD.lock){ RD.lock=await navigator.wakeLock.request("screen"); RD.lock.addEventListener("release",()=>RD.lock=null); }
+       if(!on&&RD.lock){ await RD.lock.release(); RD.lock=null; } }catch(e){}
+}
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible"&&RD.playing) wake(true); });
+function setPlaying(p){
+  RD.playing=p; $("rPlay").textContent=p?"⏸":"▶"; $("rPlay").setAttribute("aria-label",p?"Pauza":"Dalej"); wake(p);
+}
+function goTo(i,stopAt=null){ RD.stopAt=stopAt; synth.cancel(); RD.utt=null; RD.i=Math.max(0,Math.min(i,RD.items.length-1)); setPlaying(true); startItem(); }
+function openReader(){
+  pickVoices(); RD.items=readItems(); if(!RD.items.length) return false;
+  RD.on=true; $("reader").hidden=false; document.body.classList.add("reading-on"); return true;
+}
+function prayerGroups(items){ // modlitwa = blok tekstu albo cały psalm / hymn (tytuł i wszystkie jego wersety)
+  const g=[];
+  items.forEach((el,i)=>{
+    const cont=el.matches(".verse,.stanza")&&i>0&&items[i-1].matches(".pstitle,.verse,.stanza");
+    if(el.matches(".blk,.pstitle")||(el.matches(".verse,.stanza")&&!cont)) g.push([i,i]);
+    else if(cont&&g.length) g[g.length-1][1]=i;
+  });
+  return g;
+}
+function addPlayMarks(){ // przycisk ▶ przy każdej modlitwie: czyta tylko tę modlitwę
+  if(!synth) return;
+  const items=readItems();
+  prayerGroups(items).forEach(([a,b])=>{
+    const el=items[a], btn=document.createElement("button");
+    btn.className="rbtn"; btn.type="button"; btn.textContent="▶"; btn.title="Przeczytaj tę modlitwę"; btn.setAttribute("aria-label","Przeczytaj tę modlitwę");
+    btn.onclick=e=>{ e.stopPropagation(); if(!openReader()) return; goTo(a,b); };
+    if(el.matches(".pstitle")) el.appendChild(btn);
+    else { const t=el.querySelector(".la,.pl"); if(t) t.prepend(btn); }
+  });
+}
+function startReading(){
+  if(!synth){ alert("Ta przeglądarka nie obsługuje czytania na głos."); return; }
+  if(!openReader()) return;
+  // zacznij od pierwszego fragmentu widocznego na ekranie
+  const vis=RD.items.findIndex(el=>el.getBoundingClientRect().bottom>80);
+  goTo(vis<0?0:vis);
+  if(!RD.voices.pl) $("rInfo").textContent="Brak polskiego głosu w telefonie — zainstaluj go w ustawieniach mowy.";
+}
+function stopReading(){
+  RD.utt=null; if(synth) synth.cancel(); setPlaying(false); RD.on=false;
+  $("reader").hidden=true; document.body.classList.remove("reading-on");
+  document.querySelectorAll(".rd").forEach(x=>x.classList.remove("rd"));
+}
+$("readBtn").onclick=()=>RD.on?stopReading():startReading();
+$("rStop").onclick=stopReading;
+$("rPlay").onclick=()=>{ if(RD.playing){ RD.utt=null; synth.cancel(); setPlaying(false); } else goTo(RD.i); };
+$("rPrev").onclick=()=>goTo(RD.i-1);
+$("rNext").onclick=()=>goTo(RD.i+1);
+$("rRate").onchange=e=>{ RD.rate=+e.target.value; saveState(); if(RD.playing) goTo(RD.i); };
+$("rLaVoice").onchange=e=>{ RD.laVoice=e.target.value; saveState(); if(RD.playing) goTo(RD.i); };
+$("office").addEventListener("click",e=>{ if(!RD.on) return; const el=e.target.closest(".hourtitle h2,.sec,.pstitle,.blk,.verse,.stanza");
+  const i=el?RD.items.indexOf(el):-1; if(i>=0) goTo(i); });
+
+try{const st=JSON.parse(localStorage.getItem("opbmv-state")||"{}"); if(st.lang) lang=st.lang; if(TRN[st.tr]) tr=st.tr; if(Array.isArray(st.latin)) setLatin(st.latin);
+  if(st.rate) RD.rate=+st.rate; if(st.laVoice) RD.laVoice=st.laVoice; $("rRate").value=String(RD.rate); $("rLaVoice").value=RD.laVoice;}catch(e){}
 sel=[nowHour()];
 setISO(localISO(new Date()));
 if("serviceWorker" in navigator) addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
