@@ -77,6 +77,11 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--marian);outline
 .star{color:var(--rubric)}
 .pstitle{font-family:var(--sans);font-size:.85rem;color:var(--rubric);margin:14px 0 2px;letter-spacing:.03em}
 .pstitle .trsrc{color:var(--muted);letter-spacing:0}
+/* psalm, którego w wybranym wydaniu jeszcze nie przepisano — wyraźnie oznaczony */
+.psmiss{border:1.5px dashed var(--muted);border-radius:8px;padding:6px 10px;margin:10px -11px;background:rgba(128,134,150,.07)}
+.psmiss .pl,.txmiss .pl{background:rgba(128,134,150,.14);border-radius:4px;padding:0 4px}
+.txmiss .pl{outline:1.5px dashed rgba(128,134,150,.75);outline-offset:1px}
+.psmiss .trsrc{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:10px;background:var(--line);color:var(--ink)}
 .verse{margin:2px 0}
 .stanza{margin:8px 0}
 @media (max-width:720px){
@@ -100,6 +105,18 @@ body.reading-on{padding-bottom:150px}
   border-radius:50%;border:1px solid var(--marian);background:transparent;color:var(--marian);font-size:10px;line-height:1;opacity:.55}
 .rbtn:hover,.rbtn:focus-visible{opacity:1;background:var(--marian);color:var(--page)}
 .pstitle .rbtn{margin:0 0 0 8px}
+.pstitle .rbtn+.rbtn{margin-left:4px}
+/* własne nagrania */
+.rbtn.rec{border-color:#b3261e;color:#b3261e}
+.rbtn.rec:hover,.rbtn.rec:focus-visible{background:#b3261e;color:#fff}
+.rbtn.own{opacity:.9;font-size:12px}
+.rbtn.recording{opacity:1;background:#b3261e;color:#fff;animation:recpulse 1s infinite}
+@keyframes recpulse{50%{opacity:.45}}
+.recing{background:rgba(179,38,30,.09);border-radius:4px;box-shadow:0 0 0 4px rgba(179,38,30,.09)}
+#recBar{z-index:11}
+#recBar .rinfo{flex-basis:auto;font-size:.9rem;color:var(--ink)}
+#recStop{background:#b3261e;border-color:#b3261e;color:#fff;font-size:1rem}
+body.rec-on{padding-bottom:110px}
 body.reading-on .office .blk,body.reading-on .office .verse,body.reading-on .office .stanza{cursor:pointer}
 </style>
 </head>
@@ -124,12 +141,12 @@ body.reading-on .office .blk,body.reading-on .office .verse,body.reading-on .off
       <button data-lang="la">Łacina</button>
       <button data-lang="both">Oba</button>
     </div>
-    <div class="grp" role="group" aria-label="Przekład polski psalmów">
-      <span class="lbl">Psalmy</span>
+    <div class="grp" role="group" aria-label="Przekład polski">
+      <span class="lbl">Przekład</span>
       <button data-tr="own" title="Roboczy przekład z łaciny przygotowany dla tej strony">Własny</button>
       <button data-tr="wujek" title="ks. Jakub Wujek SJ, przekład z Wulgaty (wydanie z 1923 r.)">Wujek</button>
       <button data-tr="krus" title="ks. Józef Kruszyński, przekład z hebrajskiego (Lublin 1936)">Kruszyński</button>
-      <button data-tr="wyd" title="Officium parvum, wyd. 2 poprawione, Kraków 1936 (przedruk Cor Eorum 2021); psalmy jeszcze nieprzepisane — według ks. Wujka">Wyd. 1936</button>
+      <button data-tr="wyd" title="Officium parvum, wyd. 2 poprawione, Kraków 1936 (przedruk Cor Eorum 2021); cały tekst polski według tego wydania; czego jeszcze nie przepisano, ma szare tło: psalmy według ks. Wujka, reszta w przekładzie własnym">Wyd. 1936</button>
     </div>
   </div>
 
@@ -183,6 +200,11 @@ body.reading-on .office .blk,body.reading-on .office .verse,body.reading-on .off
     <div class="rinfo" id="rInfo"></div>
   </div>
 
+  <div class="reader" id="recBar" hidden role="status" aria-label="Nagrywanie">
+    <span class="rinfo" id="recInfo"></span>
+    <button id="recStop" type="button">■ Zakończ nagrywanie</button>
+  </div>
+
   <footer>
     Teksty łacińskie według tradycyjnego Małego Oficjum (Wulgata, hymny w redakcji Urbana VIII). Przekład polski „własny” jest roboczym przekładem pomocniczym z łaciny, a nie zatwierdzonym tekstem liturgicznym. Psalmy i kantyki można też czytać w przekładzie ks. Jakuba Wujka SJ (z Wulgaty; wydanie z 1923 r., pisownia oryginalna) lub ks. Józefa Kruszyńskiego (z hebrajskiego; Lublin 1936 — dlatego miejscami brzmi inaczej niż łacina). Teksty obu przekładów pochodzą z serwisu BibliePolskie.pl; kantyku Trzech Młodzieńców brak w obu, a kantyków z Ewangelii — u ks. Kruszyńskiego, więc tam zostaje przekład własny. Wydania przedsoborowe różnią się drobnymi szczegółami, na przykład kapitułami małych godzin w Adwencie i Bożym Narodzeniu — w razie rozbieżności rozstrzyga Twoje wydanie lub konstytucje zgromadzenia.
   </footer>
@@ -227,6 +249,7 @@ const VR = {
   rorate:[["Rorate, caeli, desuper, et nubes pluant justum.","Spuśćcie rosę, niebiosa, z góry, a obłoki niech spuszczą deszcz Sprawiedliwego."],["Aperiatur terra, et germinet Salvatorem.","Niech się otworzy ziemia i zrodzi Zbawiciela."]],
   angelus:[["Angelus Domini nuntiavit Mariae.","Anioł Pański zwiastował Pannie Maryi."],["Et concepit de Spiritu Sancto.","I poczęła z Ducha Świętego."]],
   gaude:[["Gaude et laetare, Virgo Maria, alleluia.","Raduj się i wesel, Panno Maryjo, alleluja."],["Quia surrexit Dominus vere, alleluia.","Bo zmartwychwstał Pan prawdziwie, alleluja."]],
+  ecceApparebit:[["Ecce apparebit Dominus super nubem candidam.","Oto ukaże się Pan na jasnym obłoku."],["Et cum eo sanctorum millia.","A z Nim tysiące świętych."]],
   laetamini:[["Laetamini in Domino et exsultate, justi.","Weselcie się w Panu i radujcie, sprawiedliwi."],["Et gloriamini, omnes recti corde.","I chlubcie się wszyscy prawego serca."]],
 };
 const END = {
@@ -245,6 +268,7 @@ const OR = {
   famulorum:{t:["Famulorum tuorum, quaesumus, Domine, delictis ignosce: ut qui tibi placere de actibus nostris non valemus; Genitricis Filii tui Domini nostri intercessione salvemur.","Odpuść, prosimy, Panie, winy sług Twoich, abyśmy, nie mogąc podobać się Tobie naszymi czynami, zostali zbawieni za wstawiennictwem Matki Syna Twojego, Pana naszego."],e:"qui"},
   beatae:{t:["Beatae et gloriosae semper Virginis Mariae, quaesumus, Domine, intercessio gloriosa nos protegat, et ad vitam perducat aeternam.","Niech nas, prosimy, Panie, chroni chwalebne wstawiennictwo błogosławionej i chwalebnej zawsze Dziewicy Maryi i doprowadzi nas do życia wiecznego."],e:"per"},
   utero:{t:["Deus, qui de beatae Mariae Virginis utero Verbum tuum, Angelo nuntiante, carnem suscipere voluisti: praesta supplicibus tuis; ut qui vere eam Genitricem Dei credimus, ejus apud te intercessionibus adjuvemur.","Boże, który chciałeś, aby Słowo Twoje za zwiastowaniem Anioła przyjęło ciało w łonie błogosławionej Maryi Dziewicy, spraw, abyśmy, wierząc, że jest Ona prawdziwie Matką Bożą, byli wspomagani Jej wstawiennictwem u Ciebie."],e:"pereum"},
+  conscientias:{t:["Conscientias nostras, quaesumus, Domine, visitando purifica: ut veniens Jesus Christus, Filius tuus, Dominus noster, cum omnibus Sanctis, paratam sibi in nobis inveniat mansionem.","Oczyść, prosimy, Panie, nasze sumienia swoim nawiedzeniem, aby przychodzący Jezus Chrystus, Syn Twój, Pan nasz, ze wszystkimi Świętymi znalazł w nas przygotowane dla siebie mieszkanie."],e:"qui"},
   protege:{t:["Protege, Domine, populum tuum, et Apostolorum tuorum Petri et Pauli et aliorum Apostolorum patrocinio confisum, perpetua defensione conserva. Omnes Sancti tui, quaesumus, Domine, nos ubique adjuvent: ut, dum eorum merita recolimus, patrocinia sentiamus: et pacem tuam nostris concede temporibus, et ab Ecclesia tua cunctam repelle nequitiam; iter, actus et voluntates nostras et omnium famulorum tuorum, in salutis tuae prosperitate dispone; benefactoribus nostris sempiterna bona retribue, et omnibus fidelibus defunctis requiem aeternam concede.","Chroń, Panie, lud Twój i zachowaj nieustanną obroną tych, którzy ufają opiece Twoich Apostołów Piotra i Pawła oraz innych Apostołów. Niech nas wszędzie wspomagają wszyscy Twoi Święci, prosimy, Panie, abyśmy, rozważając ich zasługi, doznawali ich opieki; użycz pokoju w naszych czasach i oddal od Twego Kościoła wszelką nieprawość; drogi, czyny i wolę naszą oraz wszystkich Twoich sług skieruj ku pomyślności Twego zbawienia; dobroczyńcom naszym odpłać wiecznymi dobrami, a wszystkim wiernym zmarłym daj wieczny odpoczynek."],e:"per"},
 };
 
@@ -771,11 +795,106 @@ invit:["Pójdźcie, śpiewajmy Panu, wykrzykujmy Skale zbawienia naszego! Uprzed
 // Officium parvum B.M.V., wyd. 2 poprawione, Kraków 1936 (Księgarnia Katolicka M. Łubieńskiej; przedruk Cor Eorum 2021) —
 // przepisane ze zdjęć książki. Psalmów jeszcze nieprzepisanych brak: wtedy pokazuje się Wujek (1923).
 const PSO = {
+p120:["Podniosłem oczy moje na góry, * skąd przyjdzie mi pomoc.", "Pomoc moja od Pana, * który stworzył niebo i ziemię.", "Niech nie dopuści, by zachwiała się noga twoja * i niech nie drzemie ten, który cię strzeże!", "Oto się nie zdrzemnie ani zaśnie, * który strzeże Izraela.", "Pan strzeże cię, Pan obroną twoją * po prawej ręce twojej.", "Nie upali cię słońce we dnie * ani księżyc w nocy.", "Pan strzeże cię od wszelkiego zła, * Pan niechaj strzeże duszy twojej!", "Pan niech strzeże wejścia twego i wyjścia twego, * odtąd i aż na wieki."],
+p121:["Uweseliłem się z tego, co mi powiedziano: * „Pójdziemy do domu Pańskiego”!", "Stały nogi nasze * w dziedzińcach twoich, Jeruzalem!", "Jeruzalem, które się buduje jak miasto * w sobie zespolone!", "Bo tam wstępowały pokolenia Pańskie: * ustawa dla Izraela, by sławić imię Pana.", "Bo tam stały stolice sądowe, * stolice dla domu Dawidowego.", "Proście o to, co jest ku pokojowi dla Jeruzalem, * a dostatek niech będzie dla tych, którzy cię miłują!", "Niechaj będzie pokój w warowni twojej * i dostatek w basztach twoich!", "Ze względu na braci moich i bliźnich moich * wzywałem pokoju dla ciebie:", "Dla domu Pana, Boga naszego, * szukałem dobra tobie."],
+p122:["Ku tobie podniosłem oczy moje, * który mieszkasz w niebie.", "Oto jak oczy sług * w rękach panów swoich,", "Jak oczy służebnicy w rękach pani swej, * tak oczy nasze ku Panu Bogu naszemu, aż się zmiłuje nad nami.", "Zmiłuj się nad nami, Panie, zmiłuj się nad nami, * bośmy bardzo napełnieni wzgardą;", "Bo jest bardzo napełniona dusza nasza * pośmiewiskiem bogatych i wzgardą pysznych."],
+p123:["Gdyby Pan nie był z nami – niech powie teraz Izrael – * gdyby Pan nie był z nami,", "Gdy na nas ludzie powstali: * snadźby nas byli żywych pożarli,", "Gdy płonął gniew ich przeciwko nam; * snadźby nas była woda zatopiła.", "Strumień przeszła dusza nasza, * snadźby była przeszła dusza nasza wodę nieprzebytą.", "Błogosławiony Pan, * który nie wydał nas na łup zębom ich!", "Dusza nasza jak wróbel wyrwana została * z sidła łowiących;", "Sidło się rozdarło, * a myśmy wybawieni!", "Wspomożenie nasze w imieniu Pana, * który stworzył niebo i ziemię!"],
+p124:["Którzy ufają w Panu, są jak góra Syjon; * nie poruszy się na wieki, kto mieszka w Jeruzalem!", "Góry wokoło niego, * a Pan wokoło ludu swego, odtąd i aż na wieki.", "Bo nie zostawi Pan berła grzeszników nad dziedzictwem sprawiedliwych, * aby sprawiedliwi nie wyciągnęli ręki swej ku nieprawości.", "Czyń dobrze, Panie, dobrym * i tym, którzy są prawego serca!", "Ale tych, którzy zbaczają na kręte drogi, powiedzie Pan z działającymi nieprawość. * Pokój nad Izraelem!"],
 p125:["Gdy Pan przywrócił pojmanych Syjonu, * staliśmy się jak pocieszeni.", "Wtedy się napełniły weselem usta nasze, * a język nasz radością.", "Wtedy mówić będą między narodami: * „Wielkie rzeczy uczynił Pan z nimi!”.", "Wielkie rzeczy uczynił Pan z nami, * staliśmy się weseli.", "Przywróćże, Panie, pojmanie nasze * jak strumień na południe!", "Którzy sieją ze łzami, * będą żąć z radością.", "Idąc, szli i płakali, * rozsiewając nasienie swoje.", "Ale wracając się, przyjdą z weselem, * niosąc snopy swoje."],
 p126:["Jeśli Pan nie zbuduje domu, * próżno pracowali, którzy go budują.", "Jeśli Pan nie będzie strzegł miasta, * próżno czuwa ten, który go strzeże.", "Próżno wam przede dniem wstawać; * wstańcie, skoroście usiedli, którzy pożywacie chleba boleści!", "Gdy da umiłowanym swym spanie: * oto dziedzictwem Pańskim – synowie, zapłatą – owoc żywota.", "Jak strzały w ręku mocarza, * tak synowie utrapionych.", "Błogosławiony człowiek, który napełnił nimi pragnienie swoje! * Nie zawstydzi się, kiedy będzie mówił z nieprzyjaciółmi swymi w bramie."],
 p127:["Błogosławieni wszyscy, którzy się boją Pana, * którzy chodzą drogami jego!", "Bo pracę rąk twoich pożywać będziesz; * szczęśliwy jesteś i dobrze ci będzie.", "Żona twoja jak płodny krzew winny * we wnętrzu domu twego.", "Synowie twoi jak latorośle oliwne * wokoło stołu twego.", "Oto tak ubłogosławiony będzie człowiek, * który się boi Pana!", "Niech ci błogosławi Pan z Syjonu, * i oglądaj dobra Jeruzalem po wszystkie dni żywota twego.", "I oglądaj synów synów twoich, * pokój nad Izraelem!"],
+p109:["Rzekł Pan Panu memu: * „Siądź po prawicy mojej,", "Aż położę nieprzyjaciół twoich * podnóżkiem nóg twoich!”.", "Berło mocy, twojej wypuści Pan z Syjonu; * panuj wpośród nieprzyjaciół twoich!", "Przy tobie panowanie w dzień mocy twej w blaskach świętości. * „Z żywota przed jutrzenką zrodziłem cię!”", "Przysiągł Pan i nie będzie żałował: * „Ty jesteś kapłanem na wieki według porządku Melchizedecha!”.", "Pan po prawicy twojej, * poraził w dzień gniewu swego królów.", "Będzie sądził narody, dopełni zagłady, * potłucze głowy wielu na ziemi.", "Ze strumienia na drodze pić będzie, * dlatego wywyższy głowę."],
+p112:["Chwalcie, słudzy, Pana, * chwalcie imię Pańskie!", "Niech będzie imię Pańskie błogosławione, * odtąd i aż na wieki!", "Od wschodu słońca aż do zachodu, * chwalebne jest imię Pańskie.", "Wywyższony jest Pan nad wszystkie narody * i nad niebiosa chwała jego.", "Któż jest jak Pan, Bóg nasz, który mieszka na wysokości, * a na niskość spogląda na niebie i na ziemi?", "Który podnosi z ziemi biednego * i z gnoju wywyższa ubogiego,", "Aby go posadzić z książętami, * z książętami ludu swego!", "Który czyni, iż niepłodna mieszka w domu, * matka synów z weselem."],
+p147:["Chwal, Jeruzalem, Pana, * chwal, Syjonie, Boga twego!", "Albowiem umocnił zawory bram twoich, * pobłogosławił synom twym w tobie!", "On użyczył pokoju granicom twoim * i nasyca cię najwyborniejszym zbożem.", "On puszcza słowo swe na ziemię, * bardzo prędko biegnie mowa jego.", "On daje śnieg jak wełnę, * a mgłę rozsypuje jak popiół.", "Spuszcza lód swój jak bryły; * kto się ostoi przed zimnem jego?", "Pośle słowo swoje a roztopi je, * wionie wiatr jego, a pociekną wody.", "On oznajmia słowo swe Jakubowi, * ustawy i przykazania swe Izraelowi.", "Nie uczynił tak żadnemu narodowi, * i nie objawił im przykazań swoich."],
+magnificat:["Wielbi * dusza moja Pana.", "I rozradował się duch mój * w Bogu, Zbawicielu moim.", "Gdyż wejrzał na niskość służebnicy swojej; * oto bowiem odtąd błogosławioną zwać mnie będą wszystkie narody.", "Albowiem uczynił mi wielkie rzeczy, który możny jest, * i święte imię jego.", "A miłosierdzie jego z pokolenia w pokolenie, * bojącym się jego.", "Uczynił moc ramieniem swoim, * rozproszył pysznych w zamysłach ich serca.", "Strącił mocarzy ze stolicy, * a podwyższył pokornych.", "Łaknących napełnił dobrami, * a bogaczy z niczym puścił.", "Przyjął Izraela, sługę swego, * wspomniawszy na miłosierdzie swoje.", "Jak mówił do ojców naszych, * Abrahamowi i potomstwu jego na wieki."],
 p128:["Często uderzali na mnie od młodości mojej, * niech powie teraz Izrael.", "Często uderzali na mnie od młodości mojej, * wszakże mnie nie przemogli.", "Na grzbiecie moim kowali grzesznicy, * przedłużali nieprawość swoją.", "Pan sprawiedliwy uciął szyję grzeszników: * niech się zawstydzą i wstecz obrócą wszyscy, którzy nienawidzą Syjonu.", "Niech będą jak trawa na dachu, * która usycha, zanim ją wyrwą.", "Którą nie napełni żniwiarz ręki swojej, * ani łona swego ten, który snopy zbiera!", "I nie rzekli, którzy mimo szli: „Błogosławieństwo Pańskie nad wami! * Błogosławimy wam w imię Pańskie!”."],
 };
+// pozostałe teksty (antyfony, hymny, kapitulia, wersety, modlitwy) z wydania 1936 — klucz: łaciński tekst w aplikacji
+const WYD_TX = {
+"Gloria Patri, et Filio, * et Spiritui Sancto.":"Chwała Ojcu i Synowi, * i Duchowi Świętemu.",
+"Sicut erat in principio, et nunc, et semper, * et in saecula saeculorum. Amen.":"Jak była na początku, teraz i zawsze, * i na wieki wieków. Amen.",
+"Alleluia.":"Alleluja!",
+"Laus tibi, Domine, Rex aeternae gloriae.":"Chwała Tobie, Panie, Królu wiecznej chwały.",
+"Kyrie, eleison. Christe, eleison. Kyrie, eleison.":"Kyrie, eleison. Christe, eleison. Kyrie, eleison.",
+"Oremus.":"Módlmy się.",
+"Amen.":"Amen.",
+"Deo gratias.":"Bogu niech będą dzięki.",
+"Deus, ✠ in adjutorium meum intende.":"Boże, ✠ wejrzyj ku wspomożeniu memu.",
+"Domine, ad adjuvandum me festina.":"Panie, pośpiesz ku ratunkowi memu.",
+"✠ Converte nos, Deus, salutaris noster.":"✠ Nawróć nas, Boże, nasz zbawco.",
+"Et averte iram tuam a nobis.":"I odwróć swój gniew od nas.",
+"Domine, exaudi orationem meam.":"Panie, wysłuchaj modlitwy mojej.",
+"Et clamor meus ad te veniat.":"A wołanie moje niech do Ciebie przyjdzie.",
+"Benedicamus Domino.":"Błogosławmy Panu.",
+"Fidelium animae per misericordiam Dei requiescant in pace.":"Dusze wiernych zmarłych przez miłosierdzie Boże niech odpoczywają w pokoju.",
+"Dominus det nobis suam pacem.":"Pan niechaj nam raczy dać swój pokój.",
+"Et vitam aeternam. Amen.":"I żywot wieczny. Amen.",
+"Diffusa est gratia in labiis tuis.":"Rozlany jest wdzięk na wargach Twoich.",
+"Propterea benedixit te Deus in aeternum.":"Dlatego błogosławił Cię Bóg na wieki.",
+"Post partum, Virgo, inviolata permansisti.":"Po porodzeniu, Panno, niepokalaną pozostałaś.",
+"Dei Genitrix, intercede pro nobis.":"Boża Rodzicielko, wstaw się za nami.",
+"Benedicta tu in mulieribus.":"Błogosławionaś ty między niewiastami.",
+"Et benedictus fructus ventris tui.":"I błogosławiony owoc żywota Twojego.",
+"Angelus Domini nuntiavit Mariae.":"Anioł Pański zwiastował Pannie Maryi.",
+"Et concepit de Spiritu Sancto.":"I poczęła z Ducha Świętego.",
+"Laetamini in Domino et exsultate, justi.":"Weselcie się w Panu i radujcie sprawiedliwi.",
+"Et gloriamini, omnes recti corde.":"I chlubcie się wszyscy serca prawego.",
+"Per Dominum nostrum Jesum Christum, Filium tuum, qui tecum vivit et regnat in unitate Spiritus Sancti Deus, per omnia saecula saeculorum.":"Przez Pana naszego Jezusa Chrystusa, Twojego Syna, który z Tobą żyje i króluje w jedności Ducha Świętego Bóg, przez wszystkie wieki wieków.",
+"Per eumdem Dominum nostrum Jesum Christum, Filium tuum, qui tecum vivit et regnat in unitate Spiritus Sancti Deus, per omnia saecula saeculorum.":"Przez tegoż naszego Pana Jezusa Chrystusa, Twojego Syna, który z Tobą żyje i króluje w jedności z Duchem Świętym Bóg, przez wszystkie wieki wieków.",
+"Qui tecum vivit et regnat in unitate Spiritus Sancti Deus, per omnia saecula saeculorum.":"Który z Tobą żyje i króluje w jedności z Duchem Świętym Bóg, przez wszystkie wieki wieków.",
+"Concede nos famulos tuos, quaesumus, Domine Deus, perpetua mentis et corporis sanitate gaudere: et gloriosa beatae Mariae semper Virginis intercessione, a praesenti liberari tristitia, et aeterna perfrui laetitia.":"Prosimy Cię, Panie Boże, dozwól nam, sługom Twoim, cieszyć się ustawicznie zdrowiem duszy i ciała; a przemożne orędownictwo Najświętszej Maryi, zawsze Dziewicy, niechaj to sprawi, byśmy od utrapień doczesnych uwolnieni, po śmierci zażywali szczęśliwości wiecznej.",
+"Deus, qui salutis aeternae, beatae Mariae virginitate fecunda, humano generi praemia praestitisti: tribue, quaesumus; ut ipsam pro nobis intercedere sentiamus, per quam meruimus auctorem vitae suscipere, Dominum nostrum Jesum Christum, Filium tuum.":"Boże, któryś przez dziewicze macierzyństwo Najświętszej Maryi Panny zgotował całej ludzkości łaskę zbawienia wiecznego, daj, błagamy Cię, abyśmy doznawali orędownictwa Tej, przez którą pozyskaliśmy dawcę żywota wiecznego, Pana naszego Jezusa Chrystusa, Syna Twego.",
+"Concede, misericors Deus, fragilitati nostrae praesidium: ut, qui sanctae Dei Genitricis memoriam agimus; intercessionis ejus auxilio, a nostris iniquitatibus resurgamus.":"Udziel, miłosierny Boże, wsparcia ułomności naszej, byśmy czcząc pamiątkę Świętej Bożej Rodzicielki, wsparci będąc Jej wstawiennictwem, z nieprawości naszych się podźwignęli.",
+"Famulorum tuorum, quaesumus, Domine, delictis ignosce: ut qui tibi placere de actibus nostris non valemus; Genitricis Filii tui Domini nostri intercessione salvemur.":"Przebacz, prosimy Cię, Panie, grzechy sług Twoich, i daj, abyśmy, którzy sami z siebie w czynach swych podobać się Tobie nie potrafimy, uzyskali zbawienie za pośrednictwem Rodzicielki Syna Twojego.",
+"Deus, qui de beatae Mariae Virginis utero Verbum tuum, Angelo nuntiante, carnem suscipere voluisti: praesta supplicibus tuis; ut qui vere eam Genitricem Dei credimus, ejus apud te intercessionibus adjuvemur.":"Boże, któryś zrządził, że za zwiastowaniem Anielskim Słowo Twoje w żywocie Najświętszej Maryi Panny Ciałem się stało: spraw, pokornie błagamy, aby możnym było u Ciebie wstawiennictwo Tej, w którą jako prawdziwą Bogarodzicę wierzymy.",
+"Protege, Domine, populum tuum, et Apostolorum tuorum Petri et Pauli et aliorum Apostolorum patrocinio confisum, perpetua defensione conserva. Omnes Sancti tui, quaesumus, Domine, nos ubique adjuvent: ut, dum eorum merita recolimus, patrocinia sentiamus: et pacem tuam nostris concede temporibus, et ab Ecclesia tua cunctam repelle nequitiam; iter, actus et voluntates nostras et omnium famulorum tuorum, in salutis tuae prosperitate dispone; benefactoribus nostris sempiterna bona retribue, et omnibus fidelibus defunctis requiem aeternam concede.":"Wspieraj lud Twój, Panie, i tych, którzy pokładają ufność w opiece św. Józefa, Apostołów Twoich Piotra i Pawła oraz innych Apostołów, racz otaczać ustawiczną opieką. Wszyscy Święci Twoi, prosimy, Panie, niech nas wszędzie wspomagają, iżbyśmy rozpamiętywając i czcząc ich zasługi, doznali ich wspomożenia. Pokoju Twego użycz czasom naszym, od Kościoła Twojego wszelką nieprawość oddal. Nasze i wszystkich sług Twoich uczynki, zamiary i sprawy racz pokierować ku szczęśliwemu osiągnięciu zbawienia. Dobrodziejów naszych nagródź wiecznymi dobrami. Wszystkim wiernym zmarłym racz dać wieczny odpoczynek.",
+"Jesu, tibi sit gloria, / Qui natus es de Virgine, / Cum Patre et almo Spiritu, / In sempiterna saecula. Amen.":"Chwała z Ojcem Tobie, Zbawco, / którego Panna wydała, / z Duchem Świętym, Życiodawcą, / na wieki wieczna Ci chwała. Amen.",
+"Memento, rerum Conditor, / Nostri quod olim corporis, / Sacrata ab alvo Virginis / Nascendo, formam sumpseris.":"Pomnij, o Stwórco wszechrzeczy, / Żeś w cudownej tajemnicy / Raczył przyjąć kształt człowieczy / W żywocie świętym Dziewicy.",
+"Maria, Mater gratiae, / Dulcis parens clementiae, / Tu nos ab hoste protege, / Et mortis hora suscipe.":"Maryjo! Łask rodzicielko, / Słodka Matko zmiłowania, / odpędź wroga, napaść wszelką, / Przyjm nas w godzinie skonania.",
+"Ave, maris stella, / Dei Mater alma, / Atque semper Virgo, / Felix caeli porta.":"Witaj, Gwiazdo morza, / Wielka Matko Boga, / Panno zawsze czysta, / Niebios bramo błoga.",
+"Sumens illud Ave / Gabrielis ore, / Funda nos in pace, / Mutans Hevae nomen.":"Słowy Gabriela / będąc przywitana, / Utwierdź nas w pokoju, / Odmień Ewy miano.",
+"Solve vincla reis, / Profer lumen caecis, / Mala nostra pelle, / Bona cuncta posce.":"Winnych wyzwól z więzów, / Ślepym przywróć blaski, / Oddal nędze nasze, / Uproś wszystkie łaski.",
+"Monstra te esse matrem: / Sumat per te preces, / Qui pro nobis natus, / Tulit esse tuus.":"Bądź nam Matką w niebie, / By na głos nasz baczył, / Co narodzon dla nas, / Być Twym Synem raczył.",
+"Virgo singularis, / Inter omnes mitis, / Nos culpis solutos, / Mites fac et castos.":"O Panno jedyna, / Cicha i bez skazy, / Uczyń nas cichymi, / Obmyj grzechów zmazy.",
+"Vitam praesta puram, / Iter para tutum: / Ut videntes Jesum, / Semper collaetemur.":"Daj wieść życie czyste, / Drogę ściel bezpieczną, / Widzieć daj Jezusa, / Mieć z nim radość wieczną.",
+"Sit laus Deo Patri, / Summo Christo decus, / Spiritui Sancto, / Tribus honor unus. Amen.":"Bogu Ojcu chwała, / Chrystusowi pienie, / Obu z Duchem Świętym / Jedno uwielbienie. Amen.",
+"Sancti Dei omnes, intercedere dignemini pro nostra omniumque salute.":"Wszyscy Święci Pańscy, raczcie się wstawiać za zbawieniem nas wszystkich.",
+"Maria Virgo assumpta est ad aethereum thalamum, in quo Rex regum stellato sedet solio.":"Maryja Panna wzięta jest do przybytków niebieskich, gdzie Król królów zasiada na stolicy gwiaździstej.",
+"In odorem unguentorum tuorum currimus: adolescentulae dilexerunt te nimis.":"Do wonności olejków Twoich pobiegniemy; dziewice młode umiłowały Cię bardzo.",
+"Pulchra es et decora, filia Jerusalem: terribilis ut castrorum acies ordinata.":"Piękna jesteś i ozdobna, córko Jerozolimska, strach wzbudzająca jako wojska uszykowane do boju.",
+"Dum esset Rex in accubitu suo, nardus mea dedit odorem suavitatis.":"Kiedy Król był w pokoju swoim, nard mój wydał wdzięczną wonność.",
+"Laeva ejus sub capite meo, et dextera illius amplexabitur me.":"Lewica Jego pod głową moją, a prawica obejmie mię.",
+"Nigra sum, sed formosa, filiae Jerusalem: ideo dilexit me Rex, et introduxit me in cubiculum suum.":"Czarna jestem, ale piękna, córki jerozolimskie; przeto mię Król umiłował i wprowadził mię do pokojów swoich.",
+"Jam hiems transiit, imber abiit et recessit: surge, amica mea, et veni.":"Już zima minęła, deszcz przeszedł i ustał; wstań, Przyjaciółko moja, i przyjdź.",
+"Speciosa facta es et suavis in deliciis tuis, sancta Dei Genitrix.":"Piękna jesteś i wdzięczna pośród rozkoszy swoich, Święta Boża Rodzicielko.",
+"Ab initio et ante saecula creata sum, et usque ad futurum saeculum non desinam, et in habitatione sancta coram ipso ministravi.":"Od początku i przed wiekami jestem stworzona, i aż do przyszłego wieku nie ustanę, i w mieszkaniu świętym służyłam przed Nim.",
+"Beata Mater et intacta Virgo, gloriosa Regina mundi, intercede pro nobis ad Dominum.":"Błogosławiona Matko i niepokalana Panno, chwalebna Królowo świata, wstawiaj się za nami u Pana.",
+"Missus est Gabriel Angelus ad Mariam Virginem desponsatam Joseph.":"Posłany został Anioł Gabriel do Maryi Panny, poślubionej Józefowi.",
+"Ave, Maria, gratia plena: Dominus tecum: benedicta tu in mulieribus, alleluia.":"Zdrowaś Maryjo, łaski pełna, Pan z Tobą, błogosławionaś ty między niewiastami. Alleluja.",
+"Ne timeas, Maria: invenisti gratiam apud Dominum: ecce concipies et paries filium, alleluia.":"Nie bój się, Maryjo, albowiem znalazłaś łaskę u Pana. Oto poczniesz i porodzisz Syna. Alleluja.",
+"Dabit ei Dominus sedem David patris ejus, et regnabit in aeternum.":"Da mu Pan stolicę Dawida, ojca jego; i będzie królował na wieki.",
+"Ecce ancilla Domini: fiat mihi secundum verbum tuum.":"Oto ja służebnica Pańska, niechaj mi się stanie według słowa Twego.",
+"Ecce Virgo concipiet, et pariet filium, et vocabitur nomen ejus Emmanuel. Butyrum et mel comedet, ut sciat reprobare malum, et eligere bonum.":"Oto Panna pocznie i porodzi Syna i nazwą imię jego Emanuel. Masło i miód jeść będzie, aby umiał odrzucać złe i obierać dobre.",
+"Spiritus Sanctus in te descendet, Maria: ne timeas, habebis in utero Filium Dei, alleluia.":"Duch Święty zstąpi na Cię, Maryjo; nie bój się, poczniesz w żywocie Syna Bożego. Alleluja.",
+"O admirabile commercium: Creator generis humani, animatum corpus sumens, de Virgine nasci dignatus est: et procedens homo sine semine, largitus est nobis suam deitatem.":"O przedziwna zamiano! Stwórca ludzi, przyjmując ciało ludzkie, z Panny się raczył narodzić; a stając się człowiekiem, uczynił nas uczestnikami Bóstwa swego.",
+"Quando natus es ineffabiliter ex Virgine, tunc impletae sunt Scripturae: sicut pluvia in vellus descendisti, ut salvum faceres genus humanum: te laudamus, Deus noster.":"W niewysłowionej tajemnicy narodzenia Twego z Dziewicy spełniły się proroctwa; zstąpiłeś na ziemię jak deszcz na runo, aby zbawić ludzi. Ciebie przeto wielbimy, Boże nasz!",
+"Rubum, quem viderat Moyses incombustum, conservatam agnovimus tuam laudabilem virginitatem: Dei Genitrix, intercede pro nobis.":"W krzaku gorejącym, niespalonym, który widział Mojżesz, upatrujemy podobieństwo Twego chwalebnego i nienaruszonego panieństwa. Matko Boża, wstawiaj się za nami.",
+"Germinavit radix Jesse, orta est stella ex Jacob: Virgo peperit Salvatorem: te laudamus, Deus noster.":"Wyrosła różdżka z korzenia Jessego, wzeszła gwiazda z pokolenia Jakubowego: Panna porodziła Zbawiciela. Ciebie wielbimy, Boże nasz.",
+"Ecce Maria genuit nobis Salvatorem, quem Joannes videns exclamavit dicens: Ecce Agnus Dei, ecce qui tollit peccata mundi, alleluia.":"Oto Maryja zrodziła nam Zbawiciela, którego Jan widząc, zawołał: Oto Baranek Boży, oto który gładzi grzechy świata! Alleluja.",
+"Magnum hereditatis mysterium: templum Dei factus est uterus nescientis virum: non est pollutus ex ea carnem assumens: omnes gentes venient dicentes: Gloria tibi, Domine.":"Wielka tajemnico niebieskiego dziedzictwa! Żywot panieński stał się świątynią Boga, który przybierając z Niej Ciało, nie utracił nic ze swej świętości. Wszystkie narody przyjdą, mówiąc: Chwała Tobie, Panie.",
+"Et sic in Sion firmata sum, et in civitate sanctificata similiter requievi, et in Jerusalem potestas mea.":"I tak na Syjonie jestem utwierdzona, i w mieście świętym podobnie odpoczywałam, a w Jeruzalem władza moja.",
+"Et radicavi in populo honorificato, et in parte Dei mei hereditas illius, et in plenitudine sanctorum detentio mea.":"I rozkorzeniłam się w sławnym narodzie, i w dziale Boga mego dziedzictwo jego, i w zgromadzeniu świętych pobyt mój.",
+"In plateis sicut cinnamomum et balsamum aromatizans odorem dedi: quasi myrrha electa dedi suavitatem odoris.":"Jak cynamon i balsam woniejący zapach wydałam, jak mirra wyborna wydałam woń miłą.",
+"Regina caeli, laetare, alleluia. / Quia quem meruisti portare, alleluia. / Resurrexit, sicut dixit, alleluia. / Ora pro nobis Deum, alleluia.":"Królowo niebios, wesel się, alleluja, / albowiem Ten, którego nosić zasłużyłaś, alleluja, / zmartwychwstał jak powiedział, alleluja. / Módl się za nami do Boga. Alleluja.",
+"Egredietur virga de radice Jesse, et flos de radice ejus ascendet. Et requiescet super eum Spiritus Domini.":"I wynijdzie różdżka z korzenia Jessego, a kwiat z korzenia jego wyrośnie. I spocznie na nim Duch Pański.",
+"Dabit illi Dominus Deus sedem David patris ejus, et regnabit in domo Jacob in aeternum, et regni ejus non erit finis.":"Da Mu Pan Bóg stolicę Dawida, ojca jego, i będzie królował w domu Jakubowym na wieki, a królestwu Jego nie będzie końca.",
+"Ecce Dominus veniet, et omnes sancti ejus cum eo: et erit in die illa lux magna, alleluia.":"Oto przyjdzie Pan i wszyscy święci Jego z Nim, i będzie w onym dniu światłość wielka, alleluja.",
+"Ecce apparebit Dominus super nubem candidam.":"Oto się zjawi Pan w obłoku jasnym.",
+"Et cum eo sanctorum millia.":"A z Nim świętych tysiące.",
+"Conscientias nostras, quaesumus, Domine, visitando purifica: ut veniens Jesus Christus, Filius tuus, Dominus noster, cum omnibus Sanctis, paratam sibi in nobis inveniat mansionem.":"Sumienia nasze, prosimy Cię, Panie, swym nawiedzeniem oczyść, iżby przychodzący Jezus Chrystus, Syn Twój, Pan nasz, z wszystkimi świętymi, znalazł przygotowane w nas dla siebie mieszkanie."
+};
+// książka podaje tylko początki tych modlitw („Ojcze nasz…”, „Zdrowaś Maryjo…”, „Chwała Ojcu…”) — pełny tekst jak w aplikacji, bez szarego oznaczenia
+[G.pater,G.ave,G.gloria].forEach(t=>{ if(!WYD_TX[t[0]]) WYD_TX[t[0]]=t[1]; });
 /* PRZEKŁADY:END */
 const TRN = {
   wujek:{n:"ks. Jakub Wujek", ps:PSW},
@@ -807,6 +926,7 @@ const ANT = {
         ["Post partum, Virgo, inviolata permansisti: Dei Genitrix, intercede pro nobis.","Po porodzie, Dziewico, pozostałaś nienaruszona; Boża Rodzicielko, wstawiaj się za nami."]],vr:"postPartum"}
   },
   subTuum:["Sub tuum praesidium confugimus, sancta Dei Genitrix: nostras deprecationes ne despicias in necessitatibus, sed a periculis cunctis libera nos semper, Virgo gloriosa et benedicta.","Pod Twoją obronę uciekamy się, święta Boża Rodzicielko; naszymi prośbami racz nie gardzić w potrzebach naszych, ale od wszelakich złych przygód racz nas zawsze wybawiać, Panno chwalebna i błogosławiona."],
+  sanctiAdv:["Ecce Dominus veniet, et omnes sancti ejus cum eo: et erit in die illa lux magna, alleluia.","Oto Pan przyjdzie i wszyscy Jego święci z Nim, i będzie w owym dniu wielka światłość, alleluja."],
   sancti:["Sancti Dei omnes, intercedere dignemini pro nostra omniumque salute.","Wszyscy Święci Boży, raczcie wstawiać się za zbawieniem naszym i wszystkich."]
 };
 const BEN = [
@@ -872,9 +992,10 @@ const SEASON = {
           ["Dabit ei Dominus sedem David patris ejus, et regnabit in aeternum.","Da Mu Pan tron Dawida, ojca Jego, i będzie królował na wieki."],
           ["Ecce ancilla Domini: fiat mihi secundum verbum tuum.","Oto ja służebnica Pańska, niech mi się stanie według słowa twego."]],
     capL:["Ecce Virgo concipiet, et pariet filium, et vocabitur nomen ejus Emmanuel. Butyrum et mel comedet, ut sciat reprobare malum, et eligere bonum.","Oto Dziewica pocznie i porodzi Syna, i nazwą Go imieniem Emmanuel. Masło i miód będzie jadł, aby umiał odrzucić zło, a wybrać dobro."], capLsrc:"Księga Izajasza 7, 14–15",
-    vrL:"rorate", vrV:"rorate",
+    capV:["Egredietur virga de radice Jesse, et flos de radice ejus ascendet. Et requiescet super eum Spiritus Domini.","Wyjdzie różdżka z korzenia Jessego, a kwiat wyrośnie z jego korzenia. I spocznie na nim Duch Pański."], capVsrc:"Księga Izajasza 11, 1–2",
+    vrL:"rorate", vrV:"diffusa",
     bened:["Spiritus Sanctus in te descendet, Maria: ne timeas, habebis in utero Filium Dei, alleluia.","Duch Święty zstąpi na Ciebie, Maryjo; nie bój się, będziesz nosić w łonie Syna Bożego, alleluja."],
-    magn:["Ave, Maria, gratia plena: Dominus tecum: benedicta tu in mulieribus, alleluia.","Zdrowaś Maryjo, łaski pełna, Pan z Tobą, błogosławionaś Ty między niewiastami, alleluja."],
+    magn:"bened",
     pr:"utero"},
   christmas:{name:"Boże Narodzenie (do 2 lutego)",
     laud:[["O admirabile commercium: Creator generis humani, animatum corpus sumens, de Virgine nasci dignatus est: et procedens homo sine semine, largitus est nobis suam deitatem.","O przedziwna wymiano! Stwórca rodzaju ludzkiego, przyjmując ciało z duszą, raczył narodzić się z Dziewicy, a stawszy się człowiekiem bez udziału męża, udzielił nam swojego Bóstwa."],
@@ -888,6 +1009,7 @@ const SEASON = {
 };
 // uzupełnienie: elementy wspólne z „przez rok”
 ["advent","christmas"].forEach(k=>{const s=SEASON[k],a=SEASON.annum;
+  if(s.magn==="bened") s.magn=s.bened;
   s.vesp = s.vesp || s.laud; s.capL = s.capL || a.capL; s.capLsrc = s.capLsrc || a.capLsrc;
   s.capV = s.capV || (k==="advent"? s.capL : a.capV); s.capVsrc = s.capVsrc || (k==="advent"? s.capLsrc : a.capVsrc);
   s.vrL = s.vrL || a.vrL; s.vrV = s.vrV || a.vrV;});
@@ -897,6 +1019,10 @@ const MINOR = {
   sext:{ps:["p122","p123","p124"],ai:2,cap:["Et radicavi in populo honorificato, et in parte Dei mei hereditas illius, et in plenitudine sanctorum detentio mea.","I zapuściłam korzenie w ludzie czcigodnym, w dziale mego Boga, w Jego dziedzictwie, a moje przebywanie jest w pełni świętych."],src:"Księga Syracydesa 24, 16",vr:"benedictaTu"},
   none:{ps:["p125","p126","p127"],ai:4,cap:["In plateis sicut cinnamomum et balsamum aromatizans odorem dedi: quasi myrrha electa dedi suavitatem odoris.","Na placach jak cynamon i wonny balsam wydałam zapach, jak wyborna mirra wydałam słodką woń."],src:"Księga Syracydesa 24, 19–20",vr:"postPartum"}
 };
+// Adwent według wydania 1936: własne kapitulia Tercji, Seksty i Nony, w Nonie werset „Angelus Domini”
+MINOR.terce.adv={cap:SEASON.advent.capV,src:SEASON.advent.capVsrc};
+MINOR.sext.adv={cap:["Dabit illi Dominus Deus sedem David patris ejus, et regnabit in domo Jacob in aeternum, et regni ejus non erit finis.","Da Mu Pan Bóg tron Dawida, Jego ojca, i będzie królował nad domem Jakuba na wieki, a Jego królestwu nie będzie końca."],src:"Ewangelia według świętego Łukasza 1, 32–33"};
+MINOR.none.adv={cap:SEASON.advent.capL,src:SEASON.advent.capLsrc,vr:"angelus"};
 const FINAL = {
   almaAdv:{n:"Alma Redemptoris Mater",t:["Alma Redemptoris Mater, quae pervia caeli / Porta manes, et stella maris, succurre cadenti, / Surgere qui curat, populo: tu quae genuisti, / Natura mirante, tuum sanctum Genitorem, / Virgo prius ac posterius, Gabrielis ab ore / Sumens illud Ave, peccatorum miserere.","Żywicielko Odkupiciela, Matko, która pozostajesz otwartą bramą nieba / i gwiazdą morza, wspomóż upadający lud, / który pragnie powstać; Ty, która zrodziłaś, / ku zdumieniu natury, swego świętego Stwórcę, / Dziewico przed porodem i po porodzie, przyjmując z ust Gabriela / owo «Ave», zmiłuj się nad grzesznikami."],vr:"angelus",
     or:["Gratiam tuam, quaesumus, Domine, mentibus nostris infunde: ut qui, Angelo nuntiante, Christi Filii tui incarnationem cognovimus; per passionem ejus et crucem, ad resurrectionis gloriam perducamur.","Łaskę Twoją, prosimy Cię, Panie, racz wlać w serca nasze, abyśmy, którzy za zwiastowaniem anielskim poznaliśmy wcielenie Chrystusa, Syna Twego, przez Jego mękę i krzyż zostali doprowadzeni do chwały zmartwychwstania."],e:"short"},
@@ -1048,9 +1174,15 @@ function conclusion(id,x,o,prKey,commem){
   b.push({vr:VR.exaudi});
   if(commem){
     b.push(...prayerBlocks(prKey,x,false));
-    b.push({r:"Pamiątka Wszystkich Świętych (w okresie „przez rok”):"});
-    b.push({x:A(ANT.sancti,x),k:"Antyfona"},{vr:VRp("laetamini",x)});
-    b.push(...prayerBlocks("protege",x,true));
+    if(x.sk==="advent"){
+      b.push({r:"Pamiątka Wszystkich Świętych w Adwencie:"});
+      b.push({x:ANT.sanctiAdv,k:"Antyfona"},{vr:VR.ecceApparebit});
+      b.push(...prayerBlocks("conscientias",x,true));
+    } else {
+      b.push({r:"Pamiątka Wszystkich Świętych (w okresie „przez rok”):"});
+      b.push({x:A(ANT.sancti,x),k:"Antyfona"},{vr:VRp("laetamini",x)});
+      b.push(...prayerBlocks("protege",x,true));
+    }
   } else b.push(...prayerBlocks(prKey,x,true));
   b.push({vr:VR.exaudi},{vr:VR.benedicamus});
   if(id==="compline"){
@@ -1118,7 +1250,7 @@ const BUILD={
     b.push({s:"Hymn"},{hy:"oGloriosa"},{vr:VRp(x.s.vrL,x)});
     const ba=A(x.s.bened,x);
     b.push({s:"Benedictus"},{x:ba,k:"Antyfona"},{ps:"benedictus"},{x:ba,k:"Antyfona"});
-    b.push(...conclusion("lauds",x,o,typeof x.s.pr==="string"?x.s.pr:x.s.pr.lauds,x.sk==="annum"));
+    b.push(...conclusion("lauds",x,o,typeof x.s.pr==="string"?x.s.pr:x.s.pr.lauds,(x.sk==="annum"||x.sk==="advent")));
     return b;
   },
   vespers(x,o){
@@ -1128,7 +1260,7 @@ const BUILD={
     b.push({s:"Hymn"},{hy:"aveMaris"},{vr:VRp(x.s.vrV,x)});
     const ma=A(x.s.magn,x);
     b.push({s:"Magnificat"},{x:ma,k:"Antyfona"},{ps:"magnificat"},{x:ma,k:"Antyfona"});
-    b.push(...conclusion("vespers",x,o,typeof x.s.pr==="string"?x.s.pr:x.s.pr.vespers,x.sk==="annum"));
+    b.push(...conclusion("vespers",x,o,typeof x.s.pr==="string"?x.s.pr:x.s.pr.vespers,(x.sk==="annum"||x.sk==="advent")));
     return b;
   },
   compline(x,o){
@@ -1149,7 +1281,8 @@ const BUILD={
     b.push({s:"Hymn"},{hy:"memento"});
     const a=A(x.s.laud[m.ai],x);
     b.push({s:"Psalmy"},{x:a,k:"Antyfona"},{ps:m.ps[0]},{ps:m.ps[1]},{ps:m.ps[2]},{x:a,k:"Antyfona"});
-    b.push({s:"Kapituła"},{r:m.src},{x:m.cap},{x:G.deoGratias,k:"℟."},{vr:VRp(m.vr,x)});
+    const c=x.sk==="advent"&&m.adv?{...m,...m.adv}:m;
+    b.push({s:"Kapituła"},{r:c.src},{x:c.cap},{x:G.deoGratias,k:"℟."},{vr:VRp(c.vr,x)});
     b.push(...conclusion(id,x,o,typeof x.s.pr==="string"?x.s.pr:x.s.pr[id],false));
     return b;
   };
@@ -1158,15 +1291,25 @@ const BUILD={
 /* ===================== RENDER ===================== */
 const $=id=>document.getElementById(id);
 const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const attr=s=>esc(s).replace(/"/g,"&quot;");
 const star=s=>esc(s).replace(/ \* /g,' <span class="star">*</span> ').replace(/ \/ /g,"<br>").replace(/^\* /,'<span class="star">*</span> ').replace(/✠/g,'<span class="cross" title="znak krzyża">✠</span>');
 let cur, lang="both", tr="own", sel=[], latin=[], forcedLa=new Set(), prePost="mc";
 function setLatin(ids){latin=ids.filter(id=>LATIN_GROUPS.some(g=>g.id===id));
   forcedLa=new Set(LATIN_GROUPS.filter(g=>latin.includes(g.id)).flatMap(g=>g.t.map(x=>x[0])));}
-function pair(la,pl,pre=""){
-  const L=`<div class="la">${pre}${star(la)}</div>`, P=`<div class="pl">${pre}${star(pl)}</div>`;
-  if(lang==="la"||forcedLa.has(la)) return `<div class="bi">${L}</div>`;
-  if(lang==="pl") return `<div class="bi">${P}</div>`;
-  return `<div class="bi">${L}${P}</div>`;
+function wydPl(la){ // polski tekst z wydania 1936; uwzględnia alleluja dodawane/usuwane według okresu
+  if(WYD_TX[la]) return WYD_TX[la];
+  const m=la.match(/^(.*?),?\s*alleluia\.$/i);
+  if(m) for(const b of [m[1]+".",m[1]+":",m[1]+";",m[1]+"?",m[1]]) if(WYD_TX[b]) return WYD_TX[b].replace(/[.!:;]?$/,", alleluja.");
+  const b=la.replace(/\.$/,", alleluia."); if(WYD_TX[b]) return WYD_TX[b].replace(/,?\s*alleluja[.!]?$/i,".");
+  return null;
+}
+function pair(la,pl,pre="",isPs=false){
+  let miss=false;
+  if(!isPs&&tr==="wyd"&&lang!=="la"&&!forcedLa.has(la)){ const w=wydPl(la); if(w) pl=w; else miss=true; }
+  const L=`<div class="la">${pre}${star(la)}</div>`, P=`<div class="pl">${pre}${star(pl)}</div>`, bi=`<div class="bi${miss?" txmiss":""}" data-k="${attr(la)}"${miss?' title="tego tekstu z wydania 1936 jeszcze nie przepisano — przekład własny"':""}>`;
+  if(lang==="la"||forcedLa.has(la)) return `${bi}${L}</div>`;
+  if(lang==="pl") return `${bi}${P}</div>`;
+  return `${bi}${L}${P}</div>`;
 }
 function renderBlock(b){
   if(b.h) return `<div class="hourtitle"><h2>${b.h}</h2><span>${b.la}</span></div>`;
@@ -1176,10 +1319,11 @@ function renderBlock(b){
   if(b.x){ const pre=b.k?(b.k.length<=3?`<span class="vr">${b.k}</span>`:`<span class="k">${b.k}.</span>`):""; return `<div class="blk">${pair(b.x[0],b.x[1],pre)}</div>`; }
   if(b.ps){ const p=PS[b.ps], alt=TRN[tr]?.ps[b.ps];
     const T=TRN[tr], src=lang==="la"||tr==="own"?"":alt?(T.own&&!T.own[b.ps]?` — przekład: ${T.fb} (${T.fbNote})`:` — przekład: ${T.n}`):BIBLICAL_ONLY_OWN.includes(b.ps)?` — przekład własny (brak w przekładzie: ${TRN[tr].n})`:"";
+    const miss=lang!=="la"&&T&&T.own&&!T.own[b.ps];
     let h=`<div class="pstitle">${p.n}${src?`<span class="trsrc">${src}</span>`:""}</div>`;
-    p.v.forEach((v,i)=>h+=`<div class="verse">${pair(v[0],alt?alt[i]:v[1],i===0&&CROSS_PS.includes(b.ps)?'<span class="cross" title="znak krzyża">✠</span> ':"")}</div>`);
+    p.v.forEach((v,i)=>h+=`<div class="verse">${pair(v[0],alt?alt[i]:v[1],i===0&&CROSS_PS.includes(b.ps)?'<span class="cross" title="znak krzyża">✠</span> ':"",true)}</div>`);
     if(!p.noGloria) G.gloriaV.forEach(v=>h+=`<div class="verse">${pair(v[0],v[1])}</div>`);
-    return h; }
+    return miss?`<div class="psmiss">${h}</div>`:h; }
   if(b.hy){ const H=typeof b.hy==="string"?HY[b.hy]:b.hy; let h=H.n?`<div class="pstitle">${H.n}</div>`:"";
     H.s.forEach(st=>h+=`<div class="stanza">${pair(st[0],st[1])}</div>`); return h; }
   return "";
@@ -1271,7 +1415,7 @@ function laForItalian(t){ // przybliżenie wymowy kościelnej dla głosu włoski
     .replace(/\bJ/g,"I").replace(/j/g,"i");
 }
 function cleanText(el){
-  const c=el.cloneNode(true); c.querySelectorAll(".k,.vr,.star,.cross,.trsrc,.rbtn").forEach(x=>x.remove());
+  const c=el.cloneNode(true); c.querySelectorAll(".k,.vr,.star,.cross,.trsrc,.rbtn,.marks").forEach(x=>x.remove());
   c.querySelectorAll("br").forEach(x=>x.replaceWith(" "));
   return c.textContent.replace(/[*✠†℣℟]/g," ").replace(/\s+/g," ").trim();
 }
@@ -1301,7 +1445,14 @@ function startItem(){
   document.querySelectorAll(".rd").forEach(x=>x.classList.remove("rd"));
   if(RD.i>=RD.items.length){ stopReading(); return; }
   if(RD.stopAt!==null&&RD.i>RD.stopAt){ RD.stopAt=null; setPlaying(false); $("rInfo").textContent="Koniec modlitwy — ▶ czyta dalej"; return; }
-  const el=RD.items[RD.i]; el.classList.add("rd"); el.scrollIntoView({block:"center",behavior:"smooth"});
+  const el=RD.items[RD.i], g=RD.groups&&RD.groups.get(RD.i);
+  if(g&&g.key&&REC.have.has(g.key)){ // ta modlitwa ma nagranie własnego głosu — odtwórz je zamiast syntezatora
+    const els=RD.items.slice(RD.i,g.b+1); els.forEach(x=>x.classList.add("rd")); el.scrollIntoView({block:"center",behavior:"smooth"});
+    $("rInfo").textContent=`Fragment ${RD.i+1} z ${RD.items.length} — Twoje nagranie`;
+    ownPlay(g.key,els,()=>{ if(!RD.playing) return; RD.i=g.b+1; startItem(); });
+    return;
+  }
+  el.classList.add("rd"); el.scrollIntoView({block:"center",behavior:"smooth"});
   RD.q=queueFor(el); RD.qi=0; $("rInfo").textContent=`Fragment ${RD.i+1} z ${RD.items.length}`;
   speakNext();
 }
@@ -1313,9 +1464,10 @@ document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==
 function setPlaying(p){
   RD.playing=p; $("rPlay").textContent=p?"⏸":"▶"; $("rPlay").setAttribute("aria-label",p?"Pauza":"Dalej"); wake(p);
 }
-function goTo(i,stopAt=null){ RD.stopAt=stopAt; synth.cancel(); RD.utt=null; RD.i=Math.max(0,Math.min(i,RD.items.length-1)); setPlaying(true); startItem(); }
+function goTo(i,stopAt=null){ RD.stopAt=stopAt; ownStop(); synth.cancel(); RD.utt=null; RD.i=Math.max(0,Math.min(i,RD.items.length-1)); setPlaying(true); startItem(); }
 function openReader(){
   pickVoices(); RD.items=readItems(); if(!RD.items.length) return false;
+  RD.groups=new Map(prayerGroups(RD.items).map(([a,b])=>[a,{b,key:groupKey(RD.items,a,b)}]));
   RD.on=true; $("reader").hidden=false; document.body.classList.add("reading-on"); return true;
 }
 function prayerGroups(items){ // modlitwa = blok tekstu albo cały psalm / hymn (tytuł i wszystkie jego wersety)
@@ -1327,17 +1479,87 @@ function prayerGroups(items){ // modlitwa = blok tekstu albo cały psalm / hymn 
   });
   return g;
 }
-function addPlayMarks(){ // przycisk ▶ przy każdej modlitwie: czyta tylko tę modlitwę
-  if(!synth) return;
+function addPlayMarks(){ // przy każdej modlitwie: ▶ czyta ją syntezatorem; ● nagrywa własny głos, ♪ go odtwarza, ✕ usuwa nagranie
+  document.querySelectorAll("#office .marks").forEach(x=>x.remove());
+  if(!synth&&!recOK) return;
   const items=readItems();
   prayerGroups(items).forEach(([a,b])=>{
-    const el=items[a], btn=document.createElement("button");
-    btn.className="rbtn"; btn.type="button"; btn.textContent="▶"; btn.title="Przeczytaj tę modlitwę"; btn.setAttribute("aria-label","Przeczytaj tę modlitwę");
-    btn.onclick=e=>{ e.stopPropagation(); if(!openReader()) return; goTo(a,b); };
-    if(el.matches(".pstitle")) el.appendChild(btn);
-    else { const t=el.querySelector(".la,.pl"); if(t) t.prepend(btn); }
+    const el=items[a], els=items.slice(a,b+1), key=groupKey(items,a,b), box=document.createElement("span"); box.className="marks";
+    const mk=(txt,cls,title,fn)=>{ const btn=document.createElement("button"); btn.className="rbtn"+(cls?" "+cls:""); btn.type="button"; btn.textContent=txt;
+      btn.title=title; btn.setAttribute("aria-label",title); btn.onclick=e=>{ e.stopPropagation(); fn(); }; box.appendChild(btn); };
+    if(synth) mk("▶","","Przeczytaj tę modlitwę",()=>{ if(!openReader()) return; goTo(a,b); });
+    if(recOK&&key){
+      const has=REC.have.has(key), recNow=REC.key===key, playNow=REC.playKey===key&&!RD.on;
+      if(has) mk(playNow?"■":"♪","own",playNow?"Zatrzymaj moje nagranie":"Odtwórz moje nagranie",
+        ()=>{ if(playNow){ ownStop(); addPlayMarks(); } else { if(RD.on) stopReading(); ownPlay(key,els); } });
+      mk(recNow?"■":"●","rec"+(recNow?" recording":""),recNow?"Zakończ nagrywanie":has?"Nagraj ponownie (zastąpi poprzednie nagranie)":"Nagraj, jak sam czytasz tę modlitwę",
+        ()=>REC.mr?recStop():recStart(key,els));
+      if(has&&!recNow) mk("✕","rec","Usuń moje nagranie",async()=>{ if(!confirm("Usunąć Twoje nagranie tej modlitwy?")) return;
+        if(REC.playKey===key) ownStop(); try{ await recTx("readwrite",s=>s.delete(key)); REC.have.delete(key); }catch(e){} addPlayMarks(); });
+    }
+    if(!box.children.length) return;
+    if(el.matches(".pstitle")) el.appendChild(box); else { const t=el.querySelector(".la,.pl"); if(t) t.prepend(box); }
   });
 }
+/* własne nagrania — głos nagrany dla danej modlitwy, zapisany tylko w tym urządzeniu (IndexedDB) */
+const REC={db:null,have:new Set(),mr:null,key:null,t0:0,timer:null,msgT:null,audio:null,url:null,playKey:null};
+const recOK=!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder&&window.indexedDB);
+function recDB(){ return REC.db||(REC.db=new Promise((res,rej)=>{ const r=indexedDB.open("opbmv-nagrania",1);
+  r.onupgradeneeded=()=>r.result.createObjectStore("rec"); r.onsuccess=()=>res(r.result); r.onerror=()=>{ REC.db=null; rej(r.error); }; })); }
+async function recTx(mode,fn){ const db=await recDB(); return new Promise((res,rej)=>{ const t=db.transaction("rec",mode), r=fn(t.objectStore("rec"));
+  t.oncomplete=()=>res(r.result); t.onerror=t.onabort=()=>rej(t.error); }); }
+function groupKey(items,a,b){ // klucz = łaciński tekst pierwszego wersetu — ten sam niezależnie od języka i przekładu
+  for(let i=a;i<=b;i++){ const d=items[i].matches("[data-k]")?items[i]:items[i].querySelector("[data-k]"); if(d) return "k:"+d.dataset.k; } return null; }
+function mmss(ms){ const s=Math.floor(ms/1000); return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`; }
+function recMsg(t,hideAfter=0){
+  $("recInfo").textContent=t; $("recStop").hidden=!REC.mr; $("recBar").hidden=false; document.body.classList.add("rec-on");
+  clearTimeout(REC.msgT); if(hideAfter) REC.msgT=setTimeout(()=>{ if(!REC.mr){ $("recBar").hidden=true; document.body.classList.remove("rec-on"); } },hideAfter);
+}
+async function recStart(key,els){
+  if(REC.mr) return;
+  if(RD.on) stopReading(); ownStop();
+  let stream;
+  try{ stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}}); }
+  catch(e){ recMsg("Brak dostępu do mikrofonu — zezwól na niego w ustawieniach przeglądarki.",7000); return; }
+  const type=["audio/webm;codecs=opus","audio/mp4","audio/webm","audio/ogg;codecs=opus"].find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t));
+  let mr; try{ mr=new MediaRecorder(stream,type?{mimeType:type,audioBitsPerSecond:64000}:{}); }catch(e){ mr=new MediaRecorder(stream); }
+  const parts=[];
+  mr.ondataavailable=e=>{ if(e.data&&e.data.size) parts.push(e.data); };
+  mr.onstop=async()=>{
+    stream.getTracks().forEach(t=>t.stop()); clearInterval(REC.timer);
+    const ms=Date.now()-REC.t0, blob=new Blob(parts,{type:mr.mimeType||type||"audio/webm"});
+    REC.mr=null; REC.key=null; document.querySelectorAll(".recing").forEach(x=>x.classList.remove("recing"));
+    if(blob.size&&ms>700){
+      try{ await recTx("readwrite",s=>s.put({blob,ms,date:Date.now()},key)); REC.have.add(key);
+        if(navigator.storage&&navigator.storage.persist) navigator.storage.persist().catch(()=>{});
+        recMsg(`Nagranie zapisane (${mmss(ms)}). ♪ je odtwarza, a „Czytaj” użyje przy tej modlitwie Twojego głosu.`,6000); }
+      catch(e){ recMsg("Nie udało się zapisać nagrania — może brakuje miejsca w telefonie.",7000); }
+    } else recMsg("Nagranie było za krótkie — nie zapisano.",4000);
+    addPlayMarks();
+  };
+  REC.mr=mr; REC.key=key; REC.t0=Date.now(); mr.start();
+  els.forEach(x=>x.classList.add("recing"));
+  const tick=()=>recMsg(`● Nagrywanie ${mmss(Date.now()-REC.t0)} — przeczytaj zaznaczony fragment`);
+  tick(); REC.timer=setInterval(tick,500); addPlayMarks();
+}
+function recStop(){ if(REC.mr&&REC.mr.state!=="inactive") REC.mr.stop(); }
+async function ownPlay(key,els,onend){ // onend podane = odtwarzanie w ramach „Czytaj”
+  ownStop();
+  let r=null; try{ r=await recTx("readonly",s=>s.get(key)); }catch(e){}
+  if(!r||!r.blob){ REC.have.delete(key); if(onend) onend(); else addPlayMarks(); return; }
+  if(onend&&!RD.playing) return;
+  const url=URL.createObjectURL(r.blob), a=new Audio(url); REC.audio=a; REC.url=url; REC.playKey=key;
+  if(onend) a.playbackRate=RD.rate; else els.forEach(x=>x.classList.add("rd"));
+  const done=()=>{ if(REC.audio!==a) return; ownStop(); if(onend) onend(); else addPlayMarks(); };
+  a.onended=done; a.onerror=done; a.play().catch(done);
+  if(!onend) addPlayMarks();
+}
+function ownStop(){
+  if(REC.audio){ const a=REC.audio; REC.audio=null; a.onended=a.onerror=null; a.pause(); }
+  if(REC.url){ URL.revokeObjectURL(REC.url); REC.url=null; }
+  if(REC.playKey){ REC.playKey=null; if(!RD.on) document.querySelectorAll(".rd").forEach(x=>x.classList.remove("rd")); }
+}
+$("recStop").onclick=recStop;
 function startReading(){
   if(!synth){ alert("Ta przeglądarka nie obsługuje czytania na głos."); return; }
   if(!openReader()) return;
@@ -1347,13 +1569,13 @@ function startReading(){
   if(!RD.voices.pl) $("rInfo").textContent="Brak polskiego głosu w telefonie — zainstaluj go w ustawieniach mowy.";
 }
 function stopReading(){
-  RD.utt=null; if(synth) synth.cancel(); setPlaying(false); RD.on=false;
+  ownStop(); RD.utt=null; if(synth) synth.cancel(); setPlaying(false); RD.on=false;
   $("reader").hidden=true; document.body.classList.remove("reading-on");
   document.querySelectorAll(".rd").forEach(x=>x.classList.remove("rd"));
 }
 $("readBtn").onclick=()=>RD.on?stopReading():startReading();
 $("rStop").onclick=stopReading;
-$("rPlay").onclick=()=>{ if(RD.playing){ RD.utt=null; synth.cancel(); setPlaying(false); } else goTo(RD.i); };
+$("rPlay").onclick=()=>{ if(RD.playing){ ownStop(); RD.utt=null; synth.cancel(); setPlaying(false); } else goTo(RD.i); };
 $("rPrev").onclick=()=>goTo(RD.i-1);
 $("rNext").onclick=()=>goTo(RD.i+1);
 $("rRate").onchange=e=>{ RD.rate=+e.target.value; saveState(); if(RD.playing) goTo(RD.i); };
@@ -1366,6 +1588,7 @@ try{const st=JSON.parse(localStorage.getItem("opbmv-state")||"{}"); if(st.lang) 
   if(st.rate) RD.rate=+st.rate; if(st.laVoice) RD.laVoice=st.laVoice; $("rRate").value=String(RD.rate); $("rLaVoice").value=RD.laVoice;}catch(e){}
 sel=[nowHour()];
 setISO(localISO(new Date()));
+if(recOK) recTx("readonly",s=>s.getAllKeys()).then(k=>{ REC.have=new Set(k); addPlayMarks(); }).catch(()=>{});
 if("serviceWorker" in navigator) addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 </script>
 
