@@ -888,6 +888,7 @@ const WYD_TX = {
 "Regina caeli, laetare, alleluia. / Quia quem meruisti portare, alleluia. / Resurrexit, sicut dixit, alleluia. / Ora pro nobis Deum, alleluia.":"Królowo niebios, wesel się, alleluja, / albowiem Ten, którego nosić zasłużyłaś, alleluja, / zmartwychwstał jak powiedział, alleluja. / Módl się za nami do Boga. Alleluja.",
 "Egredietur virga de radice Jesse, et flos de radice ejus ascendet. Et requiescet super eum Spiritus Domini.":"I wynijdzie różdżka z korzenia Jessego, a kwiat z korzenia jego wyrośnie. I spocznie na nim Duch Pański.",
 "Dabit illi Dominus Deus sedem David patris ejus, et regnabit in domo Jacob in aeternum, et regni ejus non erit finis.":"Da Mu Pan Bóg stolicę Dawida, ojca jego, i będzie królował w domu Jakubowym na wieki, a królestwu Jego nie będzie końca.",
+"Regina caeli, laetare, alleluia: quia quem meruisti portare, alleluia: resurrexit, sicut dixit, alleluia: ora pro nobis Deum, alleluia.":"Królowo niebios, wesel się, alleluja, albowiem Ten, którego nosić zasłużyłaś, alleluja, zmartwychwstał jak powiedział, alleluja. Módl się za nami do Boga. Alleluja.",
 "Ecce Dominus veniet, et omnes sancti ejus cum eo: et erit in die illa lux magna, alleluia.":"Oto przyjdzie Pan i wszyscy święci Jego z Nim, i będzie w onym dniu światłość wielka, alleluja.",
 "Ecce apparebit Dominus super nubem candidam.":"Oto się zjawi Pan w obłoku jasnym.",
 "Et cum eo sanctorum millia.":"A z Nim świętych tysiące.",
@@ -927,6 +928,7 @@ const ANT = {
   },
   subTuum:["Sub tuum praesidium confugimus, sancta Dei Genitrix: nostras deprecationes ne despicias in necessitatibus, sed a periculis cunctis libera nos semper, Virgo gloriosa et benedicta.","Pod Twoją obronę uciekamy się, święta Boża Rodzicielko; naszymi prośbami racz nie gardzić w potrzebach naszych, ale od wszelakich złych przygód racz nas zawsze wybawiać, Panno chwalebna i błogosławiona."],
   sanctiAdv:["Ecce Dominus veniet, et omnes sancti ejus cum eo: et erit in die illa lux magna, alleluia.","Oto Pan przyjdzie i wszyscy Jego święci z Nim, i będzie w owym dniu wielka światłość, alleluja."],
+  reginaMagn:["Regina caeli, laetare, alleluia: quia quem meruisti portare, alleluia: resurrexit, sicut dixit, alleluia: ora pro nobis Deum, alleluia.","Królowo nieba, wesel się, alleluja, bo Ten, któregoś nosić zasłużyła, alleluja, zmartwychwstał, jak powiedział, alleluja. Módl się za nami do Boga, alleluja."],
   sancti:["Sancti Dei omnes, intercedere dignemini pro nostra omniumque salute.","Wszyscy Święci Boży, raczcie wstawiać się za zbawieniem naszym i wszystkich."]
 };
 const BEN = [
@@ -1179,7 +1181,7 @@ function conclusion(id,x,o,prKey,commem){
       b.push({x:ANT.sanctiAdv,k:"Antyfona"},{vr:VR.ecceApparebit});
       b.push(...prayerBlocks("conscientias",x,true));
     } else {
-      b.push({r:"Pamiątka Wszystkich Świętych (w okresie „przez rok”):"});
+      b.push({r:"Pamiątka Wszystkich Świętych:"});
       b.push({x:A(ANT.sancti,x),k:"Antyfona"},{vr:VRp("laetamini",x)});
       b.push(...prayerBlocks("protege",x,true));
     }
@@ -1250,7 +1252,7 @@ const BUILD={
     b.push({s:"Hymn"},{hy:"oGloriosa"},{vr:VRp(x.s.vrL,x)});
     const ba=A(x.s.bened,x);
     b.push({s:"Benedictus"},{x:ba,k:"Antyfona"},{ps:"benedictus"},{x:ba,k:"Antyfona"});
-    b.push(...conclusion("lauds",x,o,typeof x.s.pr==="string"?x.s.pr:x.s.pr.lauds,(x.sk==="annum"||x.sk==="advent")));
+    b.push(...conclusion("lauds",x,o,typeof x.s.pr==="string"?x.s.pr:x.s.pr.lauds,true));
     return b;
   },
   vespers(x,o){
@@ -1258,9 +1260,9 @@ const BUILD={
     b.push({s:"Psalmy"},...antPsalms(x.s.vesp,["p109","p112","p121","p126","p147"],x));
     b.push({s:"Kapituła"},{r:x.s.capVsrc},{x:x.s.capV},{x:G.deoGratias,k:"℟."});
     b.push({s:"Hymn"},{hy:"aveMaris"},{vr:VRp(x.s.vrV,x)});
-    const ma=A(x.s.magn,x);
+    const ma=x.pasch?ANT.reginaMagn:A(x.s.magn,x); // w Okresie Wielkanocnym — Regina caeli (jak w wyd. 1936)
     b.push({s:"Magnificat"},{x:ma,k:"Antyfona"},{ps:"magnificat"},{x:ma,k:"Antyfona"});
-    b.push(...conclusion("vespers",x,o,typeof x.s.pr==="string"?x.s.pr:x.s.pr.vespers,(x.sk==="annum"||x.sk==="advent")));
+    b.push(...conclusion("vespers",x,o,typeof x.s.pr==="string"?x.s.pr:x.s.pr.vespers,true));
     return b;
   },
   compline(x,o){
@@ -1364,7 +1366,7 @@ function renderHead(){
     ["Te Deum",m.teDeum?"odmawia się":"pomija się"],
     ["Po Deus in adjutorium",m.laus?"Laus tibi, Domine…":"Alleluja"+(m.pasch?" (i alleluja przy antyfonach)":"")],
     ["Antyfona końcowa",fk?FINAL[fk].n:"pomija się"],
-    ["Pamiątka Świętych",m.sk==="annum"?"w Laudach i Nieszporach":"nie ma"]
+    ["Pamiątka Świętych","w Laudach i Nieszporach"+(m.sk==="advent"?" (adwentowa: Ecce Dominus veniet)":"")]
   ].map(([k,v])=>`<div><div class="lbl">${k}</div><div class="val">${v}</div></div>`).join("");
 }
 function render(){if(typeof RD!=="undefined"&&RD.on) stopReading(); renderHead();renderOffice();renderControls();}
