@@ -1,6 +1,6 @@
 // Service worker: zapisuje stronę w telefonie, żeby działała bez internetu.
 // Po zmianie plików podbij VERSION, aby wymusić odświeżenie pamięci podręcznej.
-const VERSION = "v15";
+const VERSION = "v16";
 const CACHE = "officium-" + VERSION;
 const SHELL = [
   "./",

@@ -117,6 +117,17 @@ body.reading-on{padding-bottom:150px}
 #recBar .rinfo{flex-basis:auto;font-size:.9rem;color:var(--ink)}
 #recStop{background:#b3261e;border-color:#b3261e;color:#fff;font-size:1rem}
 body.rec-on{padding-bottom:110px}
+/* zakładki: Oficjum | Różaniec */
+.tabs{display:flex;gap:6px;margin-top:10px}
+.tabs button{font-size:1rem;padding:7px 16px;border-radius:999px}
+body.page-ros .offOnly{display:none!important}
+body:not(.page-ros) .rosOnly{display:none!important}
+/* paciorki przy „Zdrowaś Maryjo ×10” — stuknięcie liczy, przy czytaniu podświetlają się same */
+.beads{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:6px 0 2px}
+.bead{width:18px;height:18px;padding:0;border-radius:50%;border:1.5px solid var(--marian);background:transparent;opacity:.6}
+.bead.on{background:var(--marian);opacity:.9}
+.bead.cur{background:var(--marian);opacity:1;box-shadow:0 0 0 3px var(--marian-soft)}
+.repn{font-family:var(--sans);font-size:.85rem;color:var(--muted);margin-left:6px}
 body.reading-on .office .blk,body.reading-on .office .verse,body.reading-on .office .stanza{cursor:pointer}
 </style>
 </head>
@@ -124,8 +135,14 @@ body.reading-on .office .blk,body.reading-on .office .verse,body.reading-on .off
 
 <div class="wrap">
   <header>
-    <h1>Officium Parvum <em>Beatae Mariae Virginis</em></h1>
-    <p>Pełne teksty na wybrany dzień — rubryki z 1960 roku, psalmy według Wulgaty.</p>
+    <h1 class="offOnly">Officium Parvum <em>Beatae Mariae Virginis</em></h1>
+    <h1 class="rosOnly">Rosarium <em>Beatae Mariae Virginis</em></h1>
+    <p class="offOnly">Pełne teksty na wybrany dzień — rubryki z 1960 roku, psalmy według Wulgaty.</p>
+    <p class="rosOnly">Różaniec święty w tradycyjnej formie — 15 tajemnic, łacina i polski.</p>
+    <nav class="tabs" role="group" aria-label="Strona">
+      <button data-page="off">Oficjum</button>
+      <button data-page="ros">Różaniec</button>
+    </nav>
   </header>
 
   <div class="bar">
@@ -141,7 +158,7 @@ body.reading-on .office .blk,body.reading-on .office .verse,body.reading-on .off
       <button data-lang="la">Łacina</button>
       <button data-lang="both">Oba</button>
     </div>
-    <div class="grp" role="group" aria-label="Przekład polski">
+    <div class="grp offOnly" role="group" aria-label="Przekład polski">
       <span class="lbl">Przekład</span>
       <button data-tr="own" title="Roboczy przekład z łaciny przygotowany dla tej strony">Własny</button>
       <button data-tr="wujek" title="ks. Jakub Wujek SJ, przekład z Wulgaty (wydanie z 1923 r.)">Wujek</button>
@@ -155,14 +172,31 @@ body.reading-on .office .blk,body.reading-on .office .verse,body.reading-on .off
     <div class="lbl" style="margin-top:10px">Teksty zawsze po łacinie</div>
     <div class="opts" id="latinOpts"></div>
     <div class="legend" style="margin-top:8px">Zaznaczone teksty pokazują się tylko po łacinie, także w trybie „Polski” i „Oba”.</div>
-    <div class="lbl" style="margin-top:14px">Modlitwa przygotowawcza i na zakończenie Oficjum</div>
-    <div class="opts" id="prePostOpts">
+    <div class="lbl offOnly" style="margin-top:14px">Modlitwa przygotowawcza i na zakończenie Oficjum</div>
+    <div class="opts offOnly" id="prePostOpts">
       <label><input type="radio" name="prePost" value="mc"> tylko przed Jutrznią i po Komplecie</label>
       <label><input type="radio" name="prePost" value="each"> przy każdym odmawianiu (przed pierwszą i po ostatniej wybranej godzinie)</label>
     </div>
+    <div class="lbl rosOnly" style="margin-top:14px">Różaniec</div>
+    <div class="opts rosOnly" id="rosOpts">
+      <label><input type="checkbox" value="intro"> modlitwy na początek (Wierzę w Boga, Ojcze nasz, 3 × Zdrowaś, Chwała Ojcu)</label>
+      <label><input type="checkbox" value="fatima"> „O mój Jezu” po każdej dziesiątce</label>
+      <label><input type="checkbox" value="sine"> „O Maryjo, bez grzechu poczęta” (w wersji św. Maksymiliana) po każdej dziesiątce</label>
+      <label><input type="checkbox" value="sub"> „Pod Twoją obronę” na zakończenie</label>
+    </div>
   </details>
 
-  <div class="panel">
+  <div class="panel rosOnly">
+    <div class="lbl" style="margin-bottom:6px">Tajemnice — zaznacz jedną lub kilka części</div>
+    <div class="grp" id="rosChips"></div>
+    <div class="grp" style="margin-top:8px">
+      <span class="lbl">Szybki wybór</span>
+      <button class="preset" id="rosToday">Na dziś</button>
+      <button class="preset" id="rosAll">Cały różaniec (15 tajemnic)</button>
+    </div>
+  </div>
+
+  <div class="panel offOnly">
     <div class="lbl" style="margin-bottom:6px">Godziny odmawiane razem — zaznacz jedną lub kilka</div>
     <div class="grp" id="chips"></div>
     <div class="grp" style="margin-top:8px">
@@ -181,7 +215,7 @@ body.reading-on .office .blk,body.reading-on .office .verse,body.reading-on .off
     <div class="rubrics" id="rubrics"></div>
   </div>
 
-  <div class="legend"><b>℣</b> werset (versiculus) · <b>℟</b> odpowiedź (responsorium) · <b>*</b> pauza w połowie wersetu · <b>✠</b> znak krzyża · tekst czerwony to rubryki, czyli wskazówki, których się nie odmawia</div>
+  <div class="legend offOnly"><b>℣</b> werset (versiculus) · <b>℟</b> odpowiedź (responsorium) · <b>*</b> pauza w połowie wersetu · <b>✠</b> znak krzyża · tekst czerwony to rubryki, czyli wskazówki, których się nie odmawia</div>
 
   <article class="office" id="office"></article>
 
@@ -194,6 +228,9 @@ body.reading-on .office .blk,body.reading-on .office .verse,body.reading-on .off
       <option value="0.8">Tempo 0,8×</option><option value="0.9">Tempo 0,9×</option><option value="1" selected>Tempo 1×</option>
       <option value="1.15">Tempo 1,15×</option><option value="1.3">Tempo 1,3×</option><option value="1.5">Tempo 1,5×</option>
     </select>
+    <select id="rBoth" aria-label="Co czytać przy tekście w obu językach">
+      <option value="alt">Oba języki: na zmianę</option><option value="la">Czytaj tylko łacinę</option><option value="pl">Czytaj tylko polski</option><option value="lapl">Każdą modlitwę po łacinie i po polsku</option>
+    </select>
     <select id="rLaVoice" aria-label="Wymowa łaciny">
       <option value="it">Łacina: wymowa włoska</option><option value="rest">Łacina: wymowa restytuowana</option><option value="pl">Łacina: wymowa polska</option>
     </select>
@@ -205,7 +242,8 @@ body.reading-on .office .blk,body.reading-on .office .verse,body.reading-on .off
     <button id="recStop" type="button">■ Zakończ nagrywanie</button>
   </div>
 
-  <footer>
+  <footer class="rosOnly">Różaniec w tradycyjnej formie: tajemnice radosne (poniedziałek i czwartek), bolesne (wtorek i piątek) i chwalebne (środa, sobota i niedziela). Układ i owoce tajemnic według polskiego modlitewnika (rozdział „Do Matki Bożej”). Teksty polskie w brzmieniu tradycyjnym. Nagranie „Zdrowaś Maryjo” czy „Ojcze nasz” wystarczy zrobić raz — będzie użyte przy każdej dziesiątce (i w Oficjum).</footer>
+  <footer class="offOnly">
     Teksty łacińskie według tradycyjnego Małego Oficjum (Wulgata, hymny w redakcji Urbana VIII). Przekład polski „własny” jest roboczym przekładem pomocniczym z łaciny, a nie zatwierdzonym tekstem liturgicznym. Psalmy i kantyki można też czytać w przekładzie ks. Jakuba Wujka SJ (z Wulgaty; wydanie z 1923 r., pisownia oryginalna) lub ks. Józefa Kruszyńskiego (z hebrajskiego; Lublin 1936 — dlatego miejscami brzmi inaczej niż łacina). Teksty obu przekładów pochodzą z serwisu BibliePolskie.pl; kantyku Trzech Młodzieńców brak w obu, a kantyków z Ewangelii — u ks. Kruszyńskiego, więc tam zostaje przekład własny. Wydania przedsoborowe różnią się drobnymi szczegółami, na przykład kapitułami małych godzin w Adwencie i Bożym Narodzeniu — w razie rozbieżności rozstrzyga Twoje wydanie lub konstytucje zgromadzenia.
   </footer>
 </div>
@@ -1072,6 +1110,71 @@ const LATIN_GROUPS = [
    t:[PRE.aperi,PRE.unione,PRE.sacro,...PRE.beata,...PRE.parce,PRE.strzala]}
 ];
 
+/* ===================== RÓŻANIEC ===================== */
+const ROS_TX = {
+  cross:["✠ In nomine Patris, et Filii, et Spiritus Sancti. Amen.","✠ W imię Ojca i Syna, i Ducha Świętego. Amen."],
+  credo:["Credo in Deum, Patrem omnipotentem, Creatorem caeli et terrae. Et in Jesum Christum, Filium ejus unicum, Dominum nostrum: qui conceptus est de Spiritu Sancto, natus ex Maria Virgine, passus sub Pontio Pilato, crucifixus, mortuus, et sepultus: descendit ad inferos; tertia die resurrexit a mortuis; ascendit ad caelos; sedet ad dexteram Dei Patris omnipotentis: inde venturus est judicare vivos et mortuos. Credo in Spiritum Sanctum, sanctam Ecclesiam catholicam, Sanctorum communionem, remissionem peccatorum, carnis resurrectionem, vitam aeternam. Amen.",
+         "Wierzę w Boga, Ojca wszechmogącego, Stworzyciela nieba i ziemi. I w Jezusa Chrystusa, Syna Jego jedynego, Pana naszego, który się począł z Ducha Świętego, narodził się z Maryi Panny, umęczon pod Ponckim Piłatem, ukrzyżowan, umarł i pogrzebion. Zstąpił do piekieł, trzeciego dnia zmartwychwstał. Wstąpił na niebiosa, siedzi po prawicy Boga Ojca wszechmogącego. Stamtąd przyjdzie sądzić żywych i umarłych. Wierzę w Ducha Świętego, święty Kościół powszechny, świętych obcowanie, grzechów odpuszczenie, ciała zmartwychwstanie, żywot wieczny. Amen."],
+  fatima:["O mi Jesu, dimitte nobis debita nostra, libera nos ab igne inferni, conduc in caelum omnes animas, praesertim illas, quae maxime indigent misericordia tua.",
+          "O mój Jezu, przebacz nam nasze grzechy, zachowaj nas od ognia piekielnego, zaprowadź wszystkie dusze do nieba, a szczególnie te, które najbardziej potrzebują Twego miłosierdzia."],
+  sine:["O Maria, sine labe concepta, ora pro nobis, qui ad te confugimus, et pro omnibus, qui ad te non confugiunt, praesertim pro massonibus et pro iis, qui tibi commendati sunt.","O Maryjo, bez grzechu poczęta, módl się za nami, którzy się do Ciebie uciekamy, i za wszystkimi, którzy się do Ciebie nie uciekają, a zwłaszcza za masonami i poleconymi Tobie."], // w wersji św. Maksymiliana Kolbego
+  oratio:["Deus, cujus Unigenitus per vitam, mortem et resurrectionem suam nobis salutis aeternae praemia comparavit: concede, quaesumus; ut haec mysteria sanctissimo beatae Mariae Virginis Rosario recolentes, et imitemur quod continent, et quod promittunt, assequamur.",
+          "Boże, którego Jednorodzony Syn przez swoje życie, śmierć i zmartwychwstanie wysłużył nam nagrody zbawienia wiecznego, spraw, prosimy, abyśmy, rozważając te tajemnice w najświętszym Różańcu Najświętszej Maryi Panny, naśladowali to, co zawierają, i osiągnęli to, co obiecują."]
+};
+const ROS = {
+  gaud:{pl:"Radosne",h:"Tajemnice radosne",la:"Mysteria gaudiosa",adjLa:"gaudiosum",adjPl:"radosna",m:[
+    ["Annuntiatio Beatae Mariae Virginis","Zwiastowanie Najświętszej Maryi Pannie","Ewangelia według świętego Łukasza 1, 26–38","pokora"],
+    ["Visitatio Beatae Mariae Virginis","Nawiedzenie świętej Elżbiety","Ewangelia według świętego Łukasza 1, 39–56","miłość bliźniego"],
+    ["Nativitas Domini nostri Jesu Christi","Narodzenie Pana Jezusa","Ewangelia według świętego Łukasza 2, 1–20","duch ubóstwa"],
+    ["Praesentatio Domini in templo","Ofiarowanie Pana Jezusa w świątyni","Ewangelia według świętego Łukasza 2, 22–38","posłuszeństwo"],
+    ["Inventio Pueri Jesu in templo","Odnalezienie Pana Jezusa w świątyni","Ewangelia według świętego Łukasza 2, 41–52","szukanie Jezusa"]]},
+  dol:{pl:"Bolesne",h:"Tajemnice bolesne",la:"Mysteria dolorosa",adjLa:"dolorosum",adjPl:"bolesna",m:[
+    ["Oratio Domini in horto","Konanie Pana Jezusa w Ogrójcu","Ewangelia według świętego Łukasza 22, 39–46","skrucha"],
+    ["Flagellatio Domini","Biczowanie Pana Jezusa","Ewangelia według świętego Jana 19, 1","umartwienie zmysłów"],
+    ["Coronatio spinis","Ukoronowanie Pana Jezusa cierniem","Ewangelia według świętego Mateusza 27, 27–31","umartwienie rozumu i woli"],
+    ["Bajulatio crucis","Dźwiganie krzyża","Ewangelia według świętego Łukasza 23, 26–32","cierpliwość i zgadzanie się z wolą Bożą"],
+    ["Crucifixio et mors Domini","Ukrzyżowanie i śmierć Pana Jezusa","Ewangelia według świętego Łukasza 23, 33–46","miłość Boga i gorliwość o zbawienie dusz"]]},
+  glor:{pl:"Chwalebne",h:"Tajemnice chwalebne",la:"Mysteria gloriosa",adjLa:"gloriosum",adjPl:"chwalebna",m:[
+    ["Resurrectio Domini","Zmartwychwstanie Pana Jezusa","Ewangelia według świętego Marka 16, 1–8","wiara i nawrócenie"],
+    ["Ascensio Domini","Wniebowstąpienie Pana Jezusa","Dzieje Apostolskie 1, 6–11","nadzieja i pragnienie nieba"],
+    ["Descensus Spiritus Sancti","Zesłanie Ducha Świętego","Dzieje Apostolskie 2, 1–4","miłość i żarliwość apostolska"],
+    ["Assumptio Beatae Mariae Virginis","Wniebowzięcie Najświętszej Maryi Panny","","łaska dobrej śmierci i nabożeństwo do Najświętszej Maryi Panny"],
+    ["Coronatio Beatae Mariae Virginis","Ukoronowanie Najświętszej Maryi Panny na Królową nieba i ziemi","Apokalipsa świętego Jana 12, 1","ostateczne wytrwanie w łasce i ufność w Maryi"]]}
+};
+const ROS_ORDER=["gaud","dol","glor"];
+const ORD_LA=["Primum","Secundum","Tertium","Quartum","Quintum"], ORD_PL=["pierwsza","druga","trzecia","czwarta","piąta"];
+function rosToday(d){ // pn, czw radosne; wt, pt bolesne; śr, sob, niedz. chwalebne
+  const w=d.getUTCDay();
+  return (w===1||w===4)?"gaud":(w===2||w===5)?"dol":"glor"; // środa, sobota i niedziela — chwalebne (jak w modlitewniku)
+}
+function rosBlocks(){
+  const keys=ROS_ORDER.filter(k=>rosSelNow().includes(k)), b=[];
+  if(!keys.length) return b;
+  b.push({s:"Na początek"},{x:ROS_TX.cross});
+  if(rosOpt.includes("intro")){
+    b.push({x:ROS_TX.credo,k:"Credo"},{x:G.pater,k:"Pater noster"},
+      {r:"Trzy razy Zdrowaś Maryjo — o pomnożenie wiary, nadziei i miłości."},{x:G.ave,k:"Ave Maria",rep:3},{x:G.gloria});
+  }
+  keys.forEach(k=>{ const R=ROS[k];
+    b.push({h:R.h,la:R.la});
+    R.m.forEach((m,i)=>{
+      b.push({s:`Tajemnica ${ORD_PL[i]} — ${m[1]}`});
+      b.push({x:[`${ORD_LA[i]} mysterium ${R.adjLa}: ${m[0]}.`,`Tajemnica ${ORD_PL[i]} ${R.adjPl}: ${m[1]}.`]});
+      if(m[2]) b.push({r:m[2]});
+      b.push({r:"Owoc tajemnicy: "+m[3]+"."});
+      b.push({x:G.pater,k:"Pater noster"},{x:G.ave,k:"Ave Maria",rep:10},{x:G.gloria});
+      if(rosOpt.includes("fatima")) b.push({x:ROS_TX.fatima});
+      if(rosOpt.includes("sine")) b.push({x:ROS_TX.sine});
+    });
+  });
+  b.push({h:"Zakończenie",la:"Conclusio"},{hy:{n:FINAL.salve.n,s:[FINAL.salve.t]}},{vr:VR.oraPro},
+    {x:G.oremus},{x:ROS_TX.oratio,k:"Modlitwa"},{x:END.short},{x:G.amenR,k:"℟."});
+  if(rosOpt.includes("sub")) b.push({x:ANT.subTuum,k:"Sub tuum"});
+  b.push({x:ROS_TX.cross});
+  return b;
+}
+function rosSelNow(){ return rosSel||[rosToday(cur)]; }
+
 /* ===================== KALENDARZ ===================== */
 const DAY=864e5, mk=(y,m,d)=>new Date(Date.UTC(y,m-1,d)), add=(d,n)=>new Date(d.getTime()+n*DAY), same=(a,b)=>a.getTime()===b.getTime();
 const fmt=d=>d.toISOString().slice(0,10);
@@ -1295,7 +1398,7 @@ const $=id=>document.getElementById(id);
 const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
 const attr=s=>esc(s).replace(/"/g,"&quot;");
 const star=s=>esc(s).replace(/ \* /g,' <span class="star">*</span> ').replace(/ \/ /g,"<br>").replace(/^\* /,'<span class="star">*</span> ').replace(/✠/g,'<span class="cross" title="znak krzyża">✠</span>');
-let cur, lang="both", tr="own", sel=[], latin=[], forcedLa=new Set(), prePost="mc";
+let cur, lang="both", tr="own", sel=[], latin=[], forcedLa=new Set(), prePost="mc", page="off", rosSel=null, rosOpt=["intro","fatima","sine"];
 function setLatin(ids){latin=ids.filter(id=>LATIN_GROUPS.some(g=>g.id===id));
   forcedLa=new Set(LATIN_GROUPS.filter(g=>latin.includes(g.id)).flatMap(g=>g.t.map(x=>x[0])));}
 function wydPl(la){ // polski tekst z wydania 1936; uwzględnia alleluja dodawane/usuwane według okresu
@@ -1307,7 +1410,7 @@ function wydPl(la){ // polski tekst z wydania 1936; uwzględnia alleluja dodawan
 }
 function pair(la,pl,pre="",isPs=false){
   let miss=false;
-  if(!isPs&&tr==="wyd"&&lang!=="la"&&!forcedLa.has(la)){ const w=wydPl(la); if(w) pl=w; else miss=true; }
+  if(!isPs&&page==="off"&&tr==="wyd"&&lang!=="la"&&!forcedLa.has(la)){ const w=wydPl(la); if(w) pl=w; else miss=true; }
   const L=`<div class="la">${pre}${star(la)}</div>`, P=`<div class="pl">${pre}${star(pl)}</div>`, bi=`<div class="bi${miss?" txmiss":""}" data-k="${attr(la)}"${miss?' title="tego tekstu z wydania 1936 jeszcze nie przepisano — przekład własny"':""}>`;
   if(lang==="la"||forcedLa.has(la)) return `${bi}${L}</div>`;
   if(lang==="pl") return `${bi}${P}</div>`;
@@ -1318,7 +1421,9 @@ function renderBlock(b){
   if(b.s) return `<div class="sec">${b.s}</div>`;
   if(b.r) return `<div class="rub">${esc(b.r)}</div>`;
   if(b.vr) return `<div class="blk">${pair(b.vr[0][0],b.vr[0][1],'<span class="vr">℣.</span>')}${pair(b.vr[1][0],b.vr[1][1],'<span class="vr">℟.</span>')}</div>`;
-  if(b.x){ const pre=b.k?(b.k.length<=3?`<span class="vr">${b.k}</span>`:`<span class="k">${b.k}.</span>`):""; return `<div class="blk">${pair(b.x[0],b.x[1],pre)}</div>`; }
+  if(b.x){ const pre=b.k?(b.k.length<=3?`<span class="vr">${b.k}</span>`:`<span class="k">${b.k}.</span>`):"";
+    if(b.rep) return `<div class="blk" data-rep="${b.rep}">${pair(b.x[0],b.x[1],pre+`<span class="repn">× ${b.rep}</span> `)}<div class="beads" aria-label="Licznik paciorków"><span class="repn" style="margin:0 2px 0 0">licznik:</span>${Array.from({length:b.rep},(_,i)=>`<button type="button" class="bead" tabindex="-1" title="${i+1}. Zdrowaś Maryjo — stuknij, aby odliczyć"></button>`).join("")}</div></div>`;
+    return `<div class="blk">${pair(b.x[0],b.x[1],pre)}</div>`; }
   if(b.ps){ const p=PS[b.ps], alt=TRN[tr]?.ps[b.ps];
     const T=TRN[tr], src=lang==="la"||tr==="own"?"":alt?(T.own&&!T.own[b.ps]?` — przekład: ${T.fb} (${T.fbNote})`:` — przekład: ${T.n}`):BIBLICAL_ONLY_OWN.includes(b.ps)?` — przekład własny (brak w przekładzie: ${TRN[tr].n})`:"";
     const miss=lang!=="la"&&T&&T.own&&!T.own[b.ps];
@@ -1340,6 +1445,13 @@ function postOffice(){
     {s:"Akt wynagradzający „Złota strzała”"},{x:PRE.strzala},{r:"Odpust 40 dni."}];
 }
 function renderOffice(){
+  if(page==="ros"){
+    const b=rosBlocks();
+    $("office").className="office mode-"+lang;
+    $("office").innerHTML=b.length?b.map(renderBlock).join(""):'<div class="rub" style="margin-top:20px">Zaznacz powyżej przynajmniej jedną część tajemnic.</div>';
+    if(typeof addPlayMarks==="function") addPlayMarks();
+    return;
+  }
   const list=ORDER.filter(h=>sel.includes(h)), out=[];
   if(!list.length){ $("office").innerHTML='<div class="rub" style="margin-top:20px">Zaznacz powyżej przynajmniej jedną godzinę.</div>'; return; }
   list.forEach((id,i)=>{
@@ -1358,6 +1470,11 @@ function renderHead(){
   const d=cur,w=d.getUTCDay(),c=cal(d),m=ctxFor(d,"lauds"),e=ctxFor(d,"vespers");
   $("date").value=fmt(d);
   $("dayhead").textContent=`${WD[w][0].toUpperCase()+WD[w].slice(1)}, ${d.getUTCDate()} ${MO[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+  if(page==="ros"){ const t=rosToday(d);
+    $("season").textContent="Różaniec: "+rosSelNow().map(k=>ROS[k].h.replace("Tajemnice ","")).join(" + ");
+    $("rubrics").innerHTML=[["Tajemnice na dziś",ROS[t].h],["Okres roku kościelnego",c.period],
+      ["Na zakończenie","Salve Regina i modlitwa „Deus, cujus Unigenitus”"]].map(([k,v])=>`<div><div class="lbl">${k}</div><div class="val">${v}</div></div>`).join("");
+    return; }
   $("season").textContent="Oficjum: "+m.s.name+(m.sk!==e.sk?" → od Nieszporów: "+e.s.name:"");
   const g=({0:"A",1:"A",4:"A",2:"B",5:"B",3:"C",6:"C"})[w], fk=finalKey(d,true);
   $("rubrics").innerHTML=[
@@ -1371,13 +1488,19 @@ function renderHead(){
 }
 function render(){if(typeof RD!=="undefined"&&RD.on) stopReading(); renderHead();renderOffice();renderControls();}
 function renderControls(){
+  document.body.classList.toggle("page-ros",page==="ros");
+  document.title=page==="ros"?"Różaniec — Officium Parvum":"Officium Parvum na dziś";
+  document.querySelectorAll("[data-page]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.page===page));
+  $("rosChips").innerHTML=ROS_ORDER.map(k=>`<button class="chip" data-ros="${k}" aria-pressed="${rosSelNow().includes(k)}">${ROS[k].pl}</button>`).join("");
+  $("rosToday").setAttribute("aria-pressed",!rosSel); $("rosAll").setAttribute("aria-pressed",!!rosSel&&rosSel.length===3);
+  document.querySelectorAll("#rosOpts input").forEach(i=>i.checked=rosOpt.includes(i.value));
   $("chips").innerHTML=HOURS.map(h=>`<button class="chip" data-h="${h.id}" aria-pressed="${sel.includes(h.id)}">${h.pl}</button>`).join("");
   document.querySelectorAll("[data-lang]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.lang===lang));
   document.querySelectorAll("[data-tr]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.tr===tr));
   document.querySelectorAll('[name="prePost"]').forEach(r=>r.checked=r.value===prePost);
   $("latinOpts").innerHTML=LATIN_GROUPS.map(g=>`<label><input type="checkbox" value="${g.id}"${latin.includes(g.id)?" checked":""}> ${g.n}</label>`).join("");
 }
-function saveState(){try{localStorage.setItem("opbmv-state",JSON.stringify({lang,tr,latin,prePost,rate:RD.rate,laVoice:RD.laVoice}))}catch(e){}}
+function saveState(){try{localStorage.setItem("opbmv-state",JSON.stringify({lang,tr,latin,prePost,page,rosOpt,rosV:2,rate:RD.rate,laVoice:RD.laVoice,both:RD.both}))}catch(e){}}
 function nowHour(){const h=new Date().getHours();return HOURS.find(x=>h>=x.from&&h<x.to).id;}
 function localISO(n){return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`;}
 function setISO(s){const [y,m,d]=s.split("-").map(Number);cur=mk(y,m,d);render();}
@@ -1390,6 +1513,17 @@ document.querySelectorAll("[data-lang]").forEach(b=>b.onclick=()=>{lang=b.datase
 document.querySelectorAll("[data-tr]").forEach(b=>b.onclick=()=>{tr=b.dataset.tr;saveState();render();});
 $("prePostOpts").onchange=e=>{prePost=e.target.value;saveState();render();};
 $("latinOpts").onchange=()=>{setLatin([...document.querySelectorAll("#latinOpts input:checked")].map(i=>i.value));saveState();render();};
+$("rosChips").addEventListener("click",e=>{const b=e.target.closest("[data-ros]");if(!b)return;const k=b.dataset.ros,s=rosSelNow();
+  rosSel=s.includes(k)?s.filter(x=>x!==k):[...s,k]; render();});
+$("rosToday").onclick=()=>{rosSel=null;render();};
+$("rosAll").onclick=()=>{rosSel=[...ROS_ORDER];render();};
+$("rosOpts").onchange=()=>{rosOpt=[...document.querySelectorAll("#rosOpts input:checked")].map(i=>i.value);saveState();render();};
+function setPage(p){ page=p; try{history.replaceState(null,"",p==="ros"?"#rozaniec":location.pathname+location.search);}catch(e){} saveState(); render(); scrollTo(0,0); }
+document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>setPage(b.dataset.page));
+addEventListener("hashchange",()=>{const p=location.hash==="#rozaniec"?"ros":"off"; if(p!==page){page=p;saveState();render();}});
+$("office").addEventListener("click",e=>{ const bd=e.target.closest(".bead"); if(!bd) return; e.stopPropagation(); // ręczne liczenie paciorków
+  const all=[...bd.parentNode.querySelectorAll(".bead")], i=all.indexOf(bd), n=bd.classList.contains("on")&&!all[i+1]?.classList.contains("on")?i:i+1;
+  all.forEach((x,j)=>{x.classList.toggle("on",j<n);x.classList.remove("cur");}); },true);
 $("prev").onclick=()=>{cur=add(cur,-1);render();};
 $("next").onclick=()=>{cur=add(cur,1);render();};
 $("today").onclick=()=>setISO(localISO(new Date()));
@@ -1397,7 +1531,7 @@ $("date").addEventListener("change",e=>{if(e.target.value)setISO(e.target.value)
 
 /* ===================== CZYTANIE NA GŁOS ===================== */
 // Syntezator mowy przeglądarki: polski głos dla tekstu polskiego, włoski (wymowa kościelna) albo polski dla łaciny.
-const RD={on:false,playing:false,i:0,stopAt:null,items:[],q:[],qi:0,utt:null,lock:null,rate:1,laVoice:"it",voices:{}};
+const RD={both:"alt",alt:0,only:null,steps:[],si:0,next:0,rp:1,on:false,playing:false,i:0,stopAt:null,items:[],q:[],qi:0,utt:null,lock:null,rate:1,laVoice:"it",voices:{}};
 const synth=window.speechSynthesis;
 function pickVoices(){
   const vs=synth?synth.getVoices():[], best=l=>{const c=vs.filter(v=>v.lang.replace("_","-").toLowerCase().startsWith(l));
@@ -1417,7 +1551,7 @@ function laForItalian(t){ // przybliżenie wymowy kościelnej dla głosu włoski
     .replace(/\bJ/g,"I").replace(/j/g,"i");
 }
 function cleanText(el){
-  const c=el.cloneNode(true); c.querySelectorAll(".k,.vr,.star,.cross,.trsrc,.rbtn,.marks").forEach(x=>x.remove());
+  const c=el.cloneNode(true); c.querySelectorAll(".k,.vr,.star,.cross,.trsrc,.rbtn,.marks,.repn").forEach(x=>x.remove());
   c.querySelectorAll("br").forEach(x=>x.replaceWith(" "));
   return c.textContent.replace(/[*✠†℣℟]/g," ").replace(/\s+/g," ").trim();
 }
@@ -1429,35 +1563,62 @@ function chunks(t){ // krótkie kawałki — niektóre przeglądarki urywają d�
   t.split(/(?<=[.;:!?])\s+/).forEach(s=>{ if((cur+" "+s).length>220&&cur){out.push(cur);cur=s;} else cur=cur?cur+" "+s:s; });
   if(cur) out.push(cur); return out;
 }
-function queueFor(el){
-  const parts=el.matches(".hourtitle h2,.sec,.pstitle")?[["pl",cleanText(el)]]
-    :[...el.querySelectorAll(".la,.pl")].map(d=>[d.classList.contains("la")?"la":"pl",cleanText(d)]);
-  return parts.filter(p=>p[1]).flatMap(([l,t])=>chunks(t).map(c=>[l,c]));
-}
 function speakNext(){
   if(!RD.playing) return;
-  if(RD.qi>=RD.q.length){ RD.i++; return startItem(); }
+  if(RD.qi>=RD.q.length) return runStep();
   const [l,t]=RD.q[RD.qi++], useIt=l==="la"&&RD.laVoice!=="pl"&&RD.voices.it;
   const u=new SpeechSynthesisUtterance(useIt?(RD.laVoice==="rest"?laRestituta(t):laForItalian(t)):t);
   const v=useIt?RD.voices.it:RD.voices.pl; if(v){u.voice=v;u.lang=v.lang;} else u.lang=useIt?"it-IT":"pl-PL";
   u.rate=RD.rate; u.onend=()=>{ if(RD.utt===u) speakNext(); }; u.onerror=e=>{ if(RD.utt===u&&e.error!=="interrupted"&&e.error!=="canceled") speakNext(); };
   RD.utt=u; synth.speak(u);
 }
+function readLangs(){ // które języki czytać — w trybie „Oba” według wyboru w pasku czytania
+  if(RD.only) return [RD.only];
+  if(lang==="la") return ["la"]; if(lang==="pl") return ["pl"];
+  if(RD.both==="la"||RD.both==="pl") return [RD.both];
+  if(RD.both==="alt") return [(RD.alt++%2)?"pl":"la"];
+  return ["la","pl"];
+}
+function textsIn(el,l){ // teksty elementu w danym języku; gdy go brak (np. „zawsze po łacinie”) — w tym, który jest
+  let c=[...el.querySelectorAll("."+l)]; if(!c.length){ l=l==="la"?"pl":"la"; c=[...el.querySelectorAll("."+l)]; }
+  return {l,cols:c,t:c.map(cleanText).filter(Boolean)};
+}
 function startItem(){
   document.querySelectorAll(".rd").forEach(x=>x.classList.remove("rd"));
   if(RD.i>=RD.items.length){ stopReading(); return; }
   if(RD.stopAt!==null&&RD.i>RD.stopAt){ RD.stopAt=null; setPlaying(false); $("rInfo").textContent="Koniec modlitwy — ▶ czyta dalej"; return; }
-  const el=RD.items[RD.i], g=RD.groups&&RD.groups.get(RD.i);
-  if(g&&g.key&&REC.have.has(g.key)){ // ta modlitwa ma nagranie własnego głosu — odtwórz je zamiast syntezatora
-    const els=RD.items.slice(RD.i,g.b+1); els.forEach(x=>x.classList.add("rd")); el.scrollIntoView({block:"center",behavior:"smooth"});
-    $("rInfo").textContent=`Fragment ${RD.i+1} z ${RD.items.length} — Twoje nagranie`;
-    ownPlay(g.key,els,()=>{ if(!RD.playing) return; RD.i=g.b+1; startItem(); });
-    return;
+  const el=RD.items[RD.i], g=RD.groups&&RD.groups.get(RD.i), rp=+(el.dataset.rep||1), steps=[];
+  if(rp>1) RD.alt=0;
+  el.scrollIntoView({block:"center",behavior:"smooth"});
+  const rec=l=>g&&g.keys[l]&&REC.have.has(g.keys[l])?g.keys[l]:null;
+  if(g&&(rec("la")||rec("pl"))){ // modlitwa ma nagranie własnego głosu — w tym języku odtwórz je zamiast syntezatora
+    const els=RD.items.slice(RD.i,g.b+1);
+    for(let n=1;n<=rp;n++) readLangs().forEach((l,j)=>{
+      const k=rec(l);
+      if(k) steps.push({rec:k,l,n,els:els.flatMap(e=>{const c=[...e.querySelectorAll("."+l)];return c.length?c:[e];})});
+      else els.forEach(e=>{ if(e.matches(".pstitle")){ if(n===1&&j===0) steps.push({el:e,title:true}); } else steps.push({el:e,l,n}); });
+    });
+    RD.next=g.b+1;
+  } else {
+    if(el.matches(".hourtitle h2,.sec,.pstitle")) steps.push({el,title:true});
+    else for(let n=1;n<=rp;n++) readLangs().forEach(l=>steps.push({el,l,n}));
+    RD.next=RD.i+1;
   }
-  el.classList.add("rd"); el.scrollIntoView({block:"center",behavior:"smooth"});
-  RD.q=queueFor(el); RD.qi=0; $("rInfo").textContent=`Fragment ${RD.i+1} z ${RD.items.length}`;
-  speakNext();
+  RD.steps=steps; RD.si=0; RD.rp=rp; runStep();
 }
+function runStep(){
+  if(!RD.playing) return;
+  if(RD.si>=RD.steps.length){ RD.i=RD.next; return startItem(); }
+  const s=RD.steps[RD.si++], el=RD.items[RD.i];
+  document.querySelectorAll(".rd").forEach(x=>x.classList.remove("rd"));
+  if(RD.rp>1&&s.n) beadMark(el,s.n);
+  const info=(own,l)=>$("rInfo").textContent=`Fragment ${RD.i+1} z ${RD.items.length}`+(lang==="both"&&l?(l==="la"?" — po łacinie":" — po polsku"):"")+(own?" — Twoje nagranie":"")+(RD.rp>1?` (${s.n} z ${RD.rp})`:"");
+  if(s.rec){ s.els.forEach(x=>x.classList.add("rd")); info(true,s.l); ownPlay(s.rec,s.els,runStep); return; }
+  if(s.title){ s.el.classList.add("rd"); info(false); RD.q=chunks(cleanText(s.el)).map(c=>["pl",c]); RD.qi=0; return speakNext(); }
+  const T=textsIn(s.el,s.l); (lang==="both"?T.cols:[s.el]).forEach(x=>x.classList.add("rd")); info(false,T.l);
+  RD.q=T.t.flatMap(t=>chunks(t).map(c=>[T.l,c])); RD.qi=0; speakNext();
+}
+function beadMark(el,n){ el.querySelectorAll(".bead").forEach((x,j)=>{ x.classList.toggle("on",j<n-1); x.classList.toggle("cur",j===n-1); }); }
 async function wake(on){
   try{ if(on&&"wakeLock" in navigator&&!RD.lock){ RD.lock=await navigator.wakeLock.request("screen"); RD.lock.addEventListener("release",()=>RD.lock=null); }
        if(!on&&RD.lock){ await RD.lock.release(); RD.lock=null; } }catch(e){}
@@ -1466,10 +1627,11 @@ document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==
 function setPlaying(p){
   RD.playing=p; $("rPlay").textContent=p?"⏸":"▶"; $("rPlay").setAttribute("aria-label",p?"Pauza":"Dalej"); wake(p);
 }
-function goTo(i,stopAt=null){ RD.stopAt=stopAt; ownStop(); synth.cancel(); RD.utt=null; RD.i=Math.max(0,Math.min(i,RD.items.length-1)); setPlaying(true); startItem(); }
+function goTo(i,stopAt=null,only=null){ RD.stopAt=stopAt; RD.only=only; ownStop(); synth.cancel(); RD.utt=null; RD.i=Math.max(0,Math.min(i,RD.items.length-1)); setPlaying(true); startItem(); }
 function openReader(){
   pickVoices(); RD.items=readItems(); if(!RD.items.length) return false;
-  RD.groups=new Map(prayerGroups(RD.items).map(([a,b])=>[a,{b,key:groupKey(RD.items,a,b)}]));
+  RD.groups=new Map(prayerGroups(RD.items).map(([a,b])=>[a,{b,keys:{la:langKey(RD.items,a,b,"la"),pl:langKey(RD.items,a,b,"pl")}}]));
+  $("rBoth").hidden=lang!=="both";
   RD.on=true; $("reader").hidden=false; document.body.classList.add("reading-on"); return true;
 }
 function prayerGroups(items){ // modlitwa = blok tekstu albo cały psalm / hymn (tytuł i wszystkie jego wersety)
@@ -1481,26 +1643,30 @@ function prayerGroups(items){ // modlitwa = blok tekstu albo cały psalm / hymn 
   });
   return g;
 }
-function addPlayMarks(){ // przy każdej modlitwie: ▶ czyta ją syntezatorem; ● nagrywa własny głos, ♪ go odtwarza, ✕ usuwa nagranie
+function addPlayMarks(){ // przy każdej modlitwie, osobno dla każdego języka: ▶ czyta ją; ● nagrywa własny głos, ♪ go odtwarza, ✕ usuwa nagranie
   document.querySelectorAll("#office .marks").forEach(x=>x.remove());
   if(!synth&&!recOK) return;
   const items=readItems();
   prayerGroups(items).forEach(([a,b])=>{
-    const el=items[a], els=items.slice(a,b+1), key=groupKey(items,a,b), box=document.createElement("span"); box.className="marks";
-    const mk=(txt,cls,title,fn)=>{ const btn=document.createElement("button"); btn.className="rbtn"+(cls?" "+cls:""); btn.type="button"; btn.textContent=txt;
-      btn.title=title; btn.setAttribute("aria-label",title); btn.onclick=e=>{ e.stopPropagation(); fn(); }; box.appendChild(btn); };
-    if(synth) mk("▶","","Przeczytaj tę modlitwę",()=>{ if(!openReader()) return; goTo(a,b); });
-    if(recOK&&key){
-      const has=REC.have.has(key), recNow=REC.key===key, playNow=REC.playKey===key&&!RD.on;
-      if(has) mk(playNow?"■":"♪","own",playNow?"Zatrzymaj moje nagranie":"Odtwórz moje nagranie",
-        ()=>{ if(playNow){ ownStop(); addPlayMarks(); } else { if(RD.on) stopReading(); ownPlay(key,els); } });
-      mk(recNow?"■":"●","rec"+(recNow?" recording":""),recNow?"Zakończ nagrywanie":has?"Nagraj ponownie (zastąpi poprzednie nagranie)":"Nagraj, jak sam czytasz tę modlitwę",
-        ()=>REC.mr?recStop():recStart(key,els));
-      if(has&&!recNow) mk("✕","rec","Usuń moje nagranie",async()=>{ if(!confirm("Usunąć Twoje nagranie tej modlitwy?")) return;
-        if(REC.playKey===key) ownStop(); try{ await recTx("readwrite",s=>s.delete(key)); REC.have.delete(key); }catch(e){} addPlayMarks(); });
-    }
-    if(!box.children.length) return;
-    if(el.matches(".pstitle")) el.appendChild(box); else { const t=el.querySelector(".la,.pl"); if(t) t.prepend(box); }
+    const els=items.slice(a,b+1), first=els.find(e=>e.querySelector(".bi")); if(!first) return;
+    ["la","pl"].forEach(l=>{
+      const col=first.querySelector("."+l); if(!col) return;
+      const key=langKey(items,a,b,l), cols=els.flatMap(e=>[...e.querySelectorAll("."+l)]), box=document.createElement("span"); box.className="marks";
+      const po=l==="la"?" po łacinie":" po polsku";
+      const mk=(txt,cls,title,fn)=>{ const btn=document.createElement("button"); btn.className="rbtn"+(cls?" "+cls:""); btn.type="button"; btn.textContent=txt;
+        btn.title=title; btn.setAttribute("aria-label",title); btn.onclick=e=>{ e.stopPropagation(); fn(); }; box.appendChild(btn); };
+      if(synth) mk("▶","","Przeczytaj tę modlitwę"+po,()=>{ if(!openReader()) return; goTo(a,b,l); });
+      if(recOK&&key){
+        const has=REC.have.has(key), recNow=REC.key===key, playNow=REC.playKey===key&&!RD.on;
+        if(has) mk(playNow?"■":"♪","own",playNow?"Zatrzymaj moje nagranie":"Odtwórz moje nagranie"+po,
+          ()=>{ if(playNow){ ownStop(); addPlayMarks(); } else { if(RD.on) stopReading(); ownPlay(key,cols); } });
+        mk(recNow?"■":"●","rec"+(recNow?" recording":""),recNow?"Zakończ nagrywanie":has?"Nagraj ponownie"+po+" (zastąpi poprzednie nagranie)":"Nagraj, jak sam czytasz tę modlitwę"+po,
+          ()=>REC.mr?recStop():recStart(key,cols));
+        if(has&&!recNow) mk("✕","rec","Usuń moje nagranie"+po,async()=>{ if(!confirm("Usunąć Twoje nagranie tej modlitwy"+po+"?")) return;
+          if(REC.playKey===key) ownStop(); try{ await recTx("readwrite",s=>s.delete(key)); REC.have.delete(key); }catch(e){} addPlayMarks(); });
+      }
+      if(box.children.length) col.prepend(box);
+    });
   });
 }
 /* własne nagrania — głos nagrany dla danej modlitwy, zapisany tylko w tym urządzeniu (IndexedDB) */
@@ -1510,8 +1676,11 @@ function recDB(){ return REC.db||(REC.db=new Promise((res,rej)=>{ const r=indexe
   r.onupgradeneeded=()=>r.result.createObjectStore("rec"); r.onsuccess=()=>res(r.result); r.onerror=()=>{ REC.db=null; rej(r.error); }; })); }
 async function recTx(mode,fn){ const db=await recDB(); return new Promise((res,rej)=>{ const t=db.transaction("rec",mode), r=fn(t.objectStore("rec"));
   t.oncomplete=()=>res(r.result); t.onerror=t.onabort=()=>rej(t.error); }); }
-function groupKey(items,a,b){ // klucz = łaciński tekst pierwszego wersetu — ten sam niezależnie od języka i przekładu
-  for(let i=a;i<=b;i++){ const d=items[i].matches("[data-k]")?items[i]:items[i].querySelector("[data-k]"); if(d) return "k:"+d.dataset.k; } return null; }
+function langKey(items,a,b,l){ // osobne nagranie dla każdego języka: łacina — tekst łaciński, polski — tekst polski (inny przekład = inne nagranie)
+  for(let i=a;i<=b;i++){ const bi=items[i].querySelector(".bi"); if(!bi) continue;
+    if(l==="la") return bi.querySelector(".la")?"la:"+bi.dataset.k:null;
+    const p=bi.querySelector(".pl"); return p?"pl:"+cleanText(p):null; }
+  return null; }
 function mmss(ms){ const s=Math.floor(ms/1000); return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`; }
 function recMsg(t,hideAfter=0){
   $("recInfo").textContent=t; $("recStop").hidden=!REC.mr; $("recBar").hidden=false; document.body.classList.add("rec-on");
@@ -1581,13 +1750,16 @@ $("rPlay").onclick=()=>{ if(RD.playing){ ownStop(); RD.utt=null; synth.cancel();
 $("rPrev").onclick=()=>goTo(RD.i-1);
 $("rNext").onclick=()=>goTo(RD.i+1);
 $("rRate").onchange=e=>{ RD.rate=+e.target.value; saveState(); if(RD.playing) goTo(RD.i); };
+$("rBoth").onchange=e=>{ RD.both=e.target.value; saveState(); if(RD.playing) goTo(RD.i); };
 $("rLaVoice").onchange=e=>{ RD.laVoice=e.target.value; saveState(); if(RD.playing) goTo(RD.i); };
 $("office").addEventListener("click",e=>{ if(!RD.on) return; const el=e.target.closest(".hourtitle h2,.sec,.pstitle,.blk,.verse,.stanza");
   const i=el?RD.items.indexOf(el):-1; if(i>=0) goTo(i); });
 
 try{const st=JSON.parse(localStorage.getItem("opbmv-state")||"{}"); if(st.lang) lang=st.lang; if(TRN[st.tr]) tr=st.tr; if(Array.isArray(st.latin)) setLatin(st.latin);
   if(st.prePost==="each"||st.prePost==="mc") prePost=st.prePost;
-  if(st.rate) RD.rate=+st.rate; if(st.laVoice) RD.laVoice=st.laVoice; $("rRate").value=String(RD.rate); $("rLaVoice").value=RD.laVoice;}catch(e){}
+  if(st.page==="ros") page="ros"; if(Array.isArray(st.rosOpt)) rosOpt=st.rosOpt.includes("sine")||st.rosV>=2?st.rosOpt:[...st.rosOpt,"sine"];
+  if(st.rate) RD.rate=+st.rate; if(st.laVoice) RD.laVoice=st.laVoice; if(["alt","la","pl","lapl"].includes(st.both)) RD.both=st.both; $("rBoth").value=RD.both; $("rRate").value=String(RD.rate); $("rLaVoice").value=RD.laVoice;}catch(e){}
+if(location.hash==="#rozaniec") page="ros";
 sel=[nowHour()];
 setISO(localISO(new Date()));
 if(recOK) recTx("readonly",s=>s.getAllKeys()).then(k=>{ REC.have=new Set(k); addPlayMarks(); }).catch(()=>{});
