@@ -6,11 +6,18 @@
 <title>Officium Parvum na dziś</title>
 <meta name="description" content="Małe Oficjum o Najświętszej Maryi Pannie na dziś — łacina i polski">
 <meta name="theme-color" content="#1f3f7a">
-<link rel="manifest" href="manifest.webmanifest">
+<link rel="manifest" href="manifest.webmanifest" id="manifestLink">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png" id="appleIcon">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Officium">
+<meta name="apple-mobile-web-app-title" content="Officium" id="appleTitle">
+<script>/* Różaniec jako osobna ikona na ekranie telefonu: pod adresem #rozaniec strona podaje własną nazwę, ikonę i adres startowy */
+if(location.hash==="#rozaniec"||/[?&]app=rozaniec/.test(location.search)){
+  document.getElementById("manifestLink").href="manifest-rozaniec.webmanifest";
+  document.getElementById("appleIcon").href="icons/rozaniec-apple-touch-icon.png";
+  document.getElementById("appleTitle").content="Różaniec";
+  if(location.hash!=="#rozaniec") history.replaceState(null,"",location.pathname+location.search+"#rozaniec");
+}</script>
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Alegreya+Sans:wght@400;500;700&display=swap">
 <style>
@@ -1757,7 +1764,7 @@ $("office").addEventListener("click",e=>{ if(!RD.on) return; const el=e.target.c
 
 try{const st=JSON.parse(localStorage.getItem("opbmv-state")||"{}"); if(st.lang) lang=st.lang; if(TRN[st.tr]) tr=st.tr; if(Array.isArray(st.latin)) setLatin(st.latin);
   if(st.prePost==="each"||st.prePost==="mc") prePost=st.prePost;
-  if(st.page==="ros") page="ros"; if(Array.isArray(st.rosOpt)) rosOpt=st.rosOpt.includes("sine")||st.rosV>=2?st.rosOpt:[...st.rosOpt,"sine"];
+  if(Array.isArray(st.rosOpt)) rosOpt=st.rosOpt.includes("sine")||st.rosV>=2?st.rosOpt:[...st.rosOpt,"sine"];
   if(st.rate) RD.rate=+st.rate; if(st.laVoice) RD.laVoice=st.laVoice; if(["alt","la","pl","lapl"].includes(st.both)) RD.both=st.both; $("rBoth").value=RD.both; $("rRate").value=String(RD.rate); $("rLaVoice").value=RD.laVoice;}catch(e){}
 if(location.hash==="#rozaniec") page="ros";
 sel=[nowHour()];

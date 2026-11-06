@@ -1,0 +1,17 @@
+{
+  "id": "./?app=rozaniec",
+  "name": "Różaniec — Rosarium B.M.V.",
+  "short_name": "Różaniec",
+  "description": "Różaniec święty w tradycyjnej formie — łacina i polski",
+  "lang": "pl",
+  "start_url": "./?app=rozaniec#rozaniec",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f2f3f6",
+  "theme_color": "#1f3f7a",
+  "icons": [
+    { "src": "icons/rozaniec-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/rozaniec-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/rozaniec-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

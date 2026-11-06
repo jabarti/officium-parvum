@@ -1,11 +1,16 @@
 // Service worker: zapisuje stronę w telefonie, żeby działała bez internetu.
 // Po zmianie plików podbij VERSION, aby wymusić odświeżenie pamięci podręcznej.
-const VERSION = "v16";
+const VERSION = "v17";
 const CACHE = "officium-" + VERSION;
 const SHELL = [
   "./",
   "index.html",
   "manifest.webmanifest",
+  "manifest-rozaniec.webmanifest",
+  "icons/rozaniec-192.png",
+  "icons/rozaniec-512.png",
+  "icons/rozaniec-maskable-512.png",
+  "icons/rozaniec-apple-touch-icon.png",
   "icons/icon-192.png",
   "icons/icon-512.png",
   "icons/icon-maskable-512.png",
