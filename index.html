@@ -116,6 +116,9 @@ body.reading-on{padding-bottom:150px}
 /* własne nagrania */
 .rbtn.rec{border-color:#b3261e;color:#b3261e}
 .rbtn.rec:hover,.rbtn.rec:focus-visible{background:#b3261e;color:#fff}
+/* zielone ● = nagranie już jest (nagrywanie od nowa zastąpi je wszędzie) */
+.rbtn.rec.has{border-color:#2e7d32;background:#2e7d32;color:#fff;opacity:.9}
+.rbtn.rec.has:hover,.rbtn.rec.has:focus-visible{background:#1b5e20;border-color:#1b5e20;color:#fff;opacity:1}
 .rbtn.own{opacity:.9;font-size:12px}
 .rbtn.recording{opacity:1;background:#b3261e;color:#fff;animation:recpulse 1s infinite}
 @keyframes recpulse{50%{opacity:.45}}
@@ -1653,7 +1656,7 @@ function prayerGroups(items){ // modlitwa = blok tekstu albo cały psalm / hymn 
 function addPlayMarks(){ // przy każdej modlitwie, osobno dla każdego języka: ▶ czyta ją; ● nagrywa własny głos, ♪ go odtwarza, ✕ usuwa nagranie
   document.querySelectorAll("#office .marks").forEach(x=>x.remove());
   if(!synth&&!recOK) return;
-  const items=readItems();
+  const items=readItems(), seen=new Set(); // ● i ✕ tylko przy pierwszym wystąpieniu danego tekstu — dalsze używają tego samego nagrania
   prayerGroups(items).forEach(([a,b])=>{
     const els=items.slice(a,b+1), first=els.find(e=>e.querySelector(".bi")); if(!first) return;
     ["la","pl"].forEach(l=>{
@@ -1664,12 +1667,14 @@ function addPlayMarks(){ // przy każdej modlitwie, osobno dla każdego języka:
         btn.title=title; btn.setAttribute("aria-label",title); btn.onclick=e=>{ e.stopPropagation(); fn(); }; box.appendChild(btn); };
       if(synth) mk("▶","","Przeczytaj tę modlitwę"+po,()=>{ if(!openReader()) return; goTo(a,b,l); });
       if(recOK&&key){
-        const has=REC.have.has(key), recNow=REC.key===key, playNow=REC.playKey===key&&!RD.on;
-        if(has) mk(playNow?"■":"♪","own",playNow?"Zatrzymaj moje nagranie":"Odtwórz moje nagranie"+po,
+        const has=REC.have.has(key), recNow=REC.key===key, playNow=REC.playKey===key&&!RD.on, firstOcc=!seen.has(key)||recNow; seen.add(key);
+        if(has) mk(playNow?"■":"♪","own",playNow?"Zatrzymaj moje nagranie":"Odtwórz moje nagranie"+po+(firstOcc?"":" (to samo co przy pierwszym wystąpieniu)"),
           ()=>{ if(playNow){ ownStop(); addPlayMarks(); } else { if(RD.on) stopReading(); ownPlay(key,cols); } });
-        mk(recNow?"■":"●","rec"+(recNow?" recording":""),recNow?"Zakończ nagrywanie":has?"Nagraj ponownie"+po+" (zastąpi poprzednie nagranie)":"Nagraj, jak sam czytasz tę modlitwę"+po,
-          ()=>REC.mr?recStop():recStart(key,cols));
-        if(has&&!recNow) mk("✕","rec","Usuń moje nagranie"+po,async()=>{ if(!confirm("Usunąć Twoje nagranie tej modlitwy"+po+"?")) return;
+        if(firstOcc) mk(recNow?"■":"●","rec"+(recNow?" recording":has?" has":""),recNow?"Zakończ nagrywanie":has?"Nagranie"+po+" już jest — nagraj od nowa (zmieni się wszędzie)":"Nagraj, jak sam czytasz tę modlitwę"+po,
+          ()=>{ if(REC.mr) return recStop();
+            if(has&&!confirm("Nagranie tej modlitwy"+po+" już istnieje i jest używane wszędzie, gdzie ta modlitwa występuje.\n\nNagrać od nowa? Poprzednie nagranie zostanie zastąpione.")) return;
+            recStart(key,cols); });
+        if(has&&!recNow&&firstOcc) mk("✕","rec","Usuń moje nagranie"+po,async()=>{ if(!confirm("Usunąć Twoje nagranie tej modlitwy"+po+"? Zniknie wszędzie, gdzie ta modlitwa występuje.")) return;
           if(REC.playKey===key) ownStop(); try{ await recTx("readwrite",s=>s.delete(key)); REC.have.delete(key); }catch(e){} addPlayMarks(); });
       }
       if(box.children.length) col.prepend(box);
