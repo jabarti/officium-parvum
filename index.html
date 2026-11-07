@@ -127,6 +127,25 @@ body.reading-on{padding-bottom:150px}
 #recBar .rinfo{flex-basis:auto;font-size:.9rem;color:var(--ink)}
 #recStop{background:#b3261e;border-color:#b3261e;color:#fff;font-size:1rem}
 body.rec-on{padding-bottom:110px}
+.rbtn.edit{font-size:11px}
+/* okienko edycji nagrania */
+.recEd{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:12px}
+.recEd[hidden],.recEd [hidden]{display:none}
+.edBox{background:var(--page);color:var(--ink);border-radius:12px;max-width:560px;width:100%;max-height:92vh;overflow:auto;padding:16px 18px;box-shadow:0 8px 30px rgba(0,0,0,.3)}
+.edBox h3{margin:0 0 4px;font-size:1.1rem}
+.edTxt{font-size:.9rem;color:var(--muted);font-style:italic;margin-bottom:10px}
+#edCv{width:100%;height:90px;display:block;background:var(--bg);border-radius:6px;cursor:pointer;touch-action:manipulation}
+.edRow{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:.9rem}
+.edRow label{min-width:68px}
+.edRow input[type=range]{flex:1}
+.edRow span{min-width:58px;text-align:right;font-variant-numeric:tabular-nums}
+.edBtns{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.edBtns button,.edBtns label,.fileBtn{font:inherit;font-size:.9rem;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--page);color:var(--ink);cursor:pointer}
+.fileBtn{font-size:.85rem;padding:5px 10px;color:var(--marian)}
+.edBtns .main{background:var(--marian);border-color:var(--marian);color:var(--page)}
+.edBtns .del{color:#b3261e;border-color:#b3261e}
+#edMsg{font-size:.85rem;color:var(--marian);min-height:1.2em;margin-top:8px}
+body.ed-on{overflow:hidden}
 /* zakładki: Oficjum | Różaniec */
 .tabs{display:flex;gap:6px;margin-top:10px}
 .tabs button{font-size:1rem;padding:7px 16px;border-radius:999px}
@@ -194,6 +213,16 @@ body.reading-on .office .blk,body.reading-on .office .verse,body.reading-on .off
       <label><input type="checkbox" value="sine"> „O Maryjo, bez grzechu poczęta” (w wersji św. Maksymiliana) po każdej dziesiątce</label>
       <label><input type="checkbox" value="sub"> „Pod Twoją obronę” na zakończenie</label>
     </div>
+    <div id="recOpts">
+      <div class="lbl" style="margin-top:14px">Moje nagrania</div>
+      <div class="legend" id="recCount" style="margin:4px 0 6px"></div>
+      <div class="grp">
+        <button class="preset" id="recExport" type="button">⤓ Zapisz wszystkie nagrania do pliku</button>
+        <label class="fileBtn" for="recImport">⤒ Wczytaj nagrania z pliku…</label><input type="file" id="recImport" accept=".zip,application/zip" hidden>
+      </div>
+      <div class="legend" id="recAllMsg" role="status" style="margin-top:6px"></div>
+      <div class="legend" style="margin-top:6px">Nagrania są zapisane tylko w tej przeglądarce. Plik kopii (.zip) trafia do „Pobranych” (w iPhonie: aplikacja Pliki → Pobrane) — można go przenieść na dysk, do chmury albo na inny telefon i tam wczytać. Pojedyncze nagranie można przyciąć, zastąpić plikiem lub pobrać przyciskiem ✎ przy modlitwie.</div>
+    </div>
   </details>
 
   <div class="panel rosOnly">
@@ -250,6 +279,40 @@ body.reading-on .office .blk,body.reading-on .office .verse,body.reading-on .off
   <div class="reader" id="recBar" hidden role="status" aria-label="Nagrywanie">
     <span class="rinfo" id="recInfo"></span>
     <button id="recStop" type="button">■ Zakończ nagrywanie</button>
+  </div>
+
+  <div class="recEd" id="recEd" hidden role="dialog" aria-modal="true" aria-labelledby="edTitle">
+    <div class="edBox">
+      <h3 id="edTitle"></h3>
+      <div class="edTxt" id="edTxt"></div>
+      <div id="edNone" class="legend">Nie ma jeszcze nagrania tej modlitwy. Można je nagrać przyciskiem ● przy modlitwie albo wczytać gotowy plik dźwiękowy.</div>
+      <div id="edHas">
+        <div id="edTrim">
+          <canvas id="edCv" title="Stuknij, aby przesunąć najbliższy znacznik początku albo końca"></canvas>
+          <div class="edRow"><label for="edA">Początek</label><input type="range" id="edA" min="0" max="1000" step="1"><span id="edAv"></span></div>
+          <div class="edRow"><label for="edB">Koniec</label><input type="range" id="edB" min="0" max="1000" step="1"><span id="edBv"></span></div>
+          <div class="legend" id="edLen" style="margin-top:4px"></div>
+          <div class="edBtns">
+            <button id="edPlay" type="button">▶ Odsłuchaj</button>
+            <button id="edEnd" type="button" title="Odsłuchaj ostatnie 3 sekundy zaznaczenia">▶ Końcówka</button>
+            <button id="edAuto" type="button" title="Zaznacz od pierwszego do ostatniego słowa">✂ Utnij ciszę</button>
+            <button id="edReset" type="button">Całość</button>
+            <button id="edSave" type="button" class="main">Zapisz przycięte</button>
+          </div>
+        </div>
+        <div class="edBtns">
+          <button id="edDown" type="button">⤓ Pobierz plik</button>
+          <button id="edShare" type="button" hidden>Udostępnij / zapisz w…</button>
+          <button id="edDel" type="button" class="del">✕ Usuń nagranie</button>
+        </div>
+      </div>
+      <div class="edBtns">
+        <button id="edUndo" type="button" hidden>↶ Cofnij zmianę</button>
+        <label for="edFile">⤒ Wczytaj z pliku…</label><input type="file" id="edFile" accept="audio/*" hidden>
+        <button id="edClose" type="button" class="main" style="margin-left:auto">Zamknij</button>
+      </div>
+      <div id="edMsg" role="status"></div>
+    </div>
   </div>
 
   <footer class="rosOnly">Różaniec w tradycyjnej formie: tajemnice radosne (poniedziałek i czwartek), bolesne (wtorek i piątek) i chwalebne (środa, sobota i niedziela). Układ i owoce tajemnic według polskiego modlitewnika (rozdział „Do Matki Bożej”). Teksty polskie w brzmieniu tradycyjnym. Nagranie „Zdrowaś Maryjo” czy „Ojcze nasz” wystarczy zrobić raz — będzie użyte przy każdej dziesiątce (i w Oficjum).</footer>
@@ -1601,9 +1664,12 @@ function startItem(){
   if(rp>1) RD.alt=0;
   el.scrollIntoView({block:"center",behavior:"smooth"});
   const rec=l=>g&&g.keys[l]&&REC.have.has(g.keys[l])?g.keys[l]:null;
+  const gEls=g?RD.items.slice(RD.i,g.b+1):[el], hasL=l=>gEls.some(e=>e.querySelector("."+l));
+  // język, którego przy tej modlitwie nie ma (np. „zawsze po łacinie”), zastąp tym, który jest — i nie czytaj dwa razy tego samego
+  const langs=()=>[...new Set(readLangs().map(l=>hasL(l)||!hasL(l==="la"?"pl":"la")?l:(l==="la"?"pl":"la")))];
   if(g&&(rec("la")||rec("pl"))){ // modlitwa ma nagranie własnego głosu — w tym języku odtwórz je zamiast syntezatora
-    const els=RD.items.slice(RD.i,g.b+1);
-    for(let n=1;n<=rp;n++) readLangs().forEach((l,j)=>{
+    const els=gEls;
+    for(let n=1;n<=rp;n++) langs().forEach((l,j)=>{
       const k=rec(l);
       if(k) steps.push({rec:k,l,n,els:els.flatMap(e=>{const c=[...e.querySelectorAll("."+l)];return c.length?c:[e];})});
       else els.forEach(e=>{ if(e.matches(".pstitle")){ if(n===1&&j===0) steps.push({el:e,title:true}); } else steps.push({el:e,l,n}); });
@@ -1611,7 +1677,7 @@ function startItem(){
     RD.next=g.b+1;
   } else {
     if(el.matches(".hourtitle h2,.sec,.pstitle")) steps.push({el,title:true});
-    else for(let n=1;n<=rp;n++) readLangs().forEach(l=>steps.push({el,l,n}));
+    else for(let n=1;n<=rp;n++) langs().forEach(l=>steps.push({el,l,n}));
     RD.next=RD.i+1;
   }
   RD.steps=steps; RD.si=0; RD.rp=rp; runStep();
@@ -1674,12 +1740,14 @@ function addPlayMarks(){ // przy każdej modlitwie, osobno dla każdego języka:
           ()=>{ if(REC.mr) return recStop();
             if(has&&!confirm("Nagranie tej modlitwy"+po+" już istnieje i jest używane wszędzie, gdzie ta modlitwa występuje.\n\nNagrać od nowa? Poprzednie nagranie zostanie zastąpione.")) return;
             recStart(key,cols); });
+        if(firstOcc&&!recNow) mk("✎","edit","Przytnij, wczytaj z pliku lub pobierz nagranie"+po,()=>{ if(!REC.mr) edOpen(key); });
         if(has&&!recNow&&firstOcc) mk("✕","rec","Usuń moje nagranie"+po,async()=>{ if(!confirm("Usunąć Twoje nagranie tej modlitwy"+po+"? Zniknie wszędzie, gdzie ta modlitwa występuje.")) return;
           if(REC.playKey===key) ownStop(); try{ await recTx("readwrite",s=>s.delete(key)); REC.have.delete(key); }catch(e){} addPlayMarks(); });
       }
       if(box.children.length) col.prepend(box);
     });
   });
+  recCount();
 }
 /* własne nagrania — głos nagrany dla danej modlitwy, zapisany tylko w tym urządzeniu (IndexedDB) */
 const REC={db:null,have:new Set(),mr:null,key:null,t0:0,timer:null,msgT:null,audio:null,url:null,playKey:null};
@@ -1774,6 +1842,173 @@ try{const st=JSON.parse(localStorage.getItem("opbmv-state")||"{}"); if(st.lang) 
 if(location.hash==="#rozaniec") page="ros";
 sel=[nowHour()];
 setISO(localISO(new Date()));
+/* edycja nagrania: przycinanie, wczytanie z pliku, pobranie; kopia zapasowa wszystkich nagrań */
+const ED={key:null,rec:null,blob:null,buf:null,peaks:null,a:0,b:0,src:null,raf:0,ctx:null,undo:null};
+function edCtx(){ return ED.ctx||(ED.ctx=new (window.AudioContext||window.webkitAudioContext)()); }
+async function edDecode(blob){ const ab=await blob.arrayBuffer(); return new Promise((res,rej)=>{ const p=edCtx().decodeAudioData(ab,res,rej); if(p&&p.catch) p.catch(rej); }); }
+function edMsg(t){ $("edMsg").textContent=t; }
+function plN(n,a,b,c){ return n===1?a:(n%10>=2&&n%10<=4&&(n%100<12||n%100>14))?b:c; }
+function recCount(){ const n=[...REC.have].filter(k=>/^(la|pl):/.test(k)).length;
+  $("recCount").textContent=n?`W tej przeglądarce: ${n} ${plN(n,"nagranie","nagrania","nagrań")}.`:"W tej przeglądarce nie ma jeszcze nagrań."; $("recExport").disabled=!n; }
+function edName(key,type){
+  const ext=/mp4|m4a|aac/.test(type)?"m4a":/ogg/.test(type)?"ogg":/wav/.test(type)?"wav":/mpeg|mp3/.test(type)?"mp3":"webm";
+  const t=key.slice(3).replace(/[łŁ]/g,m=>m==="ł"?"l":"L").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Za-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,50).replace(/-+$/,"");
+  return `${key.slice(0,2)}-${t||"nagranie"}.${ext}`;
+}
+function saveFile(blob,name){ const a=document.createElement("a"), u=URL.createObjectURL(blob); a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),10000); }
+async function edOpen(key){
+  ownStop(); if(RD.on) stopReading();
+  ED.key=key; ED.buf=null; ED.blob=null; ED.undo=null;
+  $("edTitle").textContent="Moje nagranie "+(key.startsWith("la:")?"po łacinie":"po polsku");
+  const t=key.slice(3); $("edTxt").textContent=t.length>170?t.slice(0,170)+"…":t; edMsg("");
+  $("recEd").hidden=false; document.body.classList.add("ed-on"); edCtx(); await edLoad(); $("edClose").focus();
+}
+async function edLoad(){
+  edStopPrev(); let r=null; try{ r=await recTx("readonly",s=>s.get(ED.key)); }catch(e){}
+  ED.rec=r; ED.blob=r&&r.blob||null; ED.buf=null; ED.peaks=null;
+  $("edHas").hidden=!ED.blob; $("edNone").hidden=!!ED.blob; $("edUndo").hidden=!ED.undo;
+  $("edShare").hidden=!(ED.blob&&navigator.canShare&&navigator.canShare({files:[new File([ED.blob],edName(ED.key,ED.blob.type),{type:ED.blob.type})]}));
+  if(!ED.blob) return;
+  try{ ED.buf=await edDecode(ED.blob); }catch(e){ $("edTrim").hidden=true; edMsg("Tego nagrania nie da się tu przyciąć (można je pobrać albo zastąpić plikiem)."); return; }
+  $("edTrim").hidden=false; ED.a=0; ED.b=ED.buf.duration; edSync();
+}
+function edClose(){ edStopPrev(); $("recEd").hidden=true; document.body.classList.remove("ed-on"); ED.key=null; ED.buf=null; ED.blob=null; ED.peaks=null; }
+function edFmt(s){ return mmss(s*1000)+","+Math.floor(s*10)%10; }
+function edSync(){ const d=ED.buf.duration; $("edA").value=Math.round(ED.a/d*1000); $("edB").value=Math.round(ED.b/d*1000);
+  $("edAv").textContent=edFmt(ED.a); $("edBv").textContent=edFmt(ED.b);
+  $("edLen").textContent=`Zaznaczone: ${edFmt(ED.b-ED.a)} z ${edFmt(d)}`+(ED.a>0.05||ED.b<d-0.05?" — „Zapisz przycięte” zostawi tylko zaznaczony fragment.":""); edDraw(); }
+function edDraw(pos){
+  const cv=$("edCv"), w=cv.clientWidth, h=cv.clientHeight, dpr=window.devicePixelRatio||1; if(!w||!ED.buf) return;
+  if(cv.width!==Math.round(w*dpr)){ cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr); }
+  const c=cv.getContext("2d"); c.setTransform(dpr,0,0,dpr,0,0); c.clearRect(0,0,w,h);
+  const d=ED.buf.duration, x=t=>t/d*w;
+  if(!ED.peaks||ED.peaks.length!==w){ const ch=ED.buf.getChannelData(0), step=Math.max(1,Math.floor(ch.length/w)); ED.peaks=new Float32Array(w);
+    for(let i=0;i<w;i++){ let m=0; for(let j=i*step,e=Math.min(ch.length,j+step);j<e;j++){ const v=Math.abs(ch[j]); if(v>m) m=v; } ED.peaks[i]=m; } }
+  let mx=0.01; ED.peaks.forEach(v=>{ if(v>mx) mx=v; });
+  const st=getComputedStyle(document.documentElement), on=st.getPropertyValue("--marian").trim()||"#1f3f7a", off=st.getPropertyValue("--line").trim()||"#ccc";
+  for(let i=0;i<w;i++){ const t=(i+.5)/w*d, ph=Math.max(1,ED.peaks[i]/mx*(h/2-3)); c.fillStyle=t>=ED.a&&t<=ED.b?on:off; c.fillRect(i,h/2-ph,1,ph*2); }
+  c.fillStyle="#b3261e"; c.fillRect(Math.max(0,x(ED.a)-1),0,2,h); c.fillRect(Math.min(w-2,x(ED.b)-1),0,2,h);
+  if(pos!=null){ c.fillStyle="#2e7d32"; c.fillRect(x(pos)-1,0,2,h); }
+}
+function edStopPrev(){ if(ED.src){ const s=ED.src; ED.src=null; s.onended=null; try{ s.stop(); }catch(e){} } cancelAnimationFrame(ED.raf); $("edPlay").textContent="▶ Odsłuchaj"; if(ED.buf) edDraw(); }
+function edPlayFrom(from){
+  if(ED.src){ edStopPrev(); return; }
+  const ctx=edCtx(); if(ctx.resume) ctx.resume();
+  const s=ctx.createBufferSource(); s.buffer=ED.buf; s.connect(ctx.destination); const t0=ctx.currentTime; s.start(0,from,ED.b-from); ED.src=s;
+  s.onended=()=>{ if(ED.src===s) edStopPrev(); }; $("edPlay").textContent="■ Zatrzymaj";
+  const tick=()=>{ if(ED.src!==s) return; edDraw(from+ctx.currentTime-t0); ED.raf=requestAnimationFrame(tick); }; tick();
+}
+$("edPlay").onclick=()=>edPlayFrom(ED.a);
+$("edEnd").onclick=()=>{ edStopPrev(); edPlayFrom(Math.max(ED.a,ED.b-3)); };
+$("edA").oninput=e=>{ edStopPrev(); const d=ED.buf.duration; ED.a=Math.max(0,Math.min(+e.target.value/1000*d,ED.b-0.3)); edSync(); };
+$("edB").oninput=e=>{ edStopPrev(); const d=ED.buf.duration; ED.b=Math.min(d,Math.max(+e.target.value/1000*d,ED.a+0.3)); edSync(); };
+$("edCv").onclick=e=>{ if(!ED.buf) return; edStopPrev(); const r=e.currentTarget.getBoundingClientRect(), d=ED.buf.duration, t=(e.clientX-r.left)/r.width*d;
+  if(Math.abs(t-ED.a)<=Math.abs(t-ED.b)) ED.a=Math.max(0,Math.min(t,ED.b-0.3)); else ED.b=Math.min(d,Math.max(t,ED.a+0.3)); edSync(); };
+$("edReset").onclick=()=>{ edStopPrev(); ED.a=0; ED.b=ED.buf.duration; edSync(); edMsg(""); };
+$("edAuto").onclick=()=>{ // od pierwszego do ostatniego dźwięku głośniejszego niż tło
+  edStopPrev(); const ch=ED.buf.getChannelData(0), sr=ED.buf.sampleRate, W=0.02, win=Math.max(1,Math.round(sr*W)), n=Math.floor(ch.length/win), rms=new Float32Array(n);
+  let mx=0; for(let i=0;i<n;i++){ let q=0; for(let j=i*win;j<(i+1)*win;j++) q+=ch[j]*ch[j]; rms[i]=Math.sqrt(q/win); if(rms[i]>mx) mx=rms[i]; }
+  const th=mx*0.08; let f=0,l=n-1; while(f<n&&rms[f]<th) f++; while(l>f&&rms[l]<th) l--;
+  if(f>=l) return edMsg("Nie znalazłem w nagraniu głosu.");
+  ED.a=Math.max(0,f*W-0.15); ED.b=Math.min(ED.buf.duration,(l+1)*W+0.3); edSync(); edMsg("Zaznaczyłem od pierwszego do ostatniego słowa — odsłuchaj i zapisz.");
+};
+function wavBlob(buf){ const d=buf.getChannelData(0), n=d.length, ab=new ArrayBuffer(44+n*2), v=new DataView(ab), sr=buf.sampleRate;
+  const w=(o,t)=>{ for(let i=0;i<t.length;i++) v.setUint8(o+i,t.charCodeAt(i)); };
+  w(0,"RIFF"); v.setUint32(4,36+n*2,true); w(8,"WAVE"); w(12,"fmt "); v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
+  v.setUint32(24,sr,true); v.setUint32(28,sr*2,true); v.setUint16(32,2,true); v.setUint16(34,16,true); w(36,"data"); v.setUint32(40,n*2,true);
+  for(let i=0;i<n;i++){ const x=Math.max(-1,Math.min(1,d[i])); v.setInt16(44+i*2,x<0?x*0x8000:x*0x7fff,true); }
+  return new Blob([ab],{type:"audio/wav"}); }
+async function edPut(rec,msg){
+  try{ await recTx("readwrite",s=>s.put(rec,ED.key)); REC.have.add(ED.key); if(navigator.storage&&navigator.storage.persist) navigator.storage.persist().catch(()=>{});
+    addPlayMarks(); await edLoad(); edMsg(msg); }
+  catch(e){ edMsg("Nie udało się zapisać — może brakuje miejsca w urządzeniu."); }
+}
+$("edSave").onclick=async()=>{
+  edStopPrev(); const d=ED.b-ED.a, full=ED.buf.duration;
+  if(ED.a<0.05&&ED.b>full-0.05) return edMsg("Najpierw zaznacz fragment do zostawienia (suwaki, stuknięcie w wykres albo „Utnij ciszę”).");
+  edMsg("Zapisuję…");
+  try{
+    const sr=24000, O=window.OfflineAudioContext||window.webkitOfflineAudioContext, off=new O(1,Math.ceil(d*sr),sr), s=off.createBufferSource(), g=off.createGain();
+    s.buffer=ED.buf; s.connect(g); g.connect(off.destination);
+    g.gain.setValueAtTime(0,0); g.gain.linearRampToValueAtTime(1,0.015); g.gain.setValueAtTime(1,Math.max(0.016,d-0.025)); g.gain.linearRampToValueAtTime(0,d);
+    s.start(0,ED.a,d);
+    const out=await new Promise((res,rej)=>{ off.oncomplete=e=>res(e.renderedBuffer); const p=off.startRendering(); if(p&&p.then) p.then(res,rej); });
+    ED.undo={key:ED.key,rec:ED.rec};
+    await edPut({blob:wavBlob(out),ms:Math.round(d*1000),date:Date.now()},`Zapisano przycięte nagranie (${edFmt(d)}) — zmieni się wszędzie, gdzie ta modlitwa występuje.`);
+  }catch(e){ edMsg("Nie udało się przyciąć nagrania w tej przeglądarce."); }
+};
+$("edUndo").onclick=async()=>{ if(!ED.undo||ED.undo.key!==ED.key) return; const r=ED.undo.rec; ED.undo=null;
+  await edPut(r,"Przywrócono poprzednią wersję nagrania."); };
+$("edFile").onchange=async e=>{ const f=e.target.files[0]; e.target.value=""; if(!f||!ED.key) return;
+  if(ED.blob&&!confirm("Plik zastąpi obecne nagranie tej modlitwy — wszędzie, gdzie ona występuje. Kontynuować?")) return;
+  let buf; try{ buf=await edDecode(f); }catch(err){ return edMsg("Nie umiem odczytać tego pliku jako dźwięku."); }
+  ED.undo=ED.rec?{key:ED.key,rec:ED.rec}:null;
+  await edPut({blob:new Blob([f],{type:f.type||"audio/mpeg"}),ms:Math.round(buf.duration*1000),date:Date.now()},`Wczytano nagranie z pliku „${f.name}”.`); };
+$("edDown").onclick=()=>{ if(ED.blob) saveFile(ED.blob,edName(ED.key,ED.blob.type)); };
+$("edShare").onclick=async()=>{ if(!ED.blob) return; const f=new File([ED.blob],edName(ED.key,ED.blob.type),{type:ED.blob.type}); try{ await navigator.share({files:[f],title:f.name}); }catch(e){} };
+$("edDel").onclick=async()=>{ if(!confirm("Usunąć to nagranie? Zniknie wszędzie, gdzie ta modlitwa występuje.")) return;
+  ED.undo={key:ED.key,rec:ED.rec}; try{ await recTx("readwrite",s=>s.delete(ED.key)); REC.have.delete(ED.key); }catch(e){} addPlayMarks(); await edLoad(); edMsg("Nagranie usunięte. „Cofnij zmianę” przywróci je, dopóki okienko jest otwarte."); };
+$("edClose").onclick=edClose;
+$("recEd").addEventListener("click",e=>{ if(e.target.id==="recEd") edClose(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("recEd").hidden) edClose(); });
+addEventListener("resize",()=>{ if(ED.buf&&!$("recEd").hidden) edDraw(); });
+
+/* kopia zapasowa: plik .zip (bez kompresji) ze spisem spis.json i plikami dźwiękowymi */
+const CRC_T=(()=>{ const t=new Uint32Array(256); for(let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++) c=c&1?0xEDB88320^(c>>>1):c>>>1; t[n]=c>>>0; } return t; })();
+function crc32(u){ let c=0xFFFFFFFF; for(let i=0;i<u.length;i++) c=CRC_T[(c^u[i])&255]^(c>>>8); return (c^0xFFFFFFFF)>>>0; }
+function zipMake(files){
+  const enc=new TextEncoder(), parts=[], cen=[]; let off=0;
+  for(const f of files){ const nm=enc.encode(f.name), crc=crc32(f.data), sz=f.data.length, h=new DataView(new ArrayBuffer(30)), c=new DataView(new ArrayBuffer(46));
+    h.setUint32(0,0x04034b50,true); h.setUint16(4,20,true); h.setUint16(6,0x0800,true); h.setUint16(12,0x21,true);
+    h.setUint32(14,crc,true); h.setUint32(18,sz,true); h.setUint32(22,sz,true); h.setUint16(26,nm.length,true);
+    c.setUint32(0,0x02014b50,true); c.setUint16(4,20,true); c.setUint16(6,20,true); c.setUint16(8,0x0800,true); c.setUint16(14,0x21,true);
+    c.setUint32(16,crc,true); c.setUint32(20,sz,true); c.setUint32(24,sz,true); c.setUint16(28,nm.length,true); c.setUint32(42,off,true);
+    parts.push(h.buffer,nm,f.data); cen.push(c.buffer,nm); off+=30+nm.length+sz; }
+  const cs=cen.reduce((a,b)=>a+b.byteLength,0), e=new DataView(new ArrayBuffer(22));
+  e.setUint32(0,0x06054b50,true); e.setUint16(8,files.length,true); e.setUint16(10,files.length,true); e.setUint32(12,cs,true); e.setUint32(16,off,true);
+  return new Blob([...parts,...cen,e.buffer],{type:"application/zip"});
+}
+async function zipRead(blob){
+  const u=new Uint8Array(await blob.arrayBuffer()), v=new DataView(u.buffer), dec=new TextDecoder(), out={}; let e=u.length-22;
+  while(e>=0&&v.getUint32(e,true)!==0x06054b50) e--; if(e<0) throw new Error("zip");
+  let p=v.getUint32(e+16,true); const n=v.getUint16(e+10,true);
+  for(let i=0;i<n;i++){
+    if(v.getUint32(p,true)!==0x02014b50) throw new Error("zip");
+    const m=v.getUint16(p+10,true), cs=v.getUint32(p+20,true), nl=v.getUint16(p+28,true), xl=v.getUint16(p+30,true), cl=v.getUint16(p+32,true), lo=v.getUint32(p+42,true);
+    const name=dec.decode(u.subarray(p+46,p+46+nl)); p+=46+nl+xl+cl;
+    const ds=lo+30+v.getUint16(lo+26,true)+v.getUint16(lo+28,true); let data=u.subarray(ds,ds+cs);
+    if(m===8&&window.DecompressionStream) data=new Uint8Array(await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer());
+    else if(m!==0) continue;
+    out[name]=data;
+  }
+  return out;
+}
+function recAllMsg(t){ $("recAllMsg").textContent=t; }
+$("recExport").onclick=async()=>{
+  recAllMsg("Przygotowuję plik…");
+  try{
+    const keys=await recTx("readonly",s=>s.getAllKeys()), vals=await recTx("readonly",s=>s.getAll()), used=new Set(), files=[], list=[];
+    for(let i=0;i<keys.length;i++){ const k=keys[i], r=vals[i]; if(!r||!r.blob||!/^(la|pl):/.test(k)) continue;
+      let nm=edName(k,r.blob.type); const ext=nm.slice(nm.lastIndexOf(".")), base=nm.slice(0,-ext.length); for(let j=2;used.has(nm);j++) nm=`${base}-${j}${ext}`; used.add(nm);
+      files.push({name:"nagrania/"+nm,data:new Uint8Array(await r.blob.arrayBuffer())});
+      list.push({plik:"nagrania/"+nm,jezyk:k.slice(0,2),tekst:k.slice(3),klucz:k,ms:r.ms||0,data:r.date||0,typ:r.blob.type||""}); }
+    if(!list.length) return recAllMsg("Nie ma jeszcze żadnych nagrań do zapisania.");
+    files.unshift({name:"spis.json",data:new TextEncoder().encode(JSON.stringify({aplikacja:"Officium Parvum — moje nagrania",wersja:1,zapisano:new Date().toISOString(),nagrania:list},null,1))});
+    const name=`officium-nagrania-${localISO(new Date())}.zip`; saveFile(zipMake(files),name);
+    recAllMsg(`Zapisano ${list.length} ${plN(list.length,"nagranie","nagrania","nagrań")} w pliku „${name}” (w folderze Pobrane).`);
+  }catch(e){ recAllMsg("Nie udało się przygotować pliku."); }
+};
+$("recImport").onchange=async e=>{ const f=e.target.files[0]; e.target.value=""; if(!f) return;
+  let z, spis; try{ z=await zipRead(f); spis=JSON.parse(new TextDecoder().decode(z["spis.json"])); }catch(err){ return recAllMsg("To nie jest plik z nagraniami zapisany przez tę aplikację."); }
+  const items=(spis.nagrania||[]).filter(x=>x&&z[x.plik]&&/^(la|pl):/.test(x.klucz)); if(!items.length) return recAllMsg("W pliku nie ma nagrań.");
+  const same=items.filter(x=>REC.have.has(x.klucz)).length;
+  if(!confirm(`Wczytać ${items.length} ${plN(items.length,"nagranie","nagrania","nagrań")} z pliku „${f.name}”?`+(same?`\n\n${same} z nich zastąpi nagrania, które już są w tej przeglądarce.`:""))) return;
+  try{ await recTx("readwrite",s=>{ items.forEach(x=>s.put({blob:new Blob([z[x.plik]],{type:x.typ||""}),ms:x.ms||0,date:x.data||Date.now()},x.klucz)); return s.count(); });
+    items.forEach(x=>REC.have.add(x.klucz)); if(navigator.storage&&navigator.storage.persist) navigator.storage.persist().catch(()=>{});
+    addPlayMarks(); recAllMsg(`Wczytano ${items.length} ${plN(items.length,"nagranie","nagrania","nagrań")}.`); }
+  catch(err){ recAllMsg("Nie udało się zapisać nagrań — może brakuje miejsca."); }
+};
+if(!window.indexedDB) $("recOpts").hidden=true; else recCount();
 if(recOK) recTx("readonly",s=>s.getAllKeys()).then(k=>{ REC.have=new Set(k); addPlayMarks(); }).catch(()=>{});
 if("serviceWorker" in navigator) addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 </script>
